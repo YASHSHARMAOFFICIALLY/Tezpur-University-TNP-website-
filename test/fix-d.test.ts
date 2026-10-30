@@ -1,9 +1,9 @@
-import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
+import { trackProcesses } from "./proc.js";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
 const DB_URL = process.env.TEST_DATABASE_URL ?? "postgresql://tnp:tnp@localhost:5434/tnp_test";
@@ -13,9 +13,10 @@ const RESTORE_URL = DB_URL.replace(/\/[^/?]+(\?|$)/, `/${RESTORE_DB}$1`);
 const ADMIN_URL = DB_URL.replace(/\/[^/?]+(\?|$)/, "/postgres$1");
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), "fix-d-"));
 const SECRET = "0123456789abcdef0123456789abcdef0123";
+const { run: spawnTracked } = trackProcesses();
 
 const run = (cmd: string, args: string[], opts: { cwd?: string; env?: Record<string, string | undefined> } = {}) => {
-  const r = spawnSync(cmd, args, { cwd: opts.cwd ?? ROOT, env: { PATH: process.env.PATH, HOME: process.env.HOME, ...opts.env }, encoding: "utf8", timeout: 170_000 });
+  const r = spawnTracked(cmd, args, { cwd: opts.cwd ?? ROOT, env: { PATH: process.env.PATH, HOME: process.env.HOME, ...opts.env }, timeout: 170_000 });
   return { code: r.status, out: `${r.stdout}\n${r.stderr}` };
 };
 const psql = (url: string, sql: string) => {
@@ -68,7 +69,7 @@ describe("D2 container start checks UPLOAD_DIR", () => {
   for (const stub of ["npx", "node"]) fs.writeFileSync(path.join(bin, stub), `#!/bin/sh\necho "${stub} $*" >> "$STUB_LOG"\n`, { mode: 0o755 });
   const start = (uploadDir: string) => {
     const log = path.join(TMP, `stub-${path.basename(uploadDir)}.log`);
-    const r = spawnSync(cmd[0]!, cmd.slice(1), { cwd: ROOT, env: { PATH: `${bin}:${process.env.PATH}`, UPLOAD_DIR: uploadDir, STUB_LOG: log }, encoding: "utf8" });
+    const r = spawnTracked(cmd[0]!, cmd.slice(1), { cwd: ROOT, env: { PATH: `${bin}:${process.env.PATH}`, UPLOAD_DIR: uploadDir, STUB_LOG: log }, timeout: 60_000 });
     return { code: r.status, out: `${r.stdout}${r.stderr}`, ran: fs.existsSync(log) ? fs.readFileSync(log, "utf8") : "" };
   };
 
