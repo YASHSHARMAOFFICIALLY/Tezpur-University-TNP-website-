@@ -1,0 +1,266 @@
+#!/usr/bin/env bash
+# tnpctl: drive an isolated instance of the T&P API the way a client does (HTTP + email).
+# Each run gets its own database, port, upload dir and run dir. Evidence lives in
+# backend/.verify-artifacts/<run>/ and survives `stop`.
+set -euo pipefail
+
+BACKEND="$(cd "$(dirname "$0")/../../.." && pwd)"
+PG_ADMIN="postgresql://tnp:tnp@localhost:5434/postgres"
+MAILPIT="http://localhost:8025"
+STATE_ROOT="${TMPDIR:-/tmp}/tnp-verify"
+
+die() { echo "tnpctl: $*" >&2; exit 1; }
+need_run() {
+  [[ -n "${TNP_RUN:-}" ]] || die "TNP_RUN not set; run: eval \"\$(tnpctl launch)\""
+  RUN_DIR="$STATE_ROOT/$TNP_RUN"
+  [[ -f "$RUN_DIR/state" ]] || die "no state for run $TNP_RUN"
+  # shellcheck disable=SC1091
+  source "$RUN_DIR/state"
+}
+# tsx runs node as a child, so the listening pid is a descendant of the one we started.
+descends_from() {
+  local p="$1"
+  for _ in 1 2 3 4 5; do
+    [[ "$p" == "$2" ]] && return 0
+    p="$(ps -o ppid= -p "$p" 2>/dev/null | tr -d ' ')"; [[ -n "$p" && "$p" != 1 ]] || return 1
+  done
+  return 1
+}
+log() { mkdir -p "$ART"; printf '%s\n' "$*" >> "$ART/transcript.log"; }
+
+cmd_launch() {
+  docker compose -f "$BACKEND/docker-compose.yml" --profile dev up -d postgres mailpit >/dev/null 2>&1 || die "docker compose up failed"
+  for _ in $(seq 1 30); do pg_isready -h localhost -p 5434 -q && break; sleep 1; done
+  curl -sf "$MAILPIT/api/v1/info" >/dev/null || die "mailpit not reachable on :8025"
+
+  local run; run="$(date +%H%M%S)$((RANDOM % 10))"
+  local dir="$STATE_ROOT/$run" db="tnp_verify_$run"
+  local port; port="$(python3 -c 'import socket;s=socket.socket();s.bind(("127.0.0.1",0));print(s.getsockname()[1])')"
+  local art="$BACKEND/.verify-artifacts/$run"
+  mkdir -p "$dir/uploads" "$dir/tokens" "$art"
+  local url="postgresql://tnp:tnp@localhost:5434/$db"
+  psql "$PG_ADMIN" -qc "create database $db" >/dev/null
+
+  cat > "$dir/env" <<EOF
+NODE_ENV=development
+DATABASE_URL=$url
+PORT=$port
+JWT_SECRET=$(openssl rand -hex 32)
+OTP_SECRET=$(openssl rand -hex 32)
+UPLOAD_DIR=$dir/uploads
+SMTP_HOST=localhost
+SMTP_PORT=1025
+SMTP_SECURE=false
+SMTP_USER=
+SMTP_PASS=
+SMTP_PER_DAY=
+SMTP_PER_MINUTE=
+SEED_ADMIN_EMAIL=tpo-$run@tezu.ac.in
+SEED_ADMIN_PASSWORD=seed-$run-pass
+WORKER=on
+LOG_LEVEL=info
+EOF
+  ( cd "$BACKEND" && set -a && source "$dir/env" && set +a && npx prisma migrate deploy >"$dir/migrate.log" 2>&1 && npx tsx prisma/seed.ts >>"$dir/migrate.log" 2>&1 ) \
+    || { cat "$dir/migrate.log" >&2; die "migrate/seed failed (log: $dir/migrate.log)"; }
+  ( cd "$BACKEND" && set -a && source "$dir/env" && set +a && exec npx tsx src/server.ts ) >"$dir/api.log" 2>&1 &
+  local pid=$!
+  cat > "$dir/state" <<EOF
+PID=$pid
+PORT=$port
+DB=$db
+DB_URL=$url
+ART=$art
+BASE=http://127.0.0.1:$port/api/v1
+ADMIN_EMAIL=tpo-$run@tezu.ac.in
+ADMIN_SEED_PASSWORD=seed-$run-pass
+EOF
+  # Ready = DB reachable through the API AND the worker started, not just a bound port.
+  for _ in $(seq 1 60); do
+    if curl -sf "http://127.0.0.1:$port/readyz" >/dev/null && grep -q '"api listening"' "$dir/api.log"; then
+      echo "export TNP_RUN=$run"
+      echo "# ready: http://127.0.0.1:$port/api/docs  db=$db  artifacts=$art" >&2
+      return 0
+    fi
+    kill -0 "$pid" 2>/dev/null || { tail -20 "$dir/api.log" >&2; die "API exited during startup"; }
+    sleep 1
+  done
+  die "API not ready after 60s (log: $dir/api.log)"
+}
+
+cmd_doctor() {
+  need_run
+  local ok=1
+  kill -0 "$PID" 2>/dev/null && echo "ok   process $PID alive" || { echo "FAIL process $PID not running"; ok=0; }
+  local owner; owner="$(lsof -nP -iTCP:"$PORT" -sTCP:LISTEN -t 2>/dev/null | head -1 || true)"
+  if [[ -n "$owner" ]] && descends_from "$owner" "$PID"; then
+    echo "ok   port $PORT owned by this run (pid $owner)"
+  else echo "FAIL port $PORT not owned by run (owner: ${owner:-none})"; ok=0; fi
+  curl -sf "http://127.0.0.1:$PORT/readyz" >/dev/null && echo "ok   /readyz" || { echo "FAIL /readyz"; ok=0; }
+  grep -q "^DATABASE_URL=$DB_URL$" "$RUN_DIR/env" && echo "ok   database $DB (disposable)" || { echo "FAIL env database mismatch"; ok=0; }
+  local n; n="$(curl -sf "$BASE/openapi.json" | jq '.paths | length' 2>/dev/null || echo 0)"
+  [[ "$n" -gt 60 ]] && echo "ok   openapi paths=$n" || { echo "FAIL openapi paths=$n"; ok=0; }
+  curl -sf "$MAILPIT/api/v1/info" >/dev/null && echo "ok   mailpit :8025" || { echo "FAIL mailpit"; ok=0; }
+  [[ $ok == 1 ]] || exit 1
+}
+
+# api METHOD PATH [JSON] [--as NAME]  -> prints "HTTP <code>" then body; logs both.
+cmd_api() {
+  need_run
+  local method="$1" path="$2"; shift 2
+  local body="" as=""
+  while [[ $# -gt 0 ]]; do case "$1" in --as) as="$2"; shift 2;; *) body="$1"; shift;; esac; done
+  local args=(-s -o "$RUN_DIR/last.body" -w '%{http_code}' -X "$method" "$BASE$path")
+  [[ -n "$as" ]] && args+=(-H "Authorization: Bearer $(cat "$RUN_DIR/tokens/$as")")
+  [[ -n "$body" ]] && args+=(-H 'content-type: application/json' -d "$body")
+  local code; code="$(curl "${args[@]}")"; echo "$code" > "$RUN_DIR/last.code"
+  log ">>> ${as:-anon} $method $path ${body}"; log "<<< HTTP $code $(cat "$RUN_DIR/last.body")"
+  echo "HTTP $code"; cat "$RUN_DIR/last.body"; echo
+}
+
+# upload PATH FILE --as NAME
+cmd_upload() {
+  need_run
+  local path="$1" file="$2" as="$4"
+  local code; code="$(curl -s -o "$RUN_DIR/last.body" -w '%{http_code}' -X POST "$BASE$path" -H "Authorization: Bearer $(cat "$RUN_DIR/tokens/$as")" -F "file=@$file")"; echo "$code" > "$RUN_DIR/last.code"
+  log ">>> $as POST $path file=$(basename "$file")"; log "<<< HTTP $code $(cat "$RUN_DIR/last.body")"
+  echo "HTTP $code"; cat "$RUN_DIR/last.body"; echo
+}
+
+# login NAME EMAIL PASSWORD -> stores token under NAME
+cmd_login() {
+  need_run
+  local name="$1" email="$2" pw="$3"
+  local res; res="$(curl -s -X POST "$BASE/auth/login" -H 'content-type: application/json' -d "{\"email\":\"$email\",\"password\":\"$pw\"}")"
+  local tok; tok="$(jq -r '.access_token // empty' <<<"$res")"
+  log ">>> login $name $email"; log "<<< $(jq -c '{user: .user, error: .error}' <<<"$res")"
+  [[ -n "$tok" ]] || { echo "$res"; die "login failed for $email"; }
+  printf '%s' "$tok" > "$RUN_DIR/tokens/$name"
+  jq -c '.user' <<<"$res"
+}
+
+# admin: log in as the seeded TPO and complete the forced password change. Token name "admin".
+cmd_admin() {
+  need_run
+  cmd_login admin "$ADMIN_EMAIL" "$ADMIN_SEED_PASSWORD" >/dev/null
+  local res; res="$(curl -s -X POST "$BASE/auth/change-password" -H "Authorization: Bearer $(cat "$RUN_DIR/tokens/admin")" -H 'content-type: application/json' \
+    -d "{\"current_password\":\"$ADMIN_SEED_PASSWORD\",\"new_password\":\"admin-$TNP_RUN-pass\"}")"
+  jq -r '.access_token // empty' <<<"$res" > "$RUN_DIR/tokens/admin"
+  [[ -s "$RUN_DIR/tokens/admin" ]] || { echo "$res"; die "admin password change failed"; }
+  log ">>> admin login + forced password change ok"
+  echo "admin token stored (password now admin-$TNP_RUN-pass)"
+}
+
+# otp EMAIL -> newest 6-digit code mailed to EMAIL (waits up to 20s for the worker to send it)
+cmd_otp() {
+  need_run
+  local email="$1" code=""
+  for _ in $(seq 1 20); do
+    code="$(curl -s "$MAILPIT/api/v1/search?query=to:$email&limit=1" | jq -r '.messages[0].Subject // empty' | grep -oE '[0-9]{6}' || true)"
+    [[ -n "$code" ]] && break; sleep 1
+  done
+  [[ -n "$code" ]] || die "no OTP email for $email in mailpit"
+  log ">>> mailpit: OTP for $email = $code"
+  echo "$code"
+}
+
+# mail EMAIL -> subjects of all mail to EMAIL (evidence that side-effect emails were sent)
+cmd_mail() {
+  need_run
+  curl -s "$MAILPIT/api/v1/search?query=to:$1&limit=50" | jq -r '.messages[] | .Subject'
+}
+
+# sql "select ..." -> read-only query against this run's database
+cmd_sql() {
+  need_run
+  PGOPTIONS='-c default_transaction_read_only=on' psql "$DB_URL" -At -F ' | ' -c "$1"
+}
+
+# fault failed-email EMAIL | fault doomed-job -> inserts ONE jobs row into this run's disposable DB and prints its id.
+# The only write tnpctl makes: an SMTP outage or a job's last failed attempt cannot be caused through the API.
+cmd_fault() {
+  need_run
+  [[ "$DB" == tnp_verify_* ]] || die "refusing to write outside a tnp_verify_* database"
+  case "$1" in
+    failed-email) psql "$DB_URL" -qAt -v to="$2" -v run="$TNP_RUN" <<'SQL' | head -1;;
+insert into jobs (id, type, payload, status, attempts, last_error)
+values (gen_random_uuid()::text, 'email.send', jsonb_build_object('to', :'to', 'subject', 'Retry check ' || :'run', 'text', 'Sent after an admin retried failed emails.'), 'failed', 6, 'simulated SMTP outage')
+returning id;
+SQL
+    doomed-job) psql "$DB_URL" -qAt <<'SQL' | head -1;;
+insert into jobs (id, type, payload, attempts, run_after) values (gen_random_uuid()::text, 'verify.no_such_handler', '{}', 4, now() - interval '1 minute') returning id;
+SQL
+    *) die "fault failed-email EMAIL | fault doomed-job";;
+  esac
+  log ">>> fault $* (direct insert into $DB)"
+}
+
+# fixture pdf|png -> path to a minimal valid file (magic bytes are what the API sniffs)
+cmd_fixture() {
+  need_run
+  case "$1" in
+    pdf) printf '%%PDF-1.4\n%%verify\n' > "$RUN_DIR/resume.pdf"; echo "$RUN_DIR/resume.pdf";;
+    png) printf '\x89PNG\r\n\x1a\n\0\0\0\0' > "$RUN_DIR/photo.png"; echo "$RUN_DIR/photo.png";;
+    *) die "fixture pdf|png";;
+  esac
+}
+
+# make-student NAME -> approved, logged-in student via the real signup path. Prints email.
+cmd_make_student() {
+  need_run
+  local name="$1" n; n="$(printf '%05d' $((RANDOM % 100000)))"
+  local email="s$n$TNP_RUN@tezu.ac.in"
+  cmd_api POST /auth/register/student "{\"email\":\"$email\",\"password\":\"pass-$TNP_RUN\",\"name\":\"Student $name\",\"enrolment_no\":\"CSB$n\",\"mobile\":\"9876543210\"}" >/dev/null
+  cmd_api POST /auth/verify-otp "{\"email\":\"$email\",\"code\":\"$(cmd_otp "$email")\"}" >/dev/null
+  approve_pending "$email" students
+  cmd_login "$name" "$email" "pass-$TNP_RUN" >/dev/null
+  echo "$email"
+}
+
+# make-recruiter NAME -> approved, logged-in recruiter with its own company. Prints email.
+cmd_make_recruiter() {
+  need_run
+  local name="$1" email="$1-$RANDOM-$TNP_RUN@corp.example"
+  cmd_api POST /auth/register/recruiter "{\"email\":\"$email\",\"password\":\"pass-$TNP_RUN\",\"name\":\"Recruiter $name\",\"company\":{\"name\":\"Co $name $TNP_RUN\",\"category\":\"private\"}}" >/dev/null
+  cmd_api POST /auth/verify-otp "{\"email\":\"$email\",\"code\":\"$(cmd_otp "$email")\"}" >/dev/null
+  approve_pending "$email" recruiters
+  cmd_login "$name" "$email" "pass-$TNP_RUN" >/dev/null
+  echo "$email"
+}
+
+approve_pending() {
+  local id; id="$(cmd_api GET /admin/pending --as admin | tail -1 | jq -r --arg e "$1" ".$2[] | select(.email == \$e) | .id")"
+  [[ -n "$id" ]] || die "$1 not in admin pending queue"
+  cmd_api POST "/admin/users/$id/decision" '{"decision":"approve"}' --as admin >/dev/null
+}
+
+# expect 201 | expect NOT_ELIGIBLE -> assert the last response's HTTP status or error.code; exit 1 if not.
+cmd_expect() {
+  need_run
+  local want="$1" got_code got_err; got_code="$(cat "$RUN_DIR/last.code")"; got_err="$(jq -r '.error.code // empty' "$RUN_DIR/last.body" 2>/dev/null || true)"
+  if [[ "$want" == "$got_code" || "$want" == "$got_err" ]]; then log "PASS expect $want"; echo "PASS $want"
+  else log "FAIL expect $want (got HTTP $got_code ${got_err})"; echo "FAIL expected $want, got HTTP $got_code ${got_err}" >&2; exit 1; fi
+}
+
+# last FIELD -> jq field from the last response body (e.g. `tnpctl last .id`)
+cmd_last() { need_run; jq -r "$1" "$RUN_DIR/last.body"; }
+
+# save NAME -> copy the last response body into artifacts as NAME.json
+cmd_save() { need_run; cp "$RUN_DIR/last.body" "$ART/$1.json"; echo "$ART/$1.json"; }
+
+cmd_stop() {
+  need_run
+  # Kill only what this run started: the recorded pid and its children.
+  pkill -TERM -P "$PID" 2>/dev/null || true
+  kill -TERM "$PID" 2>/dev/null || true
+  sleep 2
+  cp "$RUN_DIR/api.log" "$ART/api.log" 2>/dev/null || true
+  psql "$PG_ADMIN" -qc "drop database if exists $DB with (force)" >/dev/null
+  rm -rf "$RUN_DIR"
+  echo "stopped run $TNP_RUN; evidence kept in $ART"
+}
+
+case "${1:-}" in
+  launch|doctor|api|upload|login|admin|otp|mail|sql|fault|fixture|save|last|expect|stop) c="$1"; shift; "cmd_$c" "$@";;
+  make-student|make-recruiter) c="${1//-/_}"; shift; "cmd_$c" "$@";;
+  *) echo "usage: tnpctl launch|doctor|admin|make-student|make-recruiter|login|api|upload|otp|mail|sql|fault|fixture|last|expect|save|stop" >&2; exit 2;;
+esac

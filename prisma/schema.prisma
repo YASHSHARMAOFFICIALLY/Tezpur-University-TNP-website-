@@ -1,0 +1,493 @@
+// Field names are snake_case on purpose: rows serialize straight into the API contract.
+// Status columns are guarded by a Postgres trigger (see migrations/*_status_guard) and may only be
+// written through a Machine in src/core/db.ts.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  admin
+  student
+  company
+}
+
+enum UserStatus {
+  pending_email_verify
+  pending_admin
+  active
+  rejected
+  alumni
+}
+
+enum AcademicStanding {
+  good
+  probation
+}
+
+enum OtpPurpose {
+  verify_email
+  password_reset
+}
+
+enum FileKind {
+  resume
+  photo
+  jd
+  brochure
+}
+
+enum CompanyCategory {
+  private
+  mnc
+  govt
+  ngo
+  psu
+  startup
+  other
+}
+
+enum OppType {
+  job
+  internship
+  competition
+}
+
+enum OppStatus {
+  draft
+  pending_admin
+  approved
+  rejected
+  closed
+}
+
+enum AppStatus {
+  applied
+  released_to_recruiter
+  shortlisted
+  rejected
+  selected
+}
+
+enum EventType {
+  training
+  expert_session
+  awareness
+  workshop
+}
+
+enum EventStatus {
+  draft
+  published
+  cancelled
+  completed
+}
+
+enum RegStatus {
+  registered
+  cancelled
+  confirmed
+  attended
+}
+
+enum Audience {
+  students
+  companies
+  all
+}
+
+enum JobStatus {
+  queued
+  running
+  done
+  failed
+}
+
+model User {
+  id                   String     @id @default(uuid(7))
+  role                 Role
+  email                String     @unique
+  password_hash        String
+  name                 String
+  email_verified_at    DateTime?
+  status               UserStatus
+  review_note          String?
+  must_change_password Boolean    @default(false)
+  token_version        Int        @default(0)
+  company_id           String?
+  company              Company?   @relation(fields: [company_id], references: [id])
+  student              Student?
+  created_at           DateTime   @default(now())
+
+  @@index([role, status])
+  @@map("users")
+}
+
+model OtpCode {
+  id          String     @id @default(uuid(7))
+  user_id     String
+  purpose     OtpPurpose
+  code_hash   String
+  expires_at  DateTime
+  attempts    Int        @default(0)
+  consumed_at DateTime?
+  created_at  DateTime   @default(now())
+
+  @@index([user_id, purpose, created_at])
+  @@map("otp_codes")
+}
+
+model Student {
+  id                    String           @id @default(uuid(7))
+  user_id               String           @unique
+  user                  User             @relation(fields: [user_id], references: [id])
+  enrolment_no          String           @unique
+  mobile                String?
+  dob                   DateTime?        @db.Date
+  gender                String?
+  category              String?
+  minority              Boolean?
+  specially_abled       Boolean?
+  regional_diversity    String?
+  jee_rank              Int?
+  jee_score             Float?
+  jee_percentile        Float?
+  gate_qualified        Boolean?
+  gate_score            Float?
+  programme_id          String?
+  programme             Programme?       @relation(fields: [programme_id], references: [id])
+  department            String?
+  year_of_admission     Int?
+  year_of_completion    Int?
+  cgpa                  Float?
+  current_address       String?
+  permanent_address     String?
+  marks_10              Float?
+  yop_10                Int?
+  marks_12              Float?
+  yop_12                Int?
+  marks_ug              Float?
+  yop_ug                Int?
+  marks_pg              Float?
+  yop_pg                Int?
+  other_courses         String?
+  professional_interests String?
+  certifications        String?
+  portfolio_url         String?
+  linkedin_url          String?
+  resume_file_id        String?
+  photo_file_id         String?
+  academic_standing     AcademicStanding
+  applications          Application[]
+  registrations         EventRegistration[]
+
+  @@map("students")
+}
+
+model Company {
+  id             String           @id @default(uuid(7))
+  name           String
+  postal_address String?
+  website        String?
+  category       CompanyCategory  @default(other)
+  sector         String?
+  users          User[]
+  contacts       CompanyContact[]
+  opportunities  Opportunity[]
+  created_at     DateTime         @default(now())
+
+  @@map("companies")
+}
+
+model CompanyContact {
+  id          String  @id @default(uuid(7))
+  company_id  String
+  company     Company @relation(fields: [company_id], references: [id])
+  name        String
+  designation String?
+  phone       String?
+  mobile      String?
+  email       String?
+
+  @@map("company_contacts")
+}
+
+model UniversityProfile {
+  id             Int     @id @default(1)
+  name           String
+  address        String?
+  website        String?
+  est_year       Int?
+  ranking        String?
+  achievements   String?
+  contact_emails String[]
+  admin_mobiles  String[]
+
+  @@map("university_profile")
+}
+
+model Programme {
+  id            String    @id @default(uuid(7))
+  department    String
+  name          String
+  code          String    @unique
+  year          Int?
+  student_count Int?
+  students      Student[]
+
+  @@map("programmes")
+}
+
+model PlacementRecord {
+  id               String  @id @default(uuid(7))
+  year             Int
+  data             Json
+  brochure_file_id String?
+
+  @@index([year])
+  @@map("placement_records")
+}
+
+model Opportunity {
+  id                String        @id @default(uuid(7))
+  company_id        String
+  company           Company       @relation(fields: [company_id], references: [id])
+  type              OppType
+  title             String
+  job_profile       String?
+  description       String
+  expected_hires    Int?
+  location          String?
+  designation       String?
+  ctc_benefits      String?
+  bond_details      String?
+  apply_deadline    DateTime
+  eligibility       Json
+  selection_process Json
+  jd_file_id        String?
+  status            OppStatus
+  review_note       String?
+  posted_by         String
+  applications      Application[]
+  result            Result?
+  feedback_requests FeedbackRequest[]
+  created_at        DateTime      @default(now())
+
+  @@index([status, type])
+  @@index([company_id])
+  @@map("opportunities")
+}
+
+model Application {
+  id                 String              @id @default(uuid(7))
+  opportunity_id     String
+  opportunity        Opportunity         @relation(fields: [opportunity_id], references: [id])
+  student_id         String
+  student            Student             @relation(fields: [student_id], references: [id])
+  eligibility_result Json
+  status             AppStatus
+  created_at         DateTime            @default(now())
+  interviews         InterviewSchedule[]
+
+  @@unique([opportunity_id, student_id])
+  @@index([opportunity_id, status])
+  @@index([student_id])
+  @@map("applications")
+}
+
+model InterviewSchedule {
+  id             String      @id @default(uuid(7))
+  application_id String
+  application    Application @relation(fields: [application_id], references: [id])
+  round          String
+  at             DateTime
+  venue_or_link  String
+  created_at     DateTime    @default(now())
+
+  @@index([application_id])
+  @@map("interview_schedules")
+}
+
+model Result {
+  id                       String      @id @default(uuid(7))
+  opportunity_id           String      @unique
+  opportunity              Opportunity @relation(fields: [opportunity_id], references: [id])
+  selected_application_ids String[]
+  submitted_at             DateTime    @default(now())
+  published_at             DateTime?
+
+  @@map("results")
+}
+
+model Event {
+  id                     String              @id @default(uuid(7))
+  type                   EventType
+  name                   String
+  topic                  String?
+  resource_person        String?
+  starts_at              DateTime
+  venue                  String?
+  chargeable             Boolean             @default(false)
+  fee                    Float?
+  registration_opens_at  DateTime
+  registration_closes_at DateTime
+  status                 EventStatus
+  registrations          EventRegistration[]
+  created_at             DateTime            @default(now())
+
+  @@index([status, registration_closes_at])
+  @@map("events")
+}
+
+model EventRegistration {
+  id         String    @id @default(uuid(7))
+  event_id   String
+  event      Event     @relation(fields: [event_id], references: [id])
+  student_id String
+  student    Student   @relation(fields: [student_id], references: [id])
+  status     RegStatus
+  created_at DateTime  @default(now())
+
+  @@unique([event_id, student_id])
+  @@map("event_registrations")
+}
+
+model Notice {
+  id           String   @id @default(uuid(7))
+  audience     Audience
+  title        String
+  body         String
+  created_by   String?
+  published_at DateTime @default(now())
+
+  @@index([audience, published_at])
+  @@map("notices")
+}
+
+model Message {
+  id         String    @id @default(uuid(7))
+  company_id String
+  from_user  String
+  subject    String
+  body       String
+  read_at    DateTime?
+  created_at DateTime  @default(now())
+
+  @@index([company_id, created_at])
+  @@map("messages")
+}
+
+model FeedbackRequest {
+  id             String               @id @default(uuid(7))
+  opportunity_id String
+  opportunity    Opportunity          @relation(fields: [opportunity_id], references: [id])
+  questions      Json
+  created_at     DateTime             @default(now())
+  submissions    FeedbackSubmission[]
+
+  @@map("feedback_requests")
+}
+
+model FeedbackSubmission {
+  id         String          @id @default(uuid(7))
+  request_id String
+  request    FeedbackRequest @relation(fields: [request_id], references: [id])
+  user_id    String
+  answers    Json
+  created_at DateTime        @default(now())
+
+  @@unique([request_id, user_id])
+  @@map("feedback_submissions")
+}
+
+model File {
+  id            String   @id @default(uuid(7))
+  owner_user_id String
+  kind          FileKind
+  storage_path  String   @unique
+  original_name String
+  mime          String
+  size          Int
+  created_at    DateTime @default(now())
+
+  @@map("files")
+}
+
+model AuditLog {
+  id            String   @id @default(uuid(7))
+  actor_kind    String
+  actor_user_id String?
+  action        String
+  entity        String
+  entity_id     String
+  metadata      Json     @default("{}")
+  created_at    DateTime @default(now())
+
+  @@index([entity, entity_id, created_at])
+  @@index([actor_user_id, created_at])
+  @@map("audit_log")
+}
+
+model Job {
+  id          String    @id @default(uuid(7))
+  type        String
+  payload     Json
+  status      JobStatus @default(queued)
+  priority    Int       @default(5)
+  attempts    Int       @default(0)
+  run_after   DateTime  @default(now())
+  locked_at   DateTime?
+  finished_at DateTime?
+  last_error  String?
+  result      Json?
+  dedupe_key  String?   @unique
+  created_at  DateTime  @default(now())
+
+  @@index([status, priority, run_after])
+  @@index([type, status, finished_at])
+  @@map("jobs")
+}
+
+/// Admin-editable overrides of settings.registry.ts. A missing row means the registry default.
+model Setting {
+  key        String   @id
+  value      Json
+  updated_by String
+  updated_at DateTime @default(now()) @updatedAt
+
+  @@map("settings")
+}
+
+/// Every 5xx response and every job that exhausted its attempts. Pruned after 90 days.
+model ErrorLog {
+  id         String   @id @default(uuid(7))
+  request_id String
+  method     String
+  route      String
+  user_id    String?
+  status     Int
+  code       String
+  summary    String
+  detail     String
+  created_at DateTime @default(now())
+
+  @@index([created_at])
+  @@index([code, created_at])
+  @@map("error_log")
+}
+
+/// Written by deploy/backup.sh through psql, so the id is generated by the database.
+model BackupRun {
+  id          Int      @id @default(autoincrement())
+  started_at  DateTime
+  finished_at DateTime @default(now())
+  ok          Boolean
+  detail      String?
+
+  @@map("backup_runs")
+}
