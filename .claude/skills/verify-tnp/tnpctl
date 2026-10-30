@@ -169,6 +169,19 @@ cmd_mail() {
   curl -s "$MAILPIT/api/v1/search?query=to:$1&limit=50" | jq -r '.messages[] | .Subject'
 }
 
+# mail-body EMAIL -> text body of the newest mail to EMAIL, \r stripped (waits up to 20s for one to arrive)
+cmd_mail_body() {
+  need_run
+  local email="$1" id=""
+  for _ in $(seq 1 20); do
+    id="$(curl -s "$MAILPIT/api/v1/search?query=to:$email&limit=1" | jq -r '.messages[0].ID // empty')"
+    [[ -n "$id" ]] && break; sleep 1
+  done
+  [[ -n "$id" ]] || die "no email for $email in mailpit"
+  log ">>> mailpit: body of newest mail to $email ($id)"
+  curl -s "$MAILPIT/api/v1/message/$id" | jq -r .Text | tr -d '\r'
+}
+
 # sql "select ..." -> read-only query against this run's database
 cmd_sql() {
   need_run
@@ -242,7 +255,11 @@ cmd_expect() {
 }
 
 # last FIELD -> jq field from the last response body (e.g. `tnpctl last .id`)
-cmd_last() { need_run; jq -r "$1" "$RUN_DIR/last.body"; }
+# Exactly one filter: a flag would be read by jq as the filter (e.g. `last -c .x` prints ".x").
+cmd_last() {
+  [[ $# == 1 && "$1" != -* ]] || die "usage: tnpctl last FILTER (one jq filter, no flags; for compact output use: last '.x|tojson')"
+  need_run; jq -r "$1" "$RUN_DIR/last.body"
+}
 
 # save NAME -> copy the last response body into artifacts as NAME.json
 cmd_save() { need_run; cp "$RUN_DIR/last.body" "$ART/$1.json"; echo "$ART/$1.json"; }
@@ -261,6 +278,6 @@ cmd_stop() {
 
 case "${1:-}" in
   launch|doctor|api|upload|login|admin|otp|mail|sql|fault|fixture|save|last|expect|stop) c="$1"; shift; "cmd_$c" "$@";;
-  make-student|make-recruiter) c="${1//-/_}"; shift; "cmd_$c" "$@";;
-  *) echo "usage: tnpctl launch|doctor|admin|make-student|make-recruiter|login|api|upload|otp|mail|sql|fault|fixture|last|expect|save|stop" >&2; exit 2;;
+  make-student|make-recruiter|mail-body) c="${1//-/_}"; shift; "cmd_$c" "$@";;
+  *) echo "usage: tnpctl launch|doctor|admin|make-student|make-recruiter|login|api|upload|otp|mail|mail-body|sql|fault|fixture|last|expect|save|stop" >&2; exit 2;;
 esac

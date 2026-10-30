@@ -33,7 +33,6 @@ Preconditions:
 
 ```bash
 ok() { if eval "$2"; then echo "PASS $1"; else echo "FAIL $1"; fi; }
-body() { curl -s "http://localhost:8025/api/v1/message/$(curl -s "http://localhost:8025/api/v1/search?query=to:$1&limit=1" | jq -r '.messages[0].ID')" | jq -r .Text | tr -d '\r'; }
 REG='{"email":"%s","password":"student-pass-1","name":"Ops Student","enrolment_no":"%s","mobile":"9876543210"}'
 
 # ops-health
@@ -76,7 +75,7 @@ E=$($C make-student resetme); U=$($C sql "select id from users where email='$E'"
 $C api POST /admin/users/$U/reset-password --as admin;                            $C expect 200
 ok "password not returned"   '[[ $($C last tojson) == "{\"emailed\":true}" ]]'
 $C api GET /students/me --as resetme;                                             $C expect UNAUTHENTICATED
-sleep 4; PW=$(body "$E" | sed -n 's/^One-time password: //p')
+sleep 4; PW=$($C mail-body "$E" | sed -n 's/^One-time password: //p')
 ok "forced change at login"  '$C login reset2 "$E" "$PW" | grep -q "\"must_change_password\":true"'
 $C api GET /students/me --as reset2;                                              $C expect PASSWORD_CHANGE_REQUIRED
 $C api POST /auth/change-password "{\"current_password\":\"$PW\",\"new_password\":\"fresh-pass-$TNP_RUN\"}" --as reset2; $C expect 200

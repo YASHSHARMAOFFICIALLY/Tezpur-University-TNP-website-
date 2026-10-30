@@ -50,11 +50,12 @@ Run it first whenever anything looks off. Never drive an instance this run didn'
 | `$C api METHOD /path ['{json}'] [--as NAME]` | Calls `$BASE/path` and prints `HTTP <code>` plus the body. Everything is logged. |
 | `$C upload /path FILE --as NAME` | multipart upload with field `file` |
 | `$C expect 201` / `$C expect NOT_ELIGIBLE` | asserts the last response's HTTP status or `error.code`; exits 1 on mismatch |
-| `$C last .id` | applies exactly one jq filter to the last response body, no jq flags (they are passed as the filter and break); use `$C last '.x\|tojson'` for compact output |
+| `$C last .id` | applies exactly one jq filter to the last response body. Any argument starting with `-` is refused with a usage message, because jq would read a flag as the filter. Use `$C last '.x\|tojson'` for compact output. |
 | `$C login NAME EMAIL PASSWORD` | stores a bearer token under NAME |
 | `$C make-student NAME` / `$C make-recruiter NAME` | full real signup path (register, OTP from Mailpit, admin approval, login). Prints the email. |
 | `$C otp EMAIL` | newest 6-digit code mailed to EMAIL (waits up to 20 s for the worker) |
 | `$C mail EMAIL` | subjects of all mail sent to EMAIL |
+| `$C mail-body EMAIL` | text body of the newest mail to EMAIL, with `\r` stripped (waits up to 20 s for one to arrive), e.g. a reset one-time password |
 | `$C sql "select ..."` | read-only query on this run's DB (second view of stored state) |
 | `$C fault failed-email EMAIL` / `$C fault doomed-job` | inserts one `jobs` row (a failed email, or a job on its last attempt with no handler) into this run's DB; prints the id. The only write tnpctl makes, for faults the API cannot cause. |
 | `$C fixture pdf\|png` | minimal valid file. Uploads are checked by magic bytes, not by extension. |
