@@ -14,7 +14,8 @@
     "db:migrate": "prisma migrate deploy",
     "db:generate": "prisma generate",
     "seed": "tsx prisma/seed.ts",
-    "openapi": "tsx scripts/openapi.ts"
+    "openapi": "tsx scripts/openapi.ts",
+    "gate": "sh scripts/gate.sh"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^9.1.0",
@@ -43,6 +44,7 @@
     "@types/nodemailer": "^8.0.2",
     "@types/supertest": "^7.2.1",
     "@types/swagger-ui-express": "^4.1.8",
+    "madge": "^8.0.0",
     "prisma": "^7.10.1",
     "supertest": "^7.3.1",
     "tsx": "^4.23.15",
