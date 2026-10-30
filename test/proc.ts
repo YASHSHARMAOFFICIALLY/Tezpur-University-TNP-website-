@@ -36,7 +36,8 @@ export function trackProcesses() {
   });
   const run = (cmd: string, args: string[], opts: Omit<SpawnSyncOptions, "encoding" | "detached"> = {}) => {
     // Node honours `detached` in spawnSync (setsid), though @types/node omits it.
-    const r = spawnSync(cmd, args, { ...opts, encoding: "utf8", ...{ detached: true } });
+    // The cap sits under vitest's 30 s testTimeout, which cannot interrupt a synchronous spawn.
+    const r = spawnSync(cmd, args, { timeout: 20_000, ...opts, encoding: "utf8", ...{ detached: true } });
     if (r.pid) {
       groups.add(r.pid);
       if (r.error || r.signal) killGroup(r.pid);

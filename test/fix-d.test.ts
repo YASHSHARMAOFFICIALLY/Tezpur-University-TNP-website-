@@ -16,7 +16,7 @@ const SECRET = "0123456789abcdef0123456789abcdef0123";
 const { run: spawnTracked } = trackProcesses();
 
 const run = (cmd: string, args: string[], opts: { cwd?: string; env?: Record<string, string | undefined> } = {}) => {
-  const r = spawnTracked(cmd, args, { cwd: opts.cwd ?? ROOT, env: { PATH: process.env.PATH, HOME: process.env.HOME, ...opts.env }, timeout: 170_000 });
+  const r = spawnTracked(cmd, args, { cwd: opts.cwd ?? ROOT, env: { PATH: process.env.PATH, HOME: process.env.HOME, ...opts.env } });
   return { code: r.status, out: `${r.stdout}\n${r.stderr}` };
 };
 const psql = (url: string, sql: string) => {
@@ -69,7 +69,7 @@ describe("D2 container start checks UPLOAD_DIR", () => {
   for (const stub of ["npx", "node"]) fs.writeFileSync(path.join(bin, stub), `#!/bin/sh\necho "${stub} $*" >> "$STUB_LOG"\n`, { mode: 0o755 });
   const start = (uploadDir: string) => {
     const log = path.join(TMP, `stub-${path.basename(uploadDir)}.log`);
-    const r = spawnTracked(cmd[0]!, cmd.slice(1), { cwd: ROOT, env: { PATH: `${bin}:${process.env.PATH}`, UPLOAD_DIR: uploadDir, STUB_LOG: log }, timeout: 60_000 });
+    const r = spawnTracked(cmd[0]!, cmd.slice(1), { cwd: ROOT, env: { PATH: `${bin}:${process.env.PATH}`, UPLOAD_DIR: uploadDir, STUB_LOG: log } });
     return { code: r.status, out: `${r.stdout}${r.stderr}`, ran: fs.existsSync(log) ? fs.readFileSync(log, "utf8") : "" };
   };
 
