@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import useSWR from "swr";
 import { AppShell } from "@/components/AppShell";
 import { ADMIN_NAV } from "./nav";
@@ -480,6 +480,8 @@ function EventCreator() {
   const [chargeable, setChargeable] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ tone: "ok" | "err"; text: string } | null>(null);
+  // Set while a created event is still unpublished, so a retry updates and publishes it instead of creating another.
+  const draftId = useRef<string | null>(null);
   const field = "bg-surface-low shadow-none";
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
@@ -492,23 +494,23 @@ function EventCreator() {
     setBusy(true);
     setMsg(null);
     try {
-      const ev = await call(
-        api.POST("/api/v1/admin/events", {
-          body: {
-            type: g("type") as (typeof EVENT_TYPES)[number][0],
-            name: g("topic"),
-            topic: g("cohort"),
-            resource_person: [g("speaker"), g("org")].filter(Boolean).join(", ") || undefined,
-            starts_at: startsAt.toISOString(),
-            venue: g("venue") || undefined,
-            chargeable,
-            fee: chargeable ? 150 : undefined,
-            registration_opens_at: new Date().toISOString(),
-            registration_closes_at: closes.toISOString(),
-          },
-        }),
-      );
-      await call(api.POST("/api/v1/admin/events/{id}/publish", { params: { path: { id: ev.id } } }));
+      const body = {
+        type: g("type") as (typeof EVENT_TYPES)[number][0],
+        name: g("topic"),
+        topic: g("cohort"),
+        resource_person: [g("speaker"), g("org")].filter(Boolean).join(", ") || undefined,
+        starts_at: startsAt.toISOString(),
+        venue: g("venue") || undefined,
+        chargeable,
+        fee: chargeable ? 150 : undefined,
+        registration_opens_at: new Date().toISOString(),
+        registration_closes_at: closes.toISOString(),
+      };
+      const id = draftId.current;
+      if (id) await call(api.PATCH("/api/v1/admin/events/{id}", { params: { path: { id } }, body }));
+      else draftId.current = (await call(api.POST("/api/v1/admin/events", { body }))).id;
+      await call(api.POST("/api/v1/admin/events/{id}/publish", { params: { path: { id: draftId.current! } } }));
+      draftId.current = null;
       form.reset();
       setChargeable(false);
       setMsg({ tone: "ok", text: "Session published. Students can register now." });
@@ -598,7 +600,15 @@ function EventCreator() {
           </p>
         )}
         <div className="flex justify-end gap-2">
-          <Button type="reset" variant="soft" onClick={() => (setChargeable(false), setMsg(null))}>
+          <Button
+            type="reset"
+            variant="soft"
+            onClick={() => {
+              draftId.current = null;
+              setChargeable(false);
+              setMsg(null);
+            }}
+          >
             Clear Draft
           </Button>
           <Button type="submit" icon="podcasts" busy={busy}>

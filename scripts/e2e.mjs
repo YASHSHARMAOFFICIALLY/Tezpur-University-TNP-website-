@@ -6,7 +6,7 @@
 import { writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
-import { ADMIN, DOMAIN, PW, RECRUITER, SEED_STUDENT, WEB, browser, here, login, newPage, otpFor, run, step, summary } from "./e2e-lib.mjs";
+import { ADMIN, DOMAIN, PW, RECRUITER, SEED_STUDENT, WEB, apiCall, browser, here, login, newPage, otpFor, run, step, summary } from "./e2e-lib.mjs";
 
 const NEW_ENROL = `CSB9${run}`;
 const NEW_STUDENT = `${NEW_ENROL.toLowerCase()}@${DOMAIN}`;
@@ -92,6 +92,23 @@ await step("admin publishes a new event (Event Creator)", async () => {
   await adm.getByLabel("RSVP Cut-off Date").fill(day(4));
   await adm.getByRole("button", { name: /Broadcast & Enlist Session/ }).click();
   await adm.getByText("Session published").waitFor();
+});
+await step("event whose publish failed is published on retry without creating a duplicate", async () => {
+  const day = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
+  const topic = `E2E Retry Clinic ${run}`;
+  await adm.route(/\/api\/v1\/admin\/events\/[^/]+\/publish$/, (r) => r.fulfill({ status: 503, body: "" }), { times: 1 });
+  await adm.getByLabel("Workshop / Session Topic").fill(topic);
+  await adm.getByLabel("Date", { exact: true }).fill(day(7));
+  await adm.getByLabel("RSVP Cut-off Date").fill(day(5));
+  await adm.getByRole("button", { name: /Broadcast & Enlist Session/ }).click();
+  await adm.getByText("The server isn't responding").waitFor();
+  await adm.getByRole("button", { name: /Broadcast & Enlist Session/ }).click();
+  await adm.getByText("Session published").waitFor();
+  const { access_token } = await apiCall("POST", "/auth/login", { body: { email: ADMIN, password: PW } });
+  const { data } = await apiCall("GET", "/admin/events?limit=100", { token: access_token });
+  const mine = data.filter((e) => e.name === topic);
+  if (mine.length !== 1 || mine[0].status !== "published")
+    throw new Error(`expected one published "${topic}", got ${JSON.stringify(mine.map((e) => e.status))}`);
 });
 await step("a failed event transition (Complete) shows the error to the admin", async () => {
   await adm.route(
