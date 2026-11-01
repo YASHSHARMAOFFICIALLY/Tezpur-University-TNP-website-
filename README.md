@@ -40,6 +40,6 @@ Blocks with no backend data (JEE/NIRF analytics, logistics, NPS…) keep the Fig
 
 ```sh
 npx tsc --noEmit && npx eslint src scripts
-node scripts/e2e.mjs                         # 20-step UI test across all portals (needs API, web, Mailpit, seed)
+node scripts/e2e.mjs                         # 21-step UI test across all portals (needs API, web, Mailpit, seed)
 node scripts/shot.mjs student /student       # full-page screenshot as a demo user; W=390 for mobile
 ```

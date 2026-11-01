@@ -3,8 +3,8 @@
 import { useState } from "react";
 import useSWR from "swr";
 import { AppShell, type NavItem } from "@/components/AppShell";
-import { Badge, Button, Card, Empty, Icon, State, cx } from "@/components/ui";
-import { api, call, fileUrl, openFile, type ApiError } from "@/lib/api";
+import { Badge, Button, Card, Empty, Field, Icon, Input, Select, State, Textarea, cx } from "@/components/ui";
+import { api, call, fileBody, fileUrl, openFile, type ApiError } from "@/lib/api";
 import type { components } from "@/lib/api-types";
 import { APP_STATUS, fmtDate, initialsOf, reasonText, timeLeft } from "@/lib/format";
 
@@ -98,6 +98,7 @@ function Photo({ id, name }: { id: string | null | undefined; name: string }) {
 function ProfileCard() {
   const p = useProfile();
   const progs = useSWR("programmes", () => call(api.GET("/api/v1/programmes")));
+  const [editing, setEditing] = useState(false);
   return (
     <Card className="relative scroll-mt-24 overflow-hidden p-5">
       <span id="profile" className="absolute -top-24" />
@@ -151,6 +152,10 @@ function ProfileCard() {
                 </div>
               </div>
               <div className="flex flex-col items-start gap-3 md:items-end">
+                <Button size="sm" icon="edit" onClick={() => setEditing(true)} disabled={s.user.status === "alumni"}>
+                  Edit Profile &amp; Documents
+                </Button>
+                {editing && <EditProfile s={s} programmes={progs.data ?? []} onClose={() => (setEditing(false), p.mutate())} />}
                 <button
                   disabled
                   title="Alumni transition runs automatically after your year of completion"
@@ -168,6 +173,140 @@ function ProfileCard() {
         }}
       </State>
     </Card>
+  );
+}
+
+type Programme = Paths["/api/v1/programmes"]["get"]["responses"]["200"]["content"]["application/json"][number];
+
+/** Not in Figma: needed so a student can meet PROFILE_REQUIRED (photo, resume, CGPA, DOB, programme, batch) and apply. */
+function EditProfile({ s, programmes, onClose }: { s: Profile; programmes: Programme[]; onClose: () => void }) {
+  const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const g = (k: string) => String(fd.get(k) ?? "").trim();
+    const num = (k: string) => (g(k) ? Number(g(k)) : undefined);
+    setBusy(true);
+    setErr("");
+    try {
+      const photo = fd.get("photo") as File;
+      const resume = fd.get("resume") as File;
+      if (photo?.size) await call(api.POST("/api/v1/students/me/photo", fileBody(photo)));
+      if (resume?.size) await call(api.POST("/api/v1/students/me/resume", fileBody(resume)));
+      await call(
+        api.PATCH("/api/v1/students/me", {
+          body: {
+            mobile: g("mobile") || undefined,
+            dob: g("dob") || undefined,
+            programme_id: g("programme_id") || undefined,
+            year_of_admission: num("year_of_admission"),
+            year_of_completion: num("year_of_completion"),
+            cgpa: num("cgpa"),
+            category: g("category") || undefined,
+            regional_diversity: g("regional_diversity") || undefined,
+            jee_rank: num("jee_rank"),
+            marks_10: num("marks_10"),
+            marks_12: num("marks_12"),
+            current_address: g("current_address") || undefined,
+            professional_interests: g("professional_interests") || undefined,
+            certifications: g("certifications") || undefined,
+            linkedin_url: g("linkedin_url") || undefined,
+          },
+        }),
+      );
+      onClose();
+    } catch (e) {
+      setErr((e as Error).message);
+      setBusy(false);
+    }
+  }
+
+  const f = "bg-surface-low shadow-none";
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end bg-primary/30" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <form onSubmit={submit} role="dialog" aria-modal aria-label="Edit profile" className="flex h-full w-full max-w-[544px] flex-col bg-white text-left shadow-pop">
+        <div className="flex items-start justify-between bg-primary px-5 py-5 text-white">
+          <div>
+            <h2 className="font-display text-title font-semibold">Edit Profile &amp; Documents</h2>
+            <p className="text-caption font-semibold text-surface-high">Photo, resume, CGPA, DOB, programme and batch are required before applying.</p>
+          </div>
+          <button type="button" onClick={onClose} aria-label="Close" className="cursor-pointer">
+            <Icon name="close" className="text-[20px]" />
+          </button>
+        </div>
+        <div className="grid flex-1 grid-cols-2 content-start gap-3 overflow-y-auto p-5">
+          <Field label="Coloured Photo (JPEG/PNG, ≤2 MB)" hint={s.photo_file_id ? "Uploaded. Choose a file to replace." : "Required"}>
+            <Input name="photo" type="file" accept="image/jpeg,image/png" className="py-1.5" />
+          </Field>
+          <Field label="Resume (PDF, ≤5 MB)" hint={s.resume_file_id ? "Uploaded. Choose a file to replace." : "Required"}>
+            <Input name="resume" type="file" accept="application/pdf" className="py-1.5" />
+          </Field>
+          <Field label="Date of Birth *">
+            <Input name="dob" type="date" required defaultValue={s.dob?.slice(0, 10)} className={f} />
+          </Field>
+          <Field label="Cumulative CGPA *">
+            <Input name="cgpa" type="number" step="0.01" min="0" max="10" required defaultValue={s.cgpa ?? ""} className={f} />
+          </Field>
+          <Field label="Programme *" className="col-span-2">
+            <Select name="programme_id" required defaultValue={s.programme_id ?? ""} className={f}>
+              <option value="">Select programme</option>
+              {programmes.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field label="Year of Admission">
+            <Input name="year_of_admission" type="number" min="2000" max="2100" defaultValue={s.year_of_admission ?? ""} className={f} />
+          </Field>
+          <Field label="Year of Completion *">
+            <Input name="year_of_completion" type="number" min="2000" max="2100" required defaultValue={s.year_of_completion ?? ""} className={f} />
+          </Field>
+          <Field label="Mobile">
+            <Input name="mobile" type="tel" pattern="\+?\d{10,13}" defaultValue={s.mobile ?? ""} className={f} />
+          </Field>
+          <Field label="Social Category">
+            <Input name="category" defaultValue={s.category ?? ""} className={f} />
+          </Field>
+          <Field label="Domicile & Diversity">
+            <Input name="regional_diversity" defaultValue={s.regional_diversity ?? ""} className={f} />
+          </Field>
+          <Field label="JEE Rank">
+            <Input name="jee_rank" type="number" min="1" defaultValue={s.jee_rank ?? ""} className={f} />
+          </Field>
+          <Field label="Class X %">
+            <Input name="marks_10" type="number" step="0.1" min="0" max="100" defaultValue={s.marks_10 ?? ""} className={f} />
+          </Field>
+          <Field label="Class XII %">
+            <Input name="marks_12" type="number" step="0.1" min="0" max="100" defaultValue={s.marks_12 ?? ""} className={f} />
+          </Field>
+          <Field label="Current Address" className="col-span-2">
+            <Input name="current_address" defaultValue={s.current_address ?? ""} className={f} />
+          </Field>
+          <Field label="Technical Skills" hint="Comma separated; recruiters filter on these." className="col-span-2">
+            <Input name="professional_interests" defaultValue={s.professional_interests ?? ""} placeholder="Python, AWS Cloud, SQL" className={f} />
+          </Field>
+          <Field label="Certifications & Internships" hint="One per line." className="col-span-2">
+            <Textarea name="certifications" rows={3} defaultValue={s.certifications ?? ""} className={f} />
+          </Field>
+          <Field label="LinkedIn URL" className="col-span-2">
+            <Input name="linkedin_url" type="url" defaultValue={s.linkedin_url ?? ""} className={f} />
+          </Field>
+          {err && <p role="alert" className="col-span-2 rounded-xs bg-error-container px-3 py-2 text-body text-on-error-container">{err}</p>}
+        </div>
+        <div className="flex justify-end gap-2 bg-surface-low px-5 py-3">
+          <Button type="button" variant="ghost" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" busy={busy}>
+            Save Profile
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }
 

@@ -2,8 +2,9 @@
 // Needs API (:3000), web (:3001), Mailpit (:8025) and `node scripts/seed-demo.mjs` already run.
 // Every run uses fresh unique accounts/postings, so it can be re-run. Exit code 1 on the first failed step.
 //
-// usage: node scripts/e2e.mjs [--headed]
-import { readFileSync } from "node:fs";
+// usage: node scripts/e2e.mjs [--headed]   (21 steps)
+import { readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { chromium } from "playwright-core";
 
@@ -166,6 +167,23 @@ await step("approved new student logs in; posting shows ineligible (no CGPA yet)
   await card.getByText(/Ineligible: Cutoff CGPA/).waitFor();
   await card.getByRole("button", { name: /Apply Now/ }).waitFor({ state: "detached" });
 });
+await step("new student completes profile (photo + resume upload) and applies", async () => {
+  const pdf = resolve(tmpdir(), `e2e-cv-${run}.pdf`);
+  writeFileSync(pdf, "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj 3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n");
+  await stuNew.getByRole("button", { name: /Edit Profile/ }).click();
+  const d = stuNew.getByRole("dialog", { name: "Edit profile" });
+  await d.getByLabel(/Coloured Photo/).setInputFiles(resolve(here, "public/img/emblem.jpg"));
+  await d.getByLabel(/Resume \(PDF/).setInputFiles(pdf);
+  await d.getByLabel("Date of Birth *").fill("2004-02-10");
+  await d.getByLabel("Cumulative CGPA *").fill("8.4");
+  await d.getByLabel("Year of Completion *").fill("2026");
+  await d.getByRole("button", { name: "Save Profile" }).click();
+  await d.waitFor({ state: "detached" });
+  await stuNew.reload();
+  const card = stuNew.locator("article").filter({ hasText: JOB });
+  await card.getByRole("button", { name: /Apply Now/ }).click();
+  await card.getByText(/Applied • Awaiting T&P Release/).waitFor();
+});
 await step("new student registers for the event", async () => {
   await stuNew.getByRole("tab", { name: /Training & Workshops/ }).click();
   const card = stuNew.locator("article").filter({ hasText: `E2E Resume Clinic ${run}` });
@@ -186,7 +204,7 @@ await step("seeded student applies to new posting (one-click)", async () => {
 await step("admin releases applicants to recruiter", async () => {
   await adm.reload();
   await adm.getByLabel("Select Concluded Drive").selectOption({ label: `Cognizant Technology Solutions - ${JOB}` });
-  await adm.getByRole("button", { name: /Release 1 Applicant/ }).click();
+  await adm.getByRole("button", { name: /Release \d+ Applicant/ }).click();
   await adm.getByText("Applicants released to the recruiter.").waitFor();
 });
 await step("recruiter bulk-shortlists + schedules interview", async () => {
