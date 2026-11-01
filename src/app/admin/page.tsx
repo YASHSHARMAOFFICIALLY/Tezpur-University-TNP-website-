@@ -728,7 +728,7 @@ function PublishResults() {
               <Button variant="soft" icon="group_add" busy={busy === "release"} disabled={!count("applied")} onClick={() => act("release")}>
                 Release {count("applied")} Applicant(s) to Recruiter
               </Button>
-              <Button variant="tertiary" icon="send" busy={busy === "publish"} disabled={!count("selected")} onClick={() => act("publish")} className="py-2.5">
+              <Button variant="tertiary" icon="send" busy={busy === "publish"} disabled={!count("shortlisted") || drive.status === "closed"} title="Publishes the selections the recruiter submitted" onClick={() => act("publish")} className="py-2.5">
                 Execute Select Rollout &amp; Notify Candidates
               </Button>
             </>

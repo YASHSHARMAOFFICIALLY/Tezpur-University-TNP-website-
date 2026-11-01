@@ -319,13 +319,16 @@ function Opportunities() {
         {tab === "events" ? (
           <EventList data={events.data?.data} error={events.error} retry={() => events.mutate()} />
         ) : (
-          <State data={opps.data} error={opps.error} retry={() => opps.mutate()} empty={() => count(tab) === 0}>
-            {() =>
-              list
-                .filter((o) => o.type === tab)
-                .map((o) => <OppCard key={o.id} o={o} app={apps.data?.data.find((a) => a.opportunity.id === o.id)} onApplied={() => (apps.mutate(), opps.mutate())} />)
-            }
-          </State>
+          <>
+            <State data={opps.data} error={opps.error} retry={() => opps.mutate()} empty={() => count(tab) === 0}>
+              {() =>
+                list
+                  .filter((o) => o.type === tab)
+                  .map((o) => <OppCard key={o.id} o={o} app={apps.data?.data.find((a) => a.opportunity.id === o.id)} onApplied={() => (apps.mutate(), opps.mutate())} />)
+              }
+            </State>
+            <ClosedApps apps={apps.data?.data.filter((a) => a.opportunity.type === tab && !list.some((o) => o.id === a.opportunity.id)) ?? []} />
+          </>
         )}
       </div>
     </Card>
@@ -408,6 +411,27 @@ function OppCard({ o, app, onApplied }: { o: Opp; app?: App; onApplied: () => vo
         )}
       </div>
     </article>
+  );
+}
+
+/** Drives that closed after the student applied: no longer in /opportunities, but the result matters most here. */
+function ClosedApps({ apps }: { apps: App[] }) {
+  if (!apps.length) return null;
+  return (
+    <div className="flex flex-col gap-2 pt-2">
+      <p className="text-caption font-semibold text-muted uppercase">Applied drives (closed)</p>
+      {apps.map((a) => (
+        <article key={a.id} className="flex items-center justify-between gap-3 rounded-sm bg-surface-low p-3">
+          <div>
+            <p className="text-card font-semibold text-primary">{a.opportunity.company.name}</p>
+            <p className="text-body text-muted">{a.opportunity.title}</p>
+          </div>
+          <Badge tone={APP_STATUS[a.status].tone} className="rounded-xl">
+            {APP_STATUS[a.status].label}
+          </Badge>
+        </article>
+      ))}
+    </div>
   );
 }
 
