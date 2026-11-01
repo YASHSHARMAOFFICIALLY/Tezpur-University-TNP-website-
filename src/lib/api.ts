@@ -7,7 +7,11 @@ export type Role = Session["user"]["role"];
 type ErrorBody = components["schemas"]["Error"]["error"];
 
 export class ApiError extends Error {
-  constructor(public code: ErrorBody["code"] | "NETWORK", message: string, public details: Record<string, unknown> = {}) {
+  constructor(
+    public code: ErrorBody["code"] | "NETWORK",
+    message: string,
+    public details: Record<string, unknown> = {},
+  ) {
     super(message);
   }
 }

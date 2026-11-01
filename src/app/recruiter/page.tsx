@@ -4,12 +4,16 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
 import { AppShell, type NavItem } from "@/components/AppShell";
-import { Badge, Button, Card, Empty, Field, Icon, Input, Select, State, Textarea, cx, type Tone } from "@/components/ui";
+import { Badge, Button, Card, Empty, Field, Icon, Input, Modal, Notice, Select, State, Textarea, cx, useRun, type Tone } from "@/components/ui";
 import { api, call, fileBody, openFile } from "@/lib/api";
 import type { paths } from "@/lib/api-types";
 import { fmtDate, initialsOf } from "@/lib/format";
 
-type Json<P extends keyof paths, M extends "get"> = paths[P][M] extends { responses: { 200: { content: { "application/json": infer T } } } } ? T : never;
+type Json<P extends keyof paths, M extends "get"> = paths[P][M] extends {
+  responses: { 200: { content: { "application/json": infer T } } };
+}
+  ? T
+  : never;
 type Posting = Json<"/api/v1/company/opportunities", "get">["data"][number];
 type Applicant = Json<"/api/v1/company/opportunities/{id}/applicants", "get">["data"][number];
 
@@ -21,7 +25,13 @@ const NAV: NavItem[] = [
   { label: "Liaison Dispatch", icon: "forward_to_inbox", href: "#dispatch" },
 ];
 
-const POSTING_TONE: Record<Posting["status"], Tone> = { draft: "muted", pending_admin: "warn", approved: "info", rejected: "error", closed: "soft" };
+const POSTING_TONE: Record<Posting["status"], Tone> = {
+  draft: "muted",
+  pending_admin: "warn",
+  approved: "info",
+  rejected: "error",
+  closed: "soft",
+};
 const POSTING_LABEL: Record<Posting["status"], string> = {
   draft: "Draft",
   pending_admin: "Awaiting T&P approval",
@@ -37,13 +47,23 @@ const STAGE_LABEL: Record<Applicant["status"], string> = {
 };
 
 export default function RecruiterPage() {
-  const postings = useSWR("company/opportunities", () => call(api.GET("/api/v1/company/opportunities", { params: { query: { limit: 100 } } })));
+  const postings = useSWR("company/opportunities", () =>
+    call(
+      api.GET("/api/v1/company/opportunities", {
+        params: { query: { limit: 100 } },
+      }),
+    ),
+  );
   const [pick, setPick] = useState<string | null>(null);
   const [studio, setStudio] = useState(false);
   const list = postings.data?.data ?? [];
   const drive = list.find((p) => p.id === pick) ?? list.find((p) => p.status === "approved") ?? list[0];
   const applicants = useSWR(drive ? ["applicants", drive.id] : null, () =>
-    call(api.GET("/api/v1/company/opportunities/{id}/applicants", { params: { path: { id: drive!.id }, query: { limit: 100 } } })),
+    call(
+      api.GET("/api/v1/company/opportunities/{id}/applicants", {
+        params: { path: { id: drive!.id }, query: { limit: 100 } },
+      }),
+    ),
   );
 
   return (
@@ -51,7 +71,15 @@ export default function RecruiterPage() {
       <div className="mx-auto flex max-w-[912px] flex-col gap-6">
         <CompanyHeader postings={list} applicants={applicants.data?.data} onCreate={() => setStudio(true)} />
         <TalentPool />
-        <DriveTimeline postings={list} drive={drive} onPick={setPick} applicants={applicants.data?.data} reload={() => postings.mutate()} error={postings.error} loading={!postings.data} />
+        <DriveTimeline
+          postings={list}
+          drive={drive}
+          onPick={setPick}
+          applicants={applicants.data?.data}
+          reload={() => postings.mutate()}
+          error={postings.error}
+          loading={!postings.data}
+        />
         {drive && <Candidates drive={drive} q={applicants} />}
         <div className="grid gap-6 lg:grid-cols-[1fr_350px]">
           <Dispatch />
@@ -68,6 +96,7 @@ function CompanyHeader({ postings, applicants, onCreate }: { postings: Posting[]
   const feedback = useSWR("feedback", () => call(api.GET("/api/v1/feedback")));
   const pendingFeedback = feedback.data?.filter((f) => !f.submitted) ?? [];
   const [fbOpen, setFbOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const live = postings.filter((p) => p.status === "approved");
   const a = applicants ?? [];
   const short = a.filter((x) => x.status === "shortlisted").length;
@@ -101,11 +130,21 @@ function CompanyHeader({ postings, applicants, onCreate }: { postings: Posting[]
                 </p>
               </div>
             </div>
-            <div className="flex shrink-0 gap-2">
+            <div className="flex shrink-0 flex-wrap gap-2">
+              <Button variant="ghost" icon="edit" onClick={() => setProfileOpen(true)} className="px-4 py-2.5">
+                Edit Organisation Profile
+              </Button>
               <Button icon="add_circle" onClick={onCreate} className="px-4 py-2.5 text-center">
                 Create New Job Opening
               </Button>
-              <Button variant="ghost" icon="rate_review" disabled={!pendingFeedback.length} title={pendingFeedback.length ? undefined : "No feedback form from the T&P cell yet"} onClick={() => setFbOpen(true)} className="px-4 py-2.5">
+              <Button
+                variant="ghost"
+                icon="rate_review"
+                disabled={!pendingFeedback.length}
+                title={pendingFeedback.length ? undefined : "No feedback form from the T&P cell yet"}
+                onClick={() => setFbOpen(true)}
+                className="px-4 py-2.5"
+              >
                 Submit Drive Feedback
               </Button>
             </div>
@@ -113,17 +152,58 @@ function CompanyHeader({ postings, applicants, onCreate }: { postings: Posting[]
         )}
       </State>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Active Openings" icon="campaign" value={String(live.length).padStart(2, "0")} unit="Roles in progress" foot={live[0]?.title ?? "No live drive yet"} dot />
+        <Stat
+          label="Active Openings"
+          icon="campaign"
+          value={String(live.length).padStart(2, "0")}
+          unit="Roles in progress"
+          foot={live[0]?.title ?? "No live drive yet"}
+          dot
+        />
         <Stat label="Applications Received" icon="groups" value={String(a.length)} unit="released by T&P" bar={a.length ? 1 : 0} />
-        <Stat label="Shortlisted for PI" icon="contact_support" value={String(short)} unit={a.length ? `${Math.round((short / a.length) * 100)}% pass rate` : "—"} accent />
-        <Stat label="Offers Released" icon="verified" value={String(offers)} unit={target ? `of ${target} drive target` : "selections"} bar={target ? offers / target : 0} barTone="bg-tertiary" />
+        <Stat
+          label="Shortlisted for PI"
+          icon="contact_support"
+          value={String(short)}
+          unit={a.length ? `${Math.round((short / a.length) * 100)}% pass rate` : "—"}
+          accent
+        />
+        <Stat
+          label="Offers Released"
+          icon="verified"
+          value={String(offers)}
+          unit={target ? `of ${target} drive target` : "selections"}
+          bar={target ? offers / target : 0}
+          barTone="bg-tertiary"
+        />
       </div>
       {fbOpen && <FeedbackDialog forms={pendingFeedback} onClose={() => (setFbOpen(false), feedback.mutate())} />}
+      {profileOpen && co.data && <CompanyProfile c={co.data} onClose={() => (setProfileOpen(false), co.mutate())} />}
     </Card>
   );
 }
 
-function Stat({ label, icon, value, unit, foot, dot, bar, barTone = "bg-primary", accent }: { label: string; icon: string; value: string; unit: string; foot?: string; dot?: boolean; bar?: number; barTone?: string; accent?: boolean }) {
+function Stat({
+  label,
+  icon,
+  value,
+  unit,
+  foot,
+  dot,
+  bar,
+  barTone = "bg-primary",
+  accent,
+}: {
+  label: string;
+  icon: string;
+  value: string;
+  unit: string;
+  foot?: string;
+  dot?: boolean;
+  bar?: number;
+  barTone?: string;
+  accent?: boolean;
+}) {
   return (
     <div className="flex flex-col gap-1 rounded-xs bg-surface-low p-3">
       <p className="flex items-center justify-between text-caption font-semibold tracking-[0.55px] text-muted uppercase">
@@ -213,15 +293,36 @@ function TalentPool() {
   );
 }
 
-function DriveTimeline({ postings, drive, onPick, applicants, reload, error, loading }: { postings: Posting[]; drive?: Posting; onPick: (id: string) => void; applicants?: Applicant[]; reload: () => void; error?: unknown; loading: boolean }) {
+function DriveTimeline({
+  postings,
+  drive,
+  onPick,
+  applicants,
+  reload,
+  error,
+  loading,
+}: {
+  postings: Posting[];
+  drive?: Posting;
+  onPick: (id: string) => void;
+  applicants?: Applicant[];
+  reload: () => void;
+  error?: unknown;
+  loading: boolean;
+}) {
   const [busy, setBusy] = useState("");
   const [err, setErr] = useState("");
+  const [editing, setEditing] = useState(false);
   const a = applicants ?? [];
   const sp = drive?.selection_process;
   const steps: [string, string, boolean][] = drive
     ? [
         ["01. Applications", `${a.length} Released`, a.length > 0],
-        ["02. Resume Screen", sp?.shortlist_from_resumes ? `${a.filter((x) => x.status !== "released_to_recruiter").length} Screened` : "Not in process", a.some((x) => x.status !== "released_to_recruiter")],
+        [
+          "02. Resume Screen",
+          sp?.shortlist_from_resumes ? `${a.filter((x) => x.status !== "released_to_recruiter").length} Screened` : "Not in process",
+          a.some((x) => x.status !== "released_to_recruiter"),
+        ],
         ["03. Online Test", sp?.online_test || sp?.written_test ? "In selection process" : "Not in process", false],
         ["04. Technical PI", `${a.filter((x) => x.status === "shortlisted").length} Shortlisted`, a.some((x) => x.status === "shortlisted")],
         ["05. HR / Leadership", sp?.hr_interview ? `${a.filter((x) => x.interviews.length > 1).length} Scheduled` : "Not in process", false],
@@ -235,8 +336,18 @@ function DriveTimeline({ postings, drive, onPick, applicants, reload, error, loa
     setBusy(kind);
     setErr("");
     try {
-      if (kind === "submit") await call(api.POST("/api/v1/company/opportunities/{id}/submit", { params: { path: { id: drive.id } } }));
-      else await call(api.POST("/api/v1/company/opportunities/{id}/close", { params: { path: { id: drive.id } } }));
+      if (kind === "submit")
+        await call(
+          api.POST("/api/v1/company/opportunities/{id}/submit", {
+            params: { path: { id: drive.id } },
+          }),
+        );
+      else
+        await call(
+          api.POST("/api/v1/company/opportunities/{id}/close", {
+            params: { path: { id: drive.id } },
+          }),
+        );
       reload();
     } catch (e) {
       setErr((e as Error).message);
@@ -250,7 +361,12 @@ function DriveTimeline({ postings, drive, onPick, applicants, reload, error, loa
     setBusy("jd");
     setErr("");
     try {
-      await call(api.POST("/api/v1/company/opportunities/{id}/jd", { params: { path: { id: drive.id } }, ...fileBody(f) }));
+      await call(
+        api.POST("/api/v1/company/opportunities/{id}/jd", {
+          params: { path: { id: drive.id } },
+          ...fileBody(f),
+        }),
+      );
       reload();
     } catch (e) {
       setErr((e as Error).message);
@@ -272,7 +388,8 @@ function DriveTimeline({ postings, drive, onPick, applicants, reload, error, loa
                 <div>
                   <h2 className="font-display text-title font-semibold text-primary">Drive Timeline: {drive.title}</h2>
                   <p className="text-body text-muted">
-                    Drive ID: {drive.id.slice(0, 8).toUpperCase()} • Role: {drive.designation ?? drive.job_profile ?? drive.type} • Deadline {fmtDate(drive.apply_deadline)}
+                    Drive ID: {drive.id.slice(0, 8).toUpperCase()} • Role: {drive.designation ?? drive.job_profile ?? drive.type} • Deadline{" "}
+                    {fmtDate(drive.apply_deadline)}
                   </p>
                   {drive.review_note && (
                     <p className="pt-1 text-label font-semibold text-error">
@@ -297,27 +414,49 @@ function DriveTimeline({ postings, drive, onPick, applicants, reload, error, loa
               </div>
               <ol className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
                 {steps.map(([t, v, done], i) => (
-                  <li key={t} className={cx("flex justify-between gap-1 rounded-xs p-2", i === current ? "bg-primary text-white" : "bg-surface-low", !done && i > current && "opacity-60")}>
+                  <li
+                    key={t}
+                    className={cx(
+                      "flex justify-between gap-1 rounded-xs p-2",
+                      i === current ? "bg-primary text-white" : "bg-surface-low",
+                      !done && i > current && "opacity-60",
+                    )}
+                  >
                     <div>
                       <p className={cx("text-caption font-semibold", i === current ? "text-surface-high" : "text-ink")}>{t}</p>
                       <p className={cx("text-body font-semibold", i === current ? "text-white" : "text-ink")}>{v}</p>
                     </div>
-                    {i === current ? <span className="mt-1 size-2 rounded-xl bg-accent" /> : <Icon name={done ? "check_circle" : "pending"} className="text-muted" />}
+                    {i === current ? (
+                      <span className="mt-1 size-2 rounded-xl bg-accent" />
+                    ) : (
+                      <Icon name={done ? "check_circle" : "pending"} className="text-muted" />
+                    )}
                   </li>
                 ))}
               </ol>
               <div className="flex flex-wrap items-center gap-2 px-2 pb-1">
                 {(drive.status === "draft" || drive.status === "rejected") && (
-                  <Button size="sm" busy={busy === "submit"} onClick={() => act("submit")} icon="send">
-                    Submit for T&amp;P Approval
-                  </Button>
+                  <>
+                    <Button size="sm" variant="soft" icon="edit" onClick={() => setEditing(true)}>
+                      Edit Posting
+                    </Button>
+                    <Button size="sm" busy={busy === "submit"} onClick={() => act("submit")} icon="send">
+                      Submit for T&amp;P Approval
+                    </Button>
+                  </>
                 )}
+                {editing && <PostingStudio initial={drive} onClose={() => setEditing(false)} onDone={() => (setEditing(false), reload())} />}
                 {drive.status === "approved" && (
                   <Button size="sm" variant="ghost" busy={busy === "close"} onClick={() => act("close")} icon="block">
                     Stop Accepting Applications
                   </Button>
                 )}
-                <label className={cx("inline-flex cursor-pointer items-center gap-1 rounded-xs bg-surface-high px-2 py-1 text-caption font-semibold text-ink", busy === "jd" && "opacity-50")}>
+                <label
+                  className={cx(
+                    "inline-flex cursor-pointer items-center gap-1 rounded-xs bg-surface-high px-2 py-1 text-caption font-semibold text-ink",
+                    busy === "jd" && "opacity-50",
+                  )}
+                >
                   <Icon name="upload_file" /> {drive.jd_file_id ? "Replace JD PDF" : "Upload JD PDF"}
                   <input type="file" accept="application/pdf" className="sr-only" onChange={(e) => uploadJd(e.target.files?.[0])} />
                 </label>
@@ -366,10 +505,29 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
     setBusy(kind);
     setMsg(null);
     try {
-      if (kind === "shortlist") await call(api.POST("/api/v1/company/applications/shortlist", { body: { application_ids: ids } }));
-      if (kind === "reject") await call(api.POST("/api/v1/company/applications/reject", { body: { application_ids: ids } }));
-      if (kind === "results") await call(api.POST("/api/v1/company/opportunities/{id}/results", { params: { path: { id: drive.id } }, body: { selected_application_ids: ids } }));
-      setMsg({ tone: "ok", text: kind === "results" ? "Final selections sent. The T&P cell publishes them to students." : `${ids.length} candidate(s) updated.` });
+      if (kind === "shortlist")
+        await call(
+          api.POST("/api/v1/company/applications/shortlist", {
+            body: { application_ids: ids },
+          }),
+        );
+      if (kind === "reject")
+        await call(
+          api.POST("/api/v1/company/applications/reject", {
+            body: { application_ids: ids },
+          }),
+        );
+      if (kind === "results")
+        await call(
+          api.POST("/api/v1/company/opportunities/{id}/results", {
+            params: { path: { id: drive.id } },
+            body: { selected_application_ids: ids },
+          }),
+        );
+      setMsg({
+        tone: "ok",
+        text: kind === "results" ? "Final selections sent. The T&P cell publishes them to students." : `${ids.length} candidate(s) updated.`,
+      });
       setSel(new Set());
       q.mutate();
     } catch (e) {
@@ -387,7 +545,10 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
     });
     const csv = [head, ...lines].map((r) => r.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    Object.assign(document.createElement("a"), { href: url, download: `${drive.title}-candidates.csv` }).click();
+    Object.assign(document.createElement("a"), {
+      href: url,
+      download: `${drive.title}-candidates.csv`,
+    }).click();
     URL.revokeObjectURL(url);
   }
 
@@ -427,7 +588,15 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
           <span className="flex justify-between text-label font-semibold text-ink">
             MIN CGPA THRESHOLD <b>{minCgpa.toFixed(1)}</b>
           </span>
-          <input type="range" min={6} max={9.5} step={0.1} value={minCgpa} onChange={(e) => (setMinCgpa(+e.target.value), setPage(0))} className="accent-primary" />
+          <input
+            type="range"
+            min={6}
+            max={9.5}
+            step={0.1}
+            value={minCgpa}
+            onChange={(e) => (setMinCgpa(+e.target.value), setPage(0))}
+            className="accent-primary"
+          />
           <span className="flex justify-between text-caption text-muted">
             <span>6.0</span>
             <span>9.5</span>
@@ -443,14 +612,30 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
         </Field>
       </div>
 
-      {msg && <p className={cx("mx-5 mt-3 rounded-xs px-3 py-2 text-body", msg.tone === "ok" ? "bg-primary-fixed text-primary" : "bg-error-container text-on-error-container")}>{msg.text}</p>}
+      {msg && (
+        <p
+          className={cx(
+            "mx-5 mt-3 rounded-xs px-3 py-2 text-body",
+            msg.tone === "ok" ? "bg-primary-fixed text-primary" : "bg-error-container text-on-error-container",
+          )}
+        >
+          {msg.text}
+        </p>
+      )}
 
       <div className="mt-3 overflow-x-auto">
         <State data={q.data} error={q.error} retry={() => q.mutate()} rows={4}>
           {() =>
             rows.length === 0 ? (
               <div className="p-5">
-                <Empty icon="person_search" text={q.data?.data.length ? "No candidates match these filters." : "No applicants released yet. The T&P cell releases eligible applicants after the deadline."} />
+                <Empty
+                  icon="person_search"
+                  text={
+                    q.data?.data.length
+                      ? "No candidates match these filters."
+                      : "No applicants released yet. The T&P cell releases eligible applicants after the deadline."
+                  }
+                />
               </div>
             ) : (
               <table className="w-full min-w-[820px] text-left">
@@ -461,7 +646,9 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
                         type="checkbox"
                         aria-label="Select all on this page"
                         checked={shown.every((a) => sel.has(a.id))}
-                        onChange={(e) => setSel(new Set(e.target.checked ? [...sel, ...shown.map((a) => a.id)] : ids.filter((id) => !shown.some((a) => a.id === id))))}
+                        onChange={(e) =>
+                          setSel(new Set(e.target.checked ? [...sel, ...shown.map((a) => a.id)] : ids.filter((id) => !shown.some((a) => a.id === id))))
+                        }
                       />
                     </th>
                     <th className="px-2 py-3">Candidate Detail</th>
@@ -478,15 +665,26 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
                   {shown.map((a) => {
                     const s = a.student;
                     const u = s.user as { name?: string; email?: string };
-                    const skills = (s.professional_interests ?? "").split(/,|;/).map((x) => x.trim()).filter(Boolean).slice(0, 3);
+                    const skills = (s.professional_interests ?? "")
+                      .split(/,|;/)
+                      .map((x) => x.trim())
+                      .filter(Boolean)
+                      .slice(0, 3);
                     return (
                       <tr key={a.id} className="border-t border-surface">
                         <td className="px-4 py-3">
-                          <input type="checkbox" aria-label={`Select ${u.name}`} checked={sel.has(a.id)} onChange={(e) => setSel(new Set(e.target.checked ? [...ids, a.id] : ids.filter((x) => x !== a.id)))} />
+                          <input
+                            type="checkbox"
+                            aria-label={`Select ${u.name}`}
+                            checked={sel.has(a.id)}
+                            onChange={(e) => setSel(new Set(e.target.checked ? [...ids, a.id] : ids.filter((x) => x !== a.id)))}
+                          />
                         </td>
                         <td className="px-2 py-3">
                           <div className="flex items-center gap-2">
-                            <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-surface-high text-caption font-bold text-primary">{initialsOf(u.name ?? "?")}</span>
+                            <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-surface-high text-caption font-bold text-primary">
+                              {initialsOf(u.name ?? "?")}
+                            </span>
                             <div>
                               <p className="font-semibold">{u.name}</p>
                               <p className="text-caption text-muted">{u.email}</p>
@@ -498,12 +696,23 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
                         <td className="px-2 py-3 font-bold">{s.cgpa?.toFixed(2) ?? "—"}</td>
                         <td className="px-2 py-3">
                           <div className="flex max-w-[120px] flex-wrap gap-1">
-                            {skills.length ? skills.map((k) => <Badge key={k} tone="muted">{k}</Badge>) : <span className="text-muted">—</span>}
+                            {skills.length ? (
+                              skills.map((k) => (
+                                <Badge key={k} tone="muted">
+                                  {k}
+                                </Badge>
+                              ))
+                            ) : (
+                              <span className="text-muted">—</span>
+                            )}
                           </div>
                         </td>
                         <td className="px-2 py-3">
                           {s.resume_file_id ? (
-                            <button onClick={() => openFile(s.resume_file_id!)} className="flex items-center gap-1 rounded-xs bg-surface-low px-2 py-1 text-caption font-semibold cursor-pointer">
+                            <button
+                              onClick={() => openFile(s.resume_file_id!)}
+                              className="flex items-center gap-1 rounded-xs bg-surface-low px-2 py-1 text-caption font-semibold cursor-pointer"
+                            >
                               <Icon name="picture_as_pdf" /> View PDF
                             </button>
                           ) : (
@@ -512,8 +721,14 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
                         </td>
                         <td className="px-2 py-3">{fmtDate(a.created_at)}</td>
                         <td className="px-2 py-3">
-                          <Badge tone={a.status === "selected" ? "primary" : a.status === "rejected" ? "error" : a.status === "shortlisted" ? "warn" : "soft"}>{STAGE_LABEL[a.status]}</Badge>
-                          {a.interviews.at(-1) && <p className="pt-1 text-caption text-muted">{a.interviews.at(-1)!.round}: {fmtDate(a.interviews.at(-1)!.at, true)}</p>}
+                          <Badge tone={a.status === "selected" ? "primary" : a.status === "rejected" ? "error" : a.status === "shortlisted" ? "warn" : "soft"}>
+                            {STAGE_LABEL[a.status]}
+                          </Badge>
+                          {a.interviews.at(-1) && (
+                            <p className="pt-1 text-caption text-muted">
+                              {a.interviews.at(-1)!.round}: {fmtDate(a.interviews.at(-1)!.at, true)}
+                            </p>
+                          )}
                         </td>
                       </tr>
                     );
@@ -540,33 +755,44 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
             Previous
           </button>
           {Array.from({ length: pages }, (_, i) => (
-            <button key={i} onClick={() => setPage(i)} aria-current={i === page} className={cx("grid size-6 place-items-center rounded-xs text-caption font-semibold cursor-pointer", i === page ? "bg-primary text-white" : "text-ink")}>
+            <button
+              key={i}
+              onClick={() => setPage(i)}
+              aria-current={i === page}
+              className={cx(
+                "grid size-6 place-items-center rounded-xs text-caption font-semibold cursor-pointer",
+                i === page ? "bg-primary text-white" : "text-ink",
+              )}
+            >
               {i + 1}
             </button>
           ))}
-          <button disabled={page >= pages - 1} onClick={() => setPage(page + 1)} className="text-caption font-semibold text-ink disabled:opacity-40 cursor-pointer">
+          <button
+            disabled={page >= pages - 1}
+            onClick={() => setPage(page + 1)}
+            className="text-caption font-semibold text-ink disabled:opacity-40 cursor-pointer"
+          >
             Next
           </button>
         </div>
       </div>
-      {iv && <InterviewDialog drive={drive} ids={ids} onClose={(ok) => (setIv(false), ok && (setSel(new Set()), q.mutate(), setMsg({ tone: "ok", text: "Interview scheduled; candidates are notified." })))} />}
+      {iv && (
+        <InterviewDialog
+          drive={drive}
+          ids={ids}
+          onClose={(ok) => (
+            setIv(false),
+            ok &&
+              (setSel(new Set()),
+              q.mutate(),
+              setMsg({
+                tone: "ok",
+                text: "Interview scheduled; candidates are notified.",
+              }))
+          )}
+        />
+      )}
     </Card>
-  );
-}
-
-function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
-  return (
-    <div role="dialog" aria-modal aria-label={title} className="fixed inset-0 z-50 grid place-items-center bg-primary/40 p-4" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="flex w-full max-w-lg flex-col gap-4 rounded-lg bg-white p-6 shadow-pop">
-        <div className="flex items-center justify-between">
-          <h2 className="font-display text-title font-semibold text-primary">{title}</h2>
-          <button onClick={onClose} aria-label="Close" className="text-muted cursor-pointer">
-            <Icon name="close" />
-          </button>
-        </div>
-        {children}
-      </div>
-    </div>
   );
 }
 
@@ -581,7 +807,12 @@ function InterviewDialog({ drive, ids, onClose }: { drive: Posting; ids: string[
       await call(
         api.POST("/api/v1/company/opportunities/{id}/interviews", {
           params: { path: { id: drive.id } },
-          body: { application_ids: ids, round: f.round, at: new Date(f.at).toISOString(), venue_or_link: f.venue },
+          body: {
+            application_ids: ids,
+            round: f.round,
+            at: new Date(f.at).toISOString(),
+            venue_or_link: f.venue,
+          },
         }),
       );
       onClose(true);
@@ -612,6 +843,146 @@ function InterviewDialog({ drive, ids, onClose }: { drive: Posting; ids: string[
   );
 }
 
+type Company = Json<"/api/v1/companies/me", "get">;
+const CATEGORIES = ["mnc", "private", "psu", "govt", "startup", "ngo", "other"] as const;
+
+function CompanyProfile({ c, onClose }: { c: Company; onClose: () => void }) {
+  const save = useRun();
+  const contacts = useRun();
+  const [list, setList] = useState(c.contacts);
+  const refresh = async () => setList((await call(api.GET("/api/v1/companies/me"))).contacts);
+  return (
+    <Modal title="Organisation Profile" onClose={onClose} wide>
+      <form
+        className="grid gap-3 sm:grid-cols-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          const fd = new FormData(e.currentTarget);
+          const g = (k: string) => String(fd.get(k) ?? "").trim();
+          save.run(
+            "save",
+            () =>
+              call(
+                api.PATCH("/api/v1/companies/me", {
+                  body: {
+                    name: g("name"),
+                    website: g("website") || undefined,
+                    category: g("category") as Company["category"],
+                    sector: g("sector") || undefined,
+                    postal_address: g("postal_address") || undefined,
+                  },
+                }),
+              ),
+            "Profile saved.",
+          );
+        }}
+      >
+        <Field label="Organisation Legal Name *">
+          <Input name="name" required minLength={2} defaultValue={c.name} />
+        </Field>
+        <Field label="Official Website">
+          <Input name="website" type="url" defaultValue={c.website ?? ""} />
+        </Field>
+        <Field label="Corporate Category">
+          <Select name="category" defaultValue={c.category}>
+            {CATEGORIES.map((x) => (
+              <option key={x} value={x}>
+                {x.toUpperCase()}
+              </option>
+            ))}
+          </Select>
+        </Field>
+        <Field label="Industry Sector">
+          <Input name="sector" defaultValue={c.sector ?? ""} />
+        </Field>
+        <Field label="Registered Office Address" className="sm:col-span-2">
+          <Input name="postal_address" defaultValue={c.postal_address ?? ""} />
+        </Field>
+        <div className="flex items-center justify-end gap-2 sm:col-span-2">
+          <Notice msg={save.msg} />
+          <Button type="submit" busy={save.busy === "save"}>
+            Save Profile
+          </Button>
+        </div>
+      </form>
+
+      <div className="flex flex-col gap-2 rounded-xs bg-surface-low p-3">
+        <p className="text-label font-bold text-ink uppercase">Contact persons</p>
+        {list.length ? (
+          list.map((p) => (
+            <div key={p.id} className="flex items-center justify-between gap-2 rounded-xs bg-white p-2 text-body">
+              <span>
+                <b className="text-ink">{p.name}</b> {p.designation && <span className="text-muted">• {p.designation}</span>}
+                <span className="block text-caption text-muted">{[p.email, p.phone, p.mobile].filter(Boolean).join(" • ")}</span>
+              </span>
+              <Button
+                size="sm"
+                variant="danger"
+                aria-label={`Remove ${p.name}`}
+                busy={contacts.busy === p.id}
+                onClick={() =>
+                  contacts.run(
+                    p.id,
+                    async () => (
+                      await call(
+                        api.DELETE("/api/v1/companies/me/contacts/{id}", {
+                          params: { path: { id: p.id } },
+                        }),
+                      ),
+                      await refresh()
+                    ),
+                    "Contact removed.",
+                  )
+                }
+              >
+                Remove
+              </Button>
+            </div>
+          ))
+        ) : (
+          <p className="text-body text-muted">No contact persons yet.</p>
+        )}
+        <form
+          className="grid gap-2 pt-2 sm:grid-cols-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const form = e.currentTarget;
+            const fd = new FormData(form);
+            const g = (k: string) => String(fd.get(k) ?? "").trim() || undefined;
+            contacts.run(
+              "add",
+              async () => {
+                await call(
+                  api.POST("/api/v1/companies/me/contacts", {
+                    body: {
+                      name: g("name")!,
+                      designation: g("designation"),
+                      email: g("email"),
+                      phone: g("phone"),
+                    },
+                  }),
+                );
+                form.reset();
+                await refresh();
+              },
+              "Contact added.",
+            );
+          }}
+        >
+          <Input name="name" required minLength={2} placeholder="Name *" aria-label="Contact name" />
+          <Input name="designation" placeholder="Designation" aria-label="Contact designation" />
+          <Input name="email" type="email" placeholder="Email" aria-label="Contact email" />
+          <Input name="phone" type="tel" placeholder="Phone" aria-label="Contact phone" />
+          <Button type="submit" variant="soft" icon="person_add" busy={contacts.busy === "add"} className="sm:col-span-2">
+            Add Contact
+          </Button>
+        </form>
+        <Notice msg={contacts.msg} />
+      </div>
+    </Modal>
+  );
+}
+
 type FeedbackForm = Json<"/api/v1/feedback", "get">[number];
 function FeedbackDialog({ forms, onClose }: { forms: FeedbackForm[]; onClose: () => void }) {
   const form = forms[0];
@@ -620,10 +991,17 @@ function FeedbackDialog({ forms, onClose }: { forms: FeedbackForm[]; onClose: ()
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    const answers = Object.fromEntries(form.questions.map((q) => [q.id, q.kind === "rating" ? Number(fd.get(q.id)) : q.kind === "yes_no" ? fd.get(q.id) === "yes" : String(fd.get(q.id) ?? "")]));
+    const answers = Object.fromEntries(
+      form.questions.map((q) => [q.id, q.kind === "rating" ? Number(fd.get(q.id)) : q.kind === "yes_no" ? fd.get(q.id) === "yes" : String(fd.get(q.id) ?? "")]),
+    );
     setBusy(true);
     try {
-      await call(api.POST("/api/v1/feedback/{id}", { params: { path: { id: form.id } }, body: { answers } as never }));
+      await call(
+        api.POST("/api/v1/feedback/{id}", {
+          params: { path: { id: form.id } },
+          body: { answers } as never,
+        }),
+      );
       onClose();
     } catch (e) {
       setErr((e as Error).message);
@@ -674,7 +1052,11 @@ function Dispatch() {
     setBusy(true);
     setMsg(null);
     try {
-      await call(api.POST("/api/v1/messages", { body: { subject: f.subject, body: f.body } }));
+      await call(
+        api.POST("/api/v1/messages", {
+          body: { subject: f.subject, body: f.body },
+        }),
+      );
       form.reset();
       setMsg({ tone: "ok", text: "Sent to the T&P cell." });
       thread.mutate();
@@ -781,7 +1163,8 @@ const ROUNDS = [
 ] as const;
 const PERKS = ["Comprehensive Health Insurance (₹5L)", "Relocation Allowance (₹75,000)", "Annual Certifications Reimbursement"];
 
-function PostingStudio({ onClose, onDone }: { onClose: () => void; onDone: () => void }) {
+/** Create a posting, or (with `initial`) edit a draft / returned posting, then (re)submit it for T&P approval. */
+function PostingStudio({ onClose, onDone, initial }: { onClose: () => void; onDone: () => void; initial?: Posting }) {
   const progs = useSWR("programmes", () => call(api.GET("/api/v1/programmes")));
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
@@ -794,28 +1177,43 @@ function PostingStudio({ onClose, onDone }: { onClose: () => void; onDone: () =>
     const programmes = fd.getAll("programmes").map(String);
     if (!programmes.length) return setErr("Pick at least one eligible programme.");
     const perks = fd.getAll("perks").map(String);
-    const ctc = [g("base") && `₹${g("base")} LPA base`, g("variable") && `₹${g("variable")} LPA variable`, ...perks].filter(Boolean).join(" + ");
+    const ctc = initial
+      ? g("ctc_text")
+      : [g("base") && `₹${g("base")} LPA base`, g("variable") && `₹${g("variable")} LPA variable`, ...perks].filter(Boolean).join(" + ");
     setBusy(true);
     setErr("");
     try {
-      const o = await call(
-        api.POST("/api/v1/company/opportunities", {
-          body: {
-            type: g("type") as "job" | "internship",
-            title: g("title"),
-            designation: g("designation") || undefined,
-            location: g("location") || undefined,
-            description: g("description"),
-            expected_hires: g("hires") ? Number(g("hires")) : undefined,
-            ctc_benefits: ctc || undefined,
-            bond_details: g("bond") || undefined,
-            apply_deadline: new Date(g("deadline")).toISOString(),
-            eligibility: { min_cgpa: Number(g("min_cgpa") || 0), programmes, completion_years: [Number(g("batch"))] },
-            selection_process: Object.fromEntries(ROUNDS.map(([k]) => [k, fd.has(k)])) as never,
-          },
+      const body = {
+        type: g("type") as "job" | "internship",
+        title: g("title"),
+        designation: g("designation") || undefined,
+        location: g("location") || undefined,
+        description: g("description"),
+        expected_hires: g("hires") ? Number(g("hires")) : undefined,
+        ctc_benefits: ctc || undefined,
+        bond_details: g("bond") || undefined,
+        apply_deadline: new Date(g("deadline")).toISOString(),
+        eligibility: {
+          min_cgpa: Number(g("min_cgpa") || 0),
+          programmes,
+          completion_years: [Number(g("batch"))],
+        },
+        selection_process: Object.fromEntries(ROUNDS.map(([k]) => [k, fd.has(k)])) as never,
+      };
+      const id = initial
+        ? (await call(
+            api.PATCH("/api/v1/company/opportunities/{id}", {
+              params: { path: { id: initial.id } },
+              body,
+            }),
+          ),
+          initial.id)
+        : (await call(api.POST("/api/v1/company/opportunities", { body }))).id;
+      await call(
+        api.POST("/api/v1/company/opportunities/{id}/submit", {
+          params: { path: { id } },
         }),
       );
-      await call(api.POST("/api/v1/company/opportunities/{id}/submit", { params: { path: { id: o.id } } }));
       onDone();
     } catch (e) {
       setErr((e as Error).message);
@@ -826,12 +1224,18 @@ function PostingStudio({ onClose, onDone }: { onClose: () => void; onDone: () =>
   const label = "text-caption font-semibold tracking-[0.55px] text-muted uppercase";
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-primary/30" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <form onSubmit={submit} role="dialog" aria-modal aria-label="Job & Internship Posting Studio" className="flex h-full w-full max-w-[544px] flex-col bg-white shadow-pop">
+      <form
+        onSubmit={submit}
+        role="dialog"
+        aria-modal
+        aria-label={initial ? "Edit posting" : "Job & Internship Posting Studio"}
+        className="flex h-full w-full max-w-[544px] flex-col bg-white shadow-pop"
+      >
         <div className="flex items-start justify-between gap-3 bg-primary px-5 py-5 text-white">
           <div className="flex gap-3">
             <Icon name="post_add" className="text-[22px]" />
             <div>
-              <h2 className="font-display text-title font-semibold">Job &amp; Internship Posting Studio</h2>
+              <h2 className="font-display text-title font-semibold">{initial ? "Edit & Resubmit Posting" : "Job & Internship Posting Studio"}</h2>
               <p className="text-caption font-semibold text-surface-high">Launch targeted recruitment drives for Tezpur University batches</p>
             </div>
           </div>
@@ -842,10 +1246,16 @@ function PostingStudio({ onClose, onDone }: { onClose: () => void; onDone: () =>
         <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-5">
           <div className="grid grid-cols-[1fr_140px] gap-3">
             <Field label="ROLE PROFILE / JOB TITLE *">
-              <Input name="title" required className="bg-surface-low shadow-none" placeholder="Software Development Engineer - Cloud" />
+              <Input
+                name="title"
+                required
+                defaultValue={initial?.title}
+                className="bg-surface-low shadow-none"
+                placeholder="Software Development Engineer - Cloud"
+              />
             </Field>
             <Field label="TYPE *">
-              <Select name="type" className="bg-surface-low shadow-none">
+              <Select name="type" defaultValue={initial?.type} className="bg-surface-low shadow-none">
                 <option value="job">Full-time Job</option>
                 <option value="internship">Internship</option>
               </Select>
@@ -853,41 +1263,59 @@ function PostingStudio({ onClose, onDone }: { onClose: () => void; onDone: () =>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <Field label="TENTATIVE WORK LOCATION *">
-              <Input name="location" required className="bg-surface-low shadow-none" placeholder="Bangalore / Pune / Remote Hybrid" />
+              <Input
+                name="location"
+                required
+                defaultValue={initial?.location ?? ""}
+                className="bg-surface-low shadow-none"
+                placeholder="Bangalore / Pune / Remote Hybrid"
+              />
             </Field>
             <Field label="DESIGNATION">
-              <Input name="designation" className="bg-surface-low shadow-none" placeholder="Software Engineer" />
+              <Input name="designation" defaultValue={initial?.designation ?? ""} className="bg-surface-low shadow-none" placeholder="Software Engineer" />
             </Field>
           </div>
           <Field label="JOB DESCRIPTION *">
-            <Textarea name="description" required rows={3} className="bg-surface-low shadow-none" />
+            <Textarea name="description" required rows={3} defaultValue={initial?.description} className="bg-surface-low shadow-none" />
           </Field>
           <fieldset className="flex flex-col gap-2 rounded-xs bg-surface-low p-3">
             <legend className="sr-only">Compensation</legend>
             <p className="text-label font-bold text-ink uppercase">Compensation &amp; Benefits Breakdown</p>
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Base Compensation (INR LPA)">
-                <Input name="base" type="number" step="0.1" min="0" placeholder="10.5" />
+            {initial ? (
+              <Field label="CTC & Benefits">
+                <Input name="ctc_text" defaultValue={initial.ctc_benefits ?? ""} />
               </Field>
-              <Field label="Variable / Performance Bonus">
-                <Input name="variable" type="number" step="0.1" min="0" placeholder="1.5" />
-              </Field>
-            </div>
-            <p className="text-label font-semibold text-ink">Additional Perks &amp; Coverage</p>
-            <div className="flex flex-wrap gap-2">
-              {PERKS.map((p) => (
-                <label key={p} className="flex items-center gap-1 rounded-xs bg-white px-2 py-0.5 text-caption font-semibold text-ink">
-                  <input type="checkbox" name="perks" value={p} className="accent-primary" /> {p}
-                </label>
-              ))}
-            </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="Base Compensation (INR LPA)">
+                    <Input name="base" type="number" step="0.1" min="0" placeholder="10.5" />
+                  </Field>
+                  <Field label="Variable / Performance Bonus">
+                    <Input name="variable" type="number" step="0.1" min="0" placeholder="1.5" />
+                  </Field>
+                </div>
+                <p className="text-label font-semibold text-ink">Additional Perks &amp; Coverage</p>
+                <div className="flex flex-wrap gap-2">
+                  {PERKS.map((p) => (
+                    <label key={p} className="flex items-center gap-1 rounded-xs bg-white px-2 py-0.5 text-caption font-semibold text-ink">
+                      <input type="checkbox" name="perks" value={p} className="accent-primary" /> {p}
+                    </label>
+                  ))}
+                </div>
+              </>
+            )}
           </fieldset>
           <div className="grid grid-cols-2 gap-3">
             <Field label="BOND / SERVICE AGREEMENT">
-              <Input name="bond" className="bg-surface-low shadow-none" defaultValue="None (Direct Employment Agreement)" />
+              <Input
+                name="bond"
+                className="bg-surface-low shadow-none"
+                defaultValue={initial ? (initial.bond_details ?? "") : "None (Direct Employment Agreement)"}
+              />
             </Field>
             <Field label="EXPECTED HIRES">
-              <Input name="hires" type="number" min="1" className="bg-surface-low shadow-none" placeholder="25" />
+              <Input name="hires" type="number" min="1" defaultValue={initial?.expected_hires ?? ""} className="bg-surface-low shadow-none" placeholder="25" />
             </Field>
           </div>
           <fieldset className="flex flex-col gap-2 rounded-xs bg-surface-low p-3">
@@ -896,23 +1324,30 @@ function PostingStudio({ onClose, onDone }: { onClose: () => void; onDone: () =>
             <div className="flex flex-wrap gap-2">
               {progs.data?.map((p) => (
                 <label key={p.id} className="flex items-center gap-1 rounded-xs bg-white px-2 py-1 text-label text-ink">
-                  <input type="checkbox" name="programmes" value={p.id} className="accent-primary" /> {p.name}
+                  <input
+                    type="checkbox"
+                    name="programmes"
+                    value={p.id}
+                    defaultChecked={initial?.eligibility.programmes?.includes(p.id)}
+                    className="accent-primary"
+                  />{" "}
+                  {p.name}
                 </label>
               )) ?? <span className="text-body text-muted">Loading programmes…</span>}
             </div>
             <div className="grid grid-cols-3 gap-3">
               <Field label="Minimum Cutoff CGPA">
-                <Input name="min_cgpa" type="number" step="0.1" min="0" max="10" defaultValue="7.5" />
+                <Input name="min_cgpa" type="number" step="0.1" min="0" max="10" defaultValue={initial?.eligibility.min_cgpa ?? 7.5} />
               </Field>
               <Field label="Passing-out Batch *">
-                <Select name="batch" defaultValue={year}>
+                <Select name="batch" defaultValue={initial?.eligibility.completion_years?.[0] ?? year}>
                   {[year, year + 1, year + 2].map((y) => (
                     <option key={y}>{y}</option>
                   ))}
                 </Select>
               </Field>
               <Field label="Apply Deadline *">
-                <Input name="deadline" type="date" required />
+                <Input name="deadline" type="date" required defaultValue={initial?.apply_deadline.slice(0, 10)} />
               </Field>
             </div>
           </fieldset>
@@ -921,12 +1356,16 @@ function PostingStudio({ onClose, onDone }: { onClose: () => void; onDone: () =>
             <div className="grid grid-cols-2 gap-2">
               {ROUNDS.map(([k, l], i) => (
                 <label key={k} className="flex items-center gap-2 text-body-lg text-ink">
-                  <input type="checkbox" name={k} defaultChecked={i < 2} className="size-4 accent-primary" /> {l}
+                  <input type="checkbox" name={k} defaultChecked={initial ? initial.selection_process[k] : i < 2} className="size-4 accent-primary" /> {l}
                 </label>
               ))}
             </div>
           </fieldset>
-          {err && <p role="alert" className="rounded-xs bg-error-container px-3 py-2 text-body text-on-error-container">{err}</p>}
+          {err && (
+            <p role="alert" className="rounded-xs bg-error-container px-3 py-2 text-body text-on-error-container">
+              {err}
+            </p>
+          )}
         </div>
         <div className="flex items-center justify-end gap-2 bg-surface-low px-5 py-3">
           <span className="mr-auto text-caption text-muted">Goes to the T&amp;P cell for approval first.</span>
@@ -934,7 +1373,7 @@ function PostingStudio({ onClose, onDone }: { onClose: () => void; onDone: () =>
             Cancel
           </Button>
           <Button type="submit" busy={busy}>
-            Publish Opening to Students
+            {initial ? "Save & Resubmit for Approval" : "Publish Opening to Students"}
           </Button>
         </div>
       </form>

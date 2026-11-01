@@ -14,7 +14,12 @@ const here = resolve(import.meta.dirname, "..");
 
 const readEnv = (file) =>
   existsSync(file)
-    ? Object.fromEntries(readFileSync(file, "utf8").split("\n").filter((l) => /^\w+=/.test(l)).map((l) => [l.slice(0, l.indexOf("=")), l.slice(l.indexOf("=") + 1)]))
+    ? Object.fromEntries(
+        readFileSync(file, "utf8")
+          .split("\n")
+          .filter((l) => /^\w+=/.test(l))
+          .map((l) => [l.slice(0, l.indexOf("=")), l.slice(l.indexOf("=") + 1)]),
+      )
     : {};
 const backendEnv = readEnv(resolve(here, "../backend/.env"));
 const localFile = resolve(here, ".env.local");
@@ -70,7 +75,10 @@ const step = (s) => console.log("•", s);
 let admin = await req("POST", "/auth/login", { body: { email: ADMIN, password: PW }, ok: ["INVALID_CREDENTIALS"] });
 if (admin.skipped) {
   admin = await req("POST", "/auth/login", { body: { email: ADMIN, password: backendEnv.SEED_ADMIN_PASSWORD } });
-  admin = await req("POST", "/auth/change-password", { token: admin.access_token, body: { current_password: backendEnv.SEED_ADMIN_PASSWORD, new_password: PW } });
+  admin = await req("POST", "/auth/change-password", {
+    token: admin.access_token,
+    body: { current_password: backendEnv.SEED_ADMIN_PASSWORD, new_password: PW },
+  });
   step("admin password set to DEMO_PASSWORD");
 }
 const A = admin.access_token;
@@ -103,7 +111,10 @@ const cse = programmes.find((p) => p.code === "CSB");
 if (!(await req("GET", "/placement-records")).some((r) => r.year === 2024))
   await req("POST", "/admin/placement-records", {
     token: A,
-    body: { year: 2024, data: { placement_rate: 87.4, corporate_partners: 180, highest_ctc_lpa: 21.5, summer_internships: 450, cohort: "Academic Cohort 2023-24" } },
+    body: {
+      year: 2024,
+      data: { placement_rate: 87.4, corporate_partners: 180, highest_ctc_lpa: 21.5, summer_internships: 450, cohort: "Academic Cohort 2023-24" },
+    },
   });
 step(`university + ${programmes.length} programmes`);
 
@@ -120,7 +131,13 @@ const regR = await req("POST", "/auth/register/recruiter", {
     email: RECRUITER,
     password: PW,
     name: "Ritika Menon",
-    company: { name: "Cognizant Technology Solutions", category: "mnc", sector: "IT Services", website: "https://www.cognizant.com", postal_address: "Bengaluru, India" },
+    company: {
+      name: "Cognizant Technology Solutions",
+      category: "mnc",
+      sector: "IT Services",
+      website: "https://www.cognizant.com",
+      postal_address: "Bengaluru, India",
+    },
     contact: { designation: "Campus Hiring Lead", phone: "+918012345678" },
   },
   ok: ["EMAIL_TAKEN"],
@@ -142,10 +159,26 @@ const pdf = new TextEncoder().encode(
 const me = await req("GET", "/students/me", { token: S });
 if (!me.resume_file_id) await req("POST", "/students/me/resume", { token: S, file: { bytes: pdf, type: "application/pdf", name: "cv.pdf" } });
 if (!me.photo_file_id)
-  await req("POST", "/students/me/photo", { token: S, file: { bytes: readFileSync(resolve(here, "public/img/emblem.jpg")), type: "image/jpeg", name: "photo.jpg" } });
+  await req("POST", "/students/me/photo", {
+    token: S,
+    file: { bytes: readFileSync(resolve(here, "public/img/emblem.jpg")), type: "image/jpeg", name: "photo.jpg" },
+  });
 await req("PATCH", "/students/me", {
   token: S,
-  body: { dob: "2003-05-14", cgpa: 8.92, year_of_admission: 2021, year_of_completion: 2026, programme_id: cse.id, department: "Computer Science & Engg.", gender: "Male", category: "General", regional_diversity: "Assam (NE Domicile)", jee_rank: 1420, marks_10: 94.2, marks_12: 92.8 },
+  body: {
+    dob: "2003-05-14",
+    cgpa: 8.92,
+    year_of_admission: 2021,
+    year_of_completion: 2026,
+    programme_id: cse.id,
+    department: "Computer Science & Engg.",
+    gender: "Male",
+    category: "General",
+    regional_diversity: "Assam (NE Domicile)",
+    jee_rank: 1420,
+    marks_10: 94.2,
+    marks_12: 92.8,
+  },
 });
 step("student profile complete");
 
@@ -207,7 +240,12 @@ const notices = (await req("GET", "/noticeboard", { token: S })).data;
 if (!notices.length)
   await req("POST", "/admin/notices", {
     token: A,
-    body: { audience: "students", title: "Interview Protocol Alert", body: "Formal university dress code mandatory for all Technical Interviews at Central Computing Centre. Reporting time: 09:30 AM IST.", email: false },
+    body: {
+      audience: "students",
+      title: "Interview Protocol Alert",
+      body: "Formal university dress code mandatory for all Technical Interviews at Central Computing Centre. Reporting time: 09:30 AM IST.",
+      email: false,
+    },
   });
 step("event + notice");
 console.log(`done. Logins: ${ADMIN} / ${STUDENT} / ${RECRUITER} — password: DEMO_PASSWORD in frontend/.env.local`);

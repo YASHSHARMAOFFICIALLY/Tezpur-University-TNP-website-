@@ -4,17 +4,23 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useState } from "react";
 import { PublicShell } from "@/components/PublicShell";
-import { Button, Eyebrow, Field, Icon, Input } from "@/components/ui";
+import { Button, Eyebrow, Field, Icon, Input, Select } from "@/components/ui";
 import { ApiError, api, call, homeFor, setSession, useSession } from "@/lib/api";
 
-type Mode = "login" | "forgot" | "reset" | "verify";
+type Mode = "login" | "forgot" | "reset" | "verify" | "resubmit";
 
 const TITLES: Record<Mode, [string, string]> = {
   login: ["Sign in to your portal", "Students, recruiters and T&P staff use the same sign-in. You'll land on your own portal."],
   forgot: ["Reset or set your password", "First time here after a CSV import? Enter your TU email and we'll send a 6-digit code."],
   reset: ["Enter the code from your email", "The code expires in a few minutes. Check spam if it hasn't arrived."],
   verify: ["Verify your email", "Enter the 6-digit code we emailed you. After that, the T&P cell approves your account."],
+  resubmit: [
+    "Correct & resubmit your organisation",
+    "The T&P cell returned your registration. Fix the details below and it goes back into their approval queue.",
+  ],
 };
+
+const CATEGORIES = ["mnc", "private", "psu", "govt", "startup", "ngo", "other"] as const;
 
 /** Not in Figma: built in the registration-desk card style (user decision). */
 export default function LoginPage() {
@@ -23,6 +29,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [msg, setMsg] = useState<{ tone: "error" | "ok"; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [password, setPassword] = useState(""); // kept for /auth/resubmit/recruiter, which re-authenticates with it
 
   if (session) redirect(homeFor(session.user.role));
 
@@ -36,6 +43,9 @@ export default function LoginPage() {
       if (err.code === "EMAIL_NOT_VERIFIED") {
         setMode("verify");
         setMsg({ tone: "error", text: "Your email isn't verified yet. Enter the code we sent, or resend it." });
+      } else if (err.code === "ACCOUNT_REJECTED" && mode === "login") {
+        setMode("resubmit");
+        setMsg({ tone: "error", text: `${err.message}. Recruiters can correct their details below; students should contact the T&P cell.` });
       } else setMsg({ tone: "error", text: err.message });
     } finally {
       setBusy(false);
@@ -45,7 +55,30 @@ export default function LoginPage() {
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
-    if (mode === "login") return run(async () => setSession(await call(api.POST("/api/v1/auth/login", { body: { email, password: f.password } }))));
+    if (mode === "login") {
+      setPassword(f.password);
+      return run(async () => setSession(await call(api.POST("/api/v1/auth/login", { body: { email, password: f.password } }))));
+    }
+    if (mode === "resubmit")
+      return run(async () => {
+        await call(
+          api.POST("/api/v1/auth/resubmit/recruiter", {
+            body: {
+              email,
+              password,
+              company: {
+                name: f.company_name,
+                website: f.website || undefined,
+                category: (f.category || undefined) as (typeof CATEGORIES)[number] | undefined,
+                sector: f.sector || undefined,
+                postal_address: f.postal_address || undefined,
+              },
+            },
+          }),
+        );
+        setMode("login");
+        setMsg({ tone: "ok", text: "Resubmitted. Your registration is back in the T&P approval queue; you'll get an email when it's reviewed." });
+      });
     if (mode === "forgot")
       return run(async () => {
         await call(api.POST("/api/v1/auth/forgot-password", { body: { email } }));
@@ -84,14 +117,16 @@ export default function LoginPage() {
             <p className="text-caption font-semibold text-muted">Admin • Student • Recruiter</p>
           </div>
           <p className="text-body text-muted">
-            One sign-in for all three portals. New students and recruiters register from the public page and are verified by the T&amp;P cell before
-            first access.
+            One sign-in for all three portals. New students and recruiters register from the public page and are verified by the T&amp;P cell before first
+            access.
           </p>
           <div className="mt-auto rounded-xs bg-white p-3 shadow-card">
             <Eyebrow className="pb-1">
               <Icon name="verified_user" /> Security advisory
             </Eyebrow>
-            <p className="text-body text-muted">Too many attempts in one minute pause sign-in briefly. If you stay locked out, the T&amp;P cell can unlock your account.</p>
+            <p className="text-body text-muted">
+              Too many attempts in one minute pause sign-in briefly. If you stay locked out, the T&amp;P cell can unlock your account.
+            </p>
           </div>
         </aside>
 
@@ -116,7 +151,15 @@ export default function LoginPage() {
           )}
 
           <Field label="Email *">
-            <Input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@tezu.ac.in" readOnly={mode === "reset" || mode === "verify"} />
+            <Input
+              type="email"
+              required
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@tezu.ac.in"
+              readOnly={mode === "reset" || mode === "verify" || mode === "resubmit"}
+            />
           </Field>
 
           {mode === "login" && (
@@ -128,6 +171,32 @@ export default function LoginPage() {
             <Field label="6-digit code *">
               <Input name="code" inputMode="numeric" pattern="\d{6}" maxLength={6} required autoComplete="one-time-code" />
             </Field>
+          )}
+          {mode === "resubmit" && (
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Organisation Legal Name *">
+                <Input name="company_name" required minLength={2} />
+              </Field>
+              <Field label="Official Website">
+                <Input name="website" type="url" placeholder="https://" />
+              </Field>
+              <Field label="Corporate Category">
+                <Select name="category" defaultValue="">
+                  <option value="">Select</option>
+                  {CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c.toUpperCase()}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label="Industry Sector">
+                <Input name="sector" />
+              </Field>
+              <Field label="Registered Office Address" className="sm:col-span-2">
+                <Input name="postal_address" />
+              </Field>
+            </div>
           )}
           {mode === "reset" && (
             <div className="grid gap-4 sm:grid-cols-2">
@@ -158,7 +227,7 @@ export default function LoginPage() {
               )}
             </div>
             <Button type="submit" busy={busy} size="lg" className="text-body!">
-              {{ login: "Sign in", forgot: "Send code", reset: "Save new password", verify: "Verify email" }[mode]}
+              {{ login: "Sign in", forgot: "Send code", reset: "Save new password", verify: "Verify email", resubmit: "Resubmit for approval" }[mode]}
               <Icon name="arrow_forward" />
             </Button>
           </div>

@@ -2,7 +2,12 @@ const IN = "en-IN";
 
 export const fmtDate = (iso?: string | null, withTime = false) =>
   iso
-    ? new Date(iso).toLocaleString(IN, { day: "numeric", month: "short", year: withTime ? undefined : "numeric", ...(withTime && { hour: "2-digit", minute: "2-digit" }) })
+    ? new Date(iso).toLocaleString(IN, {
+        day: "numeric",
+        month: "short",
+        year: withTime ? undefined : "numeric",
+        ...(withTime && { hour: "2-digit", minute: "2-digit" }),
+      })
     : "—";
 
 /** "in 18 hrs" / "in 3 days" / "closed" */

@@ -10,9 +10,19 @@ import { chromium } from "playwright-core";
 const [who = "guest", path = "/", out = `design/compare/${who}.png`] = process.argv.slice(2);
 const here = resolve(import.meta.dirname, "..");
 const WEB = process.env.WEB ?? "http://localhost:3001";
-const env = (f) => Object.fromEntries(readFileSync(f, "utf8").split("\n").filter((l) => l.includes("=")).map((l) => [l.slice(0, l.indexOf("=")), l.slice(l.indexOf("=") + 1)]));
+const env = (f) =>
+  Object.fromEntries(
+    readFileSync(f, "utf8")
+      .split("\n")
+      .filter((l) => l.includes("="))
+      .map((l) => [l.slice(0, l.indexOf("=")), l.slice(l.indexOf("=") + 1)]),
+  );
 const backend = env(resolve(here, "../backend/.env"));
-const EMAIL = { admin: backend.SEED_ADMIN_EMAIL, student: `csb21045@${backend.STUDENT_EMAIL_DOMAIN || "tezu.ac.in"}`, recruiter: "hr.demo@cognizant-demo.test" };
+const EMAIL = {
+  admin: backend.SEED_ADMIN_EMAIL,
+  student: `csb21045@${backend.STUDENT_EMAIL_DOMAIN || "tezu.ac.in"}`,
+  recruiter: "hr.demo@cognizant-demo.test",
+};
 
 const browser = await chromium.launch({ executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
 const page = await browser.newPage({ viewport: { width: Number(process.env.W ?? 1280), height: 800 } });

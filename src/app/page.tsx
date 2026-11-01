@@ -46,7 +46,12 @@ function BrochureButton({ brochureId, className, children }: { brochureId: strin
       </Link>
     );
   return (
-    <button className={className} disabled={!brochureId} title={brochureId ? undefined : "Brochure not uploaded yet"} onClick={() => brochureId && openFile(brochureId)}>
+    <button
+      className={className}
+      disabled={!brochureId}
+      title={brochureId ? undefined : "Brochure not uploaded yet"}
+      onClick={() => brochureId && openFile(brochureId)}
+    >
       {children}
     </button>
   );
@@ -82,7 +87,10 @@ function Hero({ m, brochureId }: { m: Metrics; brochureId: string | null }) {
             </p>
           </div>
           <div className="flex w-full flex-col gap-2 lg:w-[389px]">
-            <a href="#register" className="flex h-[46px] items-center justify-center gap-2 rounded-xs bg-accent text-card font-semibold text-white shadow-pop hover:brightness-95">
+            <a
+              href="#register"
+              className="flex h-[46px] items-center justify-center gap-2 rounded-xs bg-accent text-card font-semibold text-white shadow-pop hover:brightness-95"
+            >
               Begin Registration <Icon name="arrow_downward" />
             </a>
             <BrochureButton
@@ -100,7 +108,13 @@ function Hero({ m, brochureId }: { m: Metrics; brochureId: string | null }) {
               <p className="flex items-baseline gap-1 pt-1">
                 {unit === "LPA" && <span className="font-display text-title font-semibold text-tertiary-fixed">₹</span>}
                 <span className="font-display text-display tracking-[-0.8px] font-bold text-white">{value}</span>
-                <span className={unit === "LPA" ? "text-body font-semibold text-surface-high uppercase" : "font-display text-title font-semibold text-tertiary-fixed"}>{unit}</span>
+                <span
+                  className={
+                    unit === "LPA" ? "text-body font-semibold text-surface-high uppercase" : "font-display text-title font-semibold text-tertiary-fixed"
+                  }
+                >
+                  {unit}
+                </span>
               </p>
               <p className="pt-0.5 text-body text-surface-high">{sub}</p>
             </div>
@@ -243,4 +257,3 @@ function Directorate() {
     </div>
   );
 }
-

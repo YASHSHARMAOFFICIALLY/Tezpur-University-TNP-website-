@@ -3,80 +3,15 @@
 // Every run uses fresh unique accounts/postings, so it can be re-run. Exit code 1 on the first failed step.
 //
 // usage: node scripts/e2e.mjs [--headed]   (21 steps)
-import { readFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
-import { chromium } from "playwright-core";
+import { ADMIN, DOMAIN, PW, RECRUITER, SEED_STUDENT, WEB, browser, here, login, newPage, otpFor, run, step, summary } from "./e2e-lib.mjs";
 
-const here = resolve(import.meta.dirname, "..");
-const WEB = process.env.WEB ?? "http://localhost:3001";
-const MAILPIT = process.env.MAILPIT ?? "http://localhost:8025";
-const env = (f) => Object.fromEntries(readFileSync(f, "utf8").split("\n").filter((l) => l.includes("=")).map((l) => [l.slice(0, l.indexOf("=")), l.slice(l.indexOf("=") + 1)]));
-const backend = env(resolve(here, "../backend/.env"));
-const PW = env(resolve(here, ".env.local")).DEMO_PASSWORD;
-const DOMAIN = backend.STUDENT_EMAIL_DOMAIN || "tezu.ac.in";
-const ADMIN = backend.SEED_ADMIN_EMAIL;
-const SEED_STUDENT = `csb21045@${DOMAIN}`;
-const RECRUITER = "hr.demo@cognizant-demo.test";
-
-const run = Date.now().toString().slice(-5);
 const NEW_ENROL = `CSB9${run}`;
 const NEW_STUDENT = `${NEW_ENROL.toLowerCase()}@${DOMAIN}`;
 const NEW_PW = `E2e-${run}-pass`;
 const JOB = `E2E Cloud Engineer ${run}`;
-
-const browser = await chromium.launch({ executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", headless: !process.argv.includes("--headed") });
-const results = [];
-const consoleErrors = [];
-
-async function step(name, fn) {
-  const t = Date.now();
-  try {
-    await fn();
-    results.push(["PASS", name, Date.now() - t]);
-    console.log(`PASS  ${name}`);
-  } catch (e) {
-    results.push(["FAIL", name, Date.now() - t]);
-    console.log(`FAIL  ${name}\n      ${String(e.message).split("\n")[0]}`);
-    await browser.close();
-    summary();
-    process.exit(1);
-  }
-}
-function summary() {
-  const fail = results.filter((r) => r[0] === "FAIL").length;
-  console.log(`\n${results.length - fail}/${results.length} steps passed`);
-  if (consoleErrors.length) console.log(`console errors:\n- ${[...new Set(consoleErrors)].join("\n- ")}`);
-}
-
-async function otpFor(email) {
-  for (let i = 0; i < 30; i++) {
-    const r = await fetch(`${MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:"${email}"`)}&limit=1`).then((r) => r.json());
-    const id = r.messages?.[0]?.ID;
-    if (id) {
-      const code = (await fetch(`${MAILPIT}/api/v1/message/${id}`).then((r) => r.json())).Text?.match(/\b(\d{6})\b/)?.[1];
-      if (code) return code;
-    }
-    await new Promise((s) => setTimeout(s, 500));
-  }
-  throw new Error(`no OTP mail for ${email}`);
-}
-
-async function newPage() {
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, acceptDownloads: true });
-  const page = await ctx.newPage();
-  page.on("pageerror", (e) => consoleErrors.push(e.message));
-  page.on("response", (r) => r.status() >= 400 && r.url().includes("/api/") && consoleErrors.push(`${r.status()} ${r.request().method()} ${new URL(r.url()).pathname}`));
-  page.setDefaultTimeout(10_000);
-  return page;
-}
-
-async function login(page, email, password) {
-  await page.goto(`${WEB}/login`);
-  await page.getByLabel("Email *").fill(email);
-  await page.getByLabel("Password *").fill(password);
-  await page.getByRole("button", { name: "Sign in" }).click();
-}
 
 // ---------- guest ----------
 const guest = await newPage();
@@ -169,7 +104,10 @@ await step("approved new student logs in; posting shows ineligible (no CGPA yet)
 });
 await step("new student completes profile (photo + resume upload) and applies", async () => {
   const pdf = resolve(tmpdir(), `e2e-cv-${run}.pdf`);
-  writeFileSync(pdf, "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj 3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n");
+  writeFileSync(
+    pdf,
+    "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj 3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n",
+  );
   await stuNew.getByRole("button", { name: /Edit Profile/ }).click();
   const d = stuNew.getByRole("dialog", { name: "Edit profile" });
   await d.getByLabel(/Coloured Photo/).setInputFiles(resolve(here, "public/img/emblem.jpg"));
@@ -234,7 +172,11 @@ await step("admin publishes results", async () => {
 });
 await step("student sees selection on their card", async () => {
   await stu.reload();
-  await stu.locator("article").filter({ hasText: JOB }).getByText(/Selected • Offer/).waitFor();
+  await stu
+    .locator("article")
+    .filter({ hasText: JOB })
+    .getByText(/Selected • Offer/)
+    .waitFor();
 });
 await step("recruiter sends liaison message", async () => {
   await rec.getByLabel("SUBJECT HEADER").fill(`E2E slot ${run}`);

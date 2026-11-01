@@ -155,8 +155,14 @@ function RecruiterFlow() {
     password: "",
     contact: { designation: "", phone: "" },
   });
-  const co = (k: keyof Recruiter["company"]) => ({ value: d.company[k], onChange: (e: { target: { value: string } }) => setD({ ...d, company: { ...d.company, [k]: e.target.value } }) });
-  const ct = (k: keyof Recruiter["contact"]) => ({ value: d.contact[k], onChange: (e: { target: { value: string } }) => setD({ ...d, contact: { ...d.contact, [k]: e.target.value } }) });
+  const co = (k: keyof Recruiter["company"]) => ({
+    value: d.company[k],
+    onChange: (e: { target: { value: string } }) => setD({ ...d, company: { ...d.company, [k]: e.target.value } }),
+  });
+  const ct = (k: keyof Recruiter["contact"]) => ({
+    value: d.contact[k],
+    onChange: (e: { target: { value: string } }) => setD({ ...d, contact: { ...d.contact, [k]: e.target.value } }),
+  });
 
   async function next(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -251,7 +257,14 @@ function RecruiterFlow() {
                     <Input type="tel" maxLength={20} {...ct("phone")} />
                   </Field>
                   <Field label="Create Password *" hint="At least 8 characters.">
-                    <Input required type="password" minLength={8} autoComplete="new-password" value={d.password} onChange={(e) => setD({ ...d, password: e.target.value })} />
+                    <Input
+                      required
+                      type="password"
+                      minLength={8}
+                      autoComplete="new-password"
+                      value={d.password}
+                      onChange={(e) => setD({ ...d, password: e.target.value })}
+                    />
                   </Field>
                 </>
               )}
@@ -289,7 +302,14 @@ function StudentFlow() {
     try {
       await call(
         api.POST("/api/v1/auth/register/student", {
-          body: { name: f.name, enrolment_no: f.enrolment_no.toUpperCase(), email: f.email, mobile: f.mobile, password: f.password, programme_id: f.programme_id || undefined },
+          body: {
+            name: f.name,
+            enrolment_no: f.enrolment_no.toUpperCase(),
+            email: f.email,
+            mobile: f.mobile,
+            password: f.password,
+            programme_id: f.programme_id || undefined,
+          },
         }),
       );
       setEmail(f.email);
@@ -407,7 +427,14 @@ function VerifyOtp({ email }: { email: string }) {
         </Field>
         {msg.tone === "error" ? <Alert text={msg.text} /> : msg.text && <p className="text-body text-primary">{msg.text}</p>}
         <div className="flex justify-end gap-2 pt-3">
-          <Button type="button" variant="ghost" size="lg" className="text-body!" disabled={busy} onClick={() => act(() => call(api.POST("/api/v1/auth/resend-otp", { body: { email } })), "A new code has been sent.")}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="lg"
+            className="text-body!"
+            disabled={busy}
+            onClick={() => act(() => call(api.POST("/api/v1/auth/resend-otp", { body: { email } })), "A new code has been sent.")}
+          >
             Resend code
           </Button>
           <Button type="submit" size="lg" busy={busy} className="text-body!">

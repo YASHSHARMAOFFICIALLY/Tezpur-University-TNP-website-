@@ -5026,7 +5026,7 @@ export interface paths {
                     };
                     content: {
                         "application/json": {
-                            data: components["schemas"]["StudentProfile"][];
+                            data: components["schemas"]["AdminStudent"][];
                             page: {
                                 cursor: string | null;
                                 has_more: boolean;
@@ -8392,6 +8392,56 @@ export interface components {
             registration_closes_at: string;
             /** @enum {string} */
             status: "draft" | "published" | "cancelled" | "completed";
+        };
+        AdminStudent: {
+            mobile: string | null;
+            gender: string | null;
+            category: string | null;
+            minority: boolean | null;
+            specially_abled: boolean | null;
+            regional_diversity: string | null;
+            jee_rank: number | null;
+            jee_score: number | null;
+            jee_percentile: number | null;
+            gate_qualified: boolean | null;
+            gate_score: number | null;
+            /** Format: uuid */
+            programme_id: string | null;
+            department: string | null;
+            year_of_admission: number | null;
+            year_of_completion: number | null;
+            cgpa: number | null;
+            current_address: string | null;
+            permanent_address: string | null;
+            marks_10: number | null;
+            yop_10: number | null;
+            marks_12: number | null;
+            yop_12: number | null;
+            marks_ug: number | null;
+            yop_ug: number | null;
+            marks_pg: number | null;
+            yop_pg: number | null;
+            other_courses: string | null;
+            professional_interests: string | null;
+            certifications: string | null;
+            /** Format: uri */
+            portfolio_url: string | null;
+            /** Format: uri */
+            linkedin_url: string | null;
+            id: string;
+            enrolment_no: string;
+            /** Format: date-time */
+            dob: string;
+            resume_file_id: string | null;
+            photo_file_id: string | null;
+            /** @enum {string} */
+            academic_standing: "good" | "probation";
+            user: {
+                name: string;
+                email: string;
+                status: string;
+            };
+            user_id: string;
         };
         Company: {
             id: string;

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import useSWR from "swr";
-import { AppShell, type NavItem } from "@/components/AppShell";
+import { AppShell } from "@/components/AppShell";
+import { ADMIN_NAV } from "./nav";
 import { Badge, Button, Card, Empty, Field, Icon, Input, Select, State, cx } from "@/components/ui";
 import { api, call, openFile } from "@/lib/api";
 import type { paths } from "@/lib/api-types";
@@ -10,21 +11,13 @@ import { fmtDate, initialsOf } from "@/lib/format";
 
 type Json<P extends keyof paths> = paths[P] extends { get: { responses: { 200: { content: { "application/json": infer T } } } } } ? T : never;
 
-const NAV: NavItem[] = [
-  { label: "Admin Console", icon: "dashboard", href: "#console" },
-  { label: "Approval Queue", icon: "school", href: "#queue" },
-  { label: "Events & Training", icon: "event", href: "#events" },
-  { label: "Publish Results", icon: "campaign", href: "#results" },
-  { label: "Reports & Analytics", icon: "monitoring", href: "#reports" },
-];
-
 const usePending = () => useSWR("admin/pending", () => call(api.GET("/api/v1/admin/pending")));
 const useOpps = () => useSWR("admin/opportunities", () => call(api.GET("/api/v1/admin/opportunities", { params: { query: { limit: 100 } } })));
 const useCompanies = () => useSWR("admin/companies", () => call(api.GET("/api/v1/admin/companies", { params: { query: { limit: 100 } } })));
 
 export default function AdminPage() {
   return (
-    <AppShell role="admin" nav={NAV} active="#console">
+    <AppShell role="admin" nav={ADMIN_NAV} active="/admin">
       <div className="mx-auto flex max-w-[976px] flex-col gap-5">
         <Header />
         <Stats />
@@ -55,7 +48,9 @@ export default function AdminPage() {
                   <Icon name="thumb_up" />
                 </span>
               </div>
-              <p className="text-body text-muted">112 Feedback surveys logged this semester. Top praised attribute: “Analytical aptitude &amp; professional decorum.”</p>
+              <p className="text-body text-muted">
+                112 Feedback surveys logged this semester. Top praised attribute: “Analytical aptitude &amp; professional decorum.”
+              </p>
             </Card>
           </div>
         </div>
@@ -137,7 +132,15 @@ function Stats() {
           {pending.data?.students.length ?? 0} Pending Audit
         </Badge>
         <span className="relative mt-auto h-1.5 rounded-xl bg-surface-high">
-          <span className="block h-1.5 rounded-xl bg-primary" style={{ width: students.data && pending.data ? `${(students.data.data.length / Math.max(1, students.data.data.length + pending.data.students.length)) * 100}%` : "0%" }} />
+          <span
+            className="block h-1.5 rounded-xl bg-primary"
+            style={{
+              width:
+                students.data && pending.data
+                  ? `${(students.data.data.length / Math.max(1, students.data.data.length + pending.data.students.length)) * 100}%`
+                  : "0%",
+            }}
+          />
         </span>
       </StatCard>
       <StatCard label="Approved Recruiters" icon="handshake">
@@ -221,7 +224,15 @@ function Queue() {
           decide(id, tab === "opportunities" ? "return" : "reject", reason);
         }}
       >
-        <Input autoFocus required minLength={3} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason (sent to user)" className="h-7 w-40 py-1 text-label" />
+        <Input
+          autoFocus
+          required
+          minLength={3}
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder="Reason (sent to user)"
+          className="h-7 w-40 py-1 text-label"
+        />
         <Button size="sm" variant="tertiary" busy={busy === id}>
           Send
         </Button>
@@ -257,20 +268,36 @@ function Queue() {
               role="tab"
               aria-selected={tab === id}
               onClick={() => (setTab(id), setRejecting(null))}
-              className={cx("flex shrink-0 items-center gap-1.5 rounded-t-xs px-3 py-2.5 text-body font-semibold cursor-pointer", tab === id ? "bg-white text-ink" : "text-muted")}
+              className={cx(
+                "flex shrink-0 items-center gap-1.5 rounded-t-xs px-3 py-2.5 text-body font-semibold cursor-pointer",
+                tab === id ? "bg-white text-ink" : "text-muted",
+              )}
             >
               <Icon name={icon} />
               {label}
-              <span className={cx("rounded-xl px-1.5 text-caption font-bold", tab === id ? "bg-accent text-on-accent" : "bg-surface-high text-ink")}>{n ?? "…"}</span>
+              <span className={cx("rounded-xl px-1.5 text-caption font-bold", tab === id ? "bg-accent text-on-accent" : "bg-surface-high text-ink")}>
+                {n ?? "…"}
+              </span>
             </button>
           ))}
         </div>
         <div className="flex items-center gap-2 pb-2 md:pb-0">
           <label className="relative">
             <Icon name="search" className="absolute top-2.5 left-2 text-muted" />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter by Enrollment / Org…" className="h-8 w-56 pl-8 text-body" aria-label="Filter queue" />
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Filter by Enrollment / Org…"
+              className="h-8 w-56 pl-8 text-body"
+              aria-label="Filter queue"
+            />
           </label>
-          <button onClick={exportCsv} disabled={!visible.length} aria-label="Export CSV" className="grid size-8 place-items-center rounded-xs bg-white text-primary shadow-card disabled:opacity-40 cursor-pointer">
+          <button
+            onClick={exportCsv}
+            disabled={!visible.length}
+            aria-label="Export CSV"
+            className="grid size-8 place-items-center rounded-xs bg-white text-primary shadow-card disabled:opacity-40 cursor-pointer"
+          >
             <Icon name="download" />
           </button>
         </div>
@@ -280,17 +307,33 @@ function Queue() {
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2 className="font-display text-title font-bold text-primary">
-              {{ students: "Verification Queue: Academic Records & Resumes", recruiters: "Recruiter KYC & Organisation Audit", opportunities: "Posting Review: JNF / INF Compliance" }[tab]}
+              {
+                {
+                  students: "Verification Queue: Academic Records & Resumes",
+                  recruiters: "Recruiter KYC & Organisation Audit",
+                  opportunities: "Posting Review: JNF / INF Compliance",
+                }[tab]
+              }
             </h2>
             <p className="text-body text-muted">
-              {{ students: "Validate candidate CGPA against official Tezpur University Examination Cell registers.", recruiters: "Confirm corporate identity before granting drive access.", opportunities: "Approve postings to make them visible to eligible students." }[tab]}
+              {
+                {
+                  students: "Validate candidate CGPA against official Tezpur University Examination Cell registers.",
+                  recruiters: "Confirm corporate identity before granting drive access.",
+                  opportunities: "Approve postings to make them visible to eligible students.",
+                }[tab]
+              }
             </p>
           </div>
           <Button size="sm" variant="soft" disabled={!visible.length || !!busy} onClick={batchApprove} className="shrink-0">
             Batch Verify All Filtered ({visible.length})
           </Button>
         </div>
-        {err && <p role="alert" className="rounded-xs bg-error-container px-3 py-2 text-body text-on-error-container">{err}</p>}
+        {err && (
+          <p role="alert" className="rounded-xs bg-error-container px-3 py-2 text-body text-on-error-container">
+            {err}
+          </p>
+        )}
         <div className="overflow-x-auto">
           <State data={d} error={pending.error} retry={() => pending.mutate()} rows={4}>
             {() =>
@@ -300,11 +343,13 @@ function Queue() {
                 <table className="w-full min-w-[820px] text-left text-body">
                   <thead className="bg-surface-low text-caption font-semibold tracking-[0.55px] text-muted uppercase">
                     <tr>
-                      {["Enrollment No", "Candidate Name", "Department", "CGPA", "Backlogs", "Official Email", "Resume Status", "Governance Actions"].map((h, i) => (
-                        <th key={h} className={cx("px-3 py-2", i === 7 && "text-right")}>
-                          {h}
-                        </th>
-                      ))}
+                      {["Enrollment No", "Candidate Name", "Department", "CGPA", "Backlogs", "Official Email", "Resume Status", "Governance Actions"].map(
+                        (h, i) => (
+                          <th key={h} className={cx("px-3 py-2", i === 7 && "text-right")}>
+                            {h}
+                          </th>
+                        ),
+                      )}
                     </tr>
                   </thead>
                   <tbody>
@@ -315,7 +360,9 @@ function Queue() {
                           <td className="px-3 py-3 font-bold">{st.enrolment_no ?? "—"}</td>
                           <td className="px-3 py-3">
                             <span className="flex items-center gap-2">
-                              <span className="grid size-6 shrink-0 place-items-center rounded-xl bg-surface-high text-caption font-bold">{initialsOf(s.name)}</span>
+                              <span className="grid size-6 shrink-0 place-items-center rounded-xl bg-surface-high text-caption font-bold">
+                                {initialsOf(s.name)}
+                              </span>
                               <span className="font-semibold">{s.name}</span>
                             </span>
                           </td>
@@ -327,11 +374,16 @@ function Queue() {
                           <td className="px-3 py-3 text-muted">{s.email}</td>
                           <td className="px-3 py-3">
                             {st.resume_file_id ? (
-                              <button onClick={() => openFile(st.resume_file_id!)} className="flex items-center gap-1 rounded-xs bg-surface-high px-2 py-1 text-caption font-semibold cursor-pointer">
+                              <button
+                                onClick={() => openFile(st.resume_file_id!)}
+                                className="flex items-center gap-1 rounded-xs bg-surface-high px-2 py-1 text-caption font-semibold cursor-pointer"
+                              >
                                 <Icon name="description" /> PDF Valid
                               </button>
                             ) : (
-                              <Badge tone="error" icon="warning">Not uploaded</Badge>
+                              <Badge tone="error" icon="warning">
+                                Not uploaded
+                              </Badge>
                             )}
                           </td>
                           <td className="px-3 py-3">{actions(s.id)}</td>
@@ -523,17 +575,25 @@ function EventCreator() {
           <fieldset className="flex flex-col gap-1.5">
             <legend className="pb-1.5 text-label font-semibold text-ink">Student Fee Policy</legend>
             <label className="flex items-start gap-2 text-body text-muted">
-              <input type="radio" name="fee" checked={!chargeable} onChange={() => setChargeable(false)} className="mt-0.5 accent-primary" /> Non-Chargeable (Free T&amp;P Cell Spons.)
+              <input type="radio" name="fee" checked={!chargeable} onChange={() => setChargeable(false)} className="mt-0.5 accent-primary" /> Non-Chargeable
+              (Free T&amp;P Cell Spons.)
             </label>
             <label className="flex items-start gap-2 text-body text-muted">
-              <input type="radio" name="fee" checked={chargeable} onChange={() => setChargeable(true)} className="mt-0.5 accent-primary" /> Chargeable (₹150 Cert. Fee)
+              <input type="radio" name="fee" checked={chargeable} onChange={() => setChargeable(true)} className="mt-0.5 accent-primary" /> Chargeable (₹150
+              Cert. Fee)
             </label>
           </fieldset>
           <Field label="RSVP Cut-off Date">
             <Input name="rsvp" type="date" required className={field} />
           </Field>
         </div>
-        {msg && <p className={cx("rounded-xs px-3 py-2 text-body", msg.tone === "ok" ? "bg-primary-fixed text-primary" : "bg-error-container text-on-error-container")}>{msg.text}</p>}
+        {msg && (
+          <p
+            className={cx("rounded-xs px-3 py-2 text-body", msg.tone === "ok" ? "bg-primary-fixed text-primary" : "bg-error-container text-on-error-container")}
+          >
+            {msg.text}
+          </p>
+        )}
         <div className="flex justify-end gap-2">
           <Button type="reset" variant="soft" onClick={() => (setChargeable(false), setMsg(null))}>
             Clear Draft
@@ -562,7 +622,9 @@ function EventCreator() {
 type AdminEvent = Json<"/api/v1/admin/events">["data"][number];
 function EventRow({ ev, reload }: { ev: AdminEvent; reload: () => void }) {
   const [open, setOpen] = useState(false);
-  const regs = useSWR(open ? ["regs", ev.id] : null, () => call(api.GET("/api/v1/admin/events/{id}/registrations", { params: { path: { id: ev.id }, query: { limit: 100 } } })));
+  const regs = useSWR(open ? ["regs", ev.id] : null, () =>
+    call(api.GET("/api/v1/admin/events/{id}/registrations", { params: { path: { id: ev.id }, query: { limit: 100 } } })),
+  );
   const [busy, setBusy] = useState("");
   async function move(kind: "publish" | "complete" | "cancel") {
     setBusy(kind);
@@ -622,16 +684,38 @@ function EventRow({ ev, reload }: { ev: AdminEvent; reload: () => void }) {
                   <ul className="flex flex-col gap-1 text-body">
                     {data.map((r) => (
                       <li key={r.id} className="flex justify-between">
-                        <span>{r.student.user.name} • {r.student.enrolment_no}</span>
+                        <span>
+                          {r.student.user.name} • {r.student.enrolment_no}
+                        </span>
                         <Badge className="capitalize">{r.status}</Badge>
                       </li>
                     ))}
                   </ul>
                   <div className="flex gap-1 pt-2">
-                    <Button size="sm" variant="soft" busy={busy === "confirm"} onClick={() => mark("confirm", data.filter((r) => r.status === "registered").map((r) => r.id))}>
+                    <Button
+                      size="sm"
+                      variant="soft"
+                      busy={busy === "confirm"}
+                      onClick={() =>
+                        mark(
+                          "confirm",
+                          data.filter((r) => r.status === "registered").map((r) => r.id),
+                        )
+                      }
+                    >
                       Confirm all registered
                     </Button>
-                    <Button size="sm" variant="soft" busy={busy === "attend"} onClick={() => mark("attend", data.filter((r) => r.status === "confirmed").map((r) => r.id))}>
+                    <Button
+                      size="sm"
+                      variant="soft"
+                      busy={busy === "attend"}
+                      onClick={() =>
+                        mark(
+                          "attend",
+                          data.filter((r) => r.status === "confirmed").map((r) => r.id),
+                        )
+                      }
+                    >
                       Mark confirmed as attended
                     </Button>
                   </div>
@@ -723,11 +807,28 @@ function PublishResults() {
                   <Icon name="check_box" className="text-primary" /> Update year-wise placement report
                 </li>
               </ul>
-              {msg && <p className={cx("rounded-xs px-3 py-2 text-body", msg.tone === "ok" ? "bg-primary-fixed text-primary" : "bg-error-container text-on-error-container")}>{msg.text}</p>}
+              {msg && (
+                <p
+                  className={cx(
+                    "rounded-xs px-3 py-2 text-body",
+                    msg.tone === "ok" ? "bg-primary-fixed text-primary" : "bg-error-container text-on-error-container",
+                  )}
+                >
+                  {msg.text}
+                </p>
+              )}
               <Button variant="soft" icon="group_add" busy={busy === "release"} disabled={!count("applied")} onClick={() => act("release")}>
                 Release {count("applied")} Applicant(s) to Recruiter
               </Button>
-              <Button variant="tertiary" icon="send" busy={busy === "publish"} disabled={!count("shortlisted") || drive.status === "closed"} title="Publishes the selections the recruiter submitted" onClick={() => act("publish")} className="py-2.5">
+              <Button
+                variant="tertiary"
+                icon="send"
+                busy={busy === "publish"}
+                disabled={!count("shortlisted") || drive.status === "closed"}
+                title="Publishes the selections the recruiter submitted"
+                onClick={() => act("publish")}
+                className="py-2.5"
+              >
                 Execute Select Rollout &amp; Notify Candidates
               </Button>
             </>

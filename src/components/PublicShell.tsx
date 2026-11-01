@@ -38,7 +38,10 @@ export function PublicShell({ active = "/", children }: { active?: string; child
               <Link
                 key={p.href}
                 href={p.href}
-                className={cx("rounded-xs px-2 py-0.5 text-caption font-semibold", p.href === "/" ? "text-white" : "text-on-primary-container hover:text-white")}
+                className={cx(
+                  "rounded-xs px-2 py-0.5 text-caption font-semibold",
+                  p.href === "/" ? "text-white" : "text-on-primary-container hover:text-white",
+                )}
               >
                 {p.label}
               </Link>
@@ -70,7 +73,9 @@ export function PublicShell({ active = "/", children }: { active?: string; child
           <div className="flex items-center gap-3">
             {session ? (
               <Link href={homeFor(session.user.role)} className="flex h-12 items-center gap-2 rounded-xs bg-surface-low py-1 pr-2 pl-2">
-                <span className="grid size-8 place-items-center rounded-xl bg-primary-container text-label font-bold text-white">{initials(session.user.name)}</span>
+                <span className="grid size-8 place-items-center rounded-xl bg-primary-container text-label font-bold text-white">
+                  {initials(session.user.name)}
+                </span>
                 <span className="hidden sm:block">
                   <span className="block text-label leading-3 font-semibold text-ink">{session.user.name}</span>
                   <span className="text-caption font-semibold text-muted">Open my portal</span>
@@ -101,8 +106,22 @@ export function PublicShell({ active = "/", children }: { active?: string; child
               Training and Placement Cell, Napaam, Sonitpur, Assam - 784028. Fostering industry-academia synergy and career progression.
             </p>
           </div>
-          <FooterCol title="Quick Portals" items={[["Active Placement Drives", "/student#placements"], ["Summer Internships 2024-25", "/student#internships"], ["Corporate Registration (JNF/INF)", "/#register"]]} />
-          <FooterCol title="Institutional Resources" items={[["Placement Brochure PDF", "/#brochure"], ["Academic Demographics & NIRF", "/#schools"], ["Skill Training Modules", "/student#training"]]} />
+          <FooterCol
+            title="Quick Portals"
+            items={[
+              ["Active Placement Drives", "/student#placements"],
+              ["Summer Internships 2024-25", "/student#internships"],
+              ["Corporate Registration (JNF/INF)", "/#register"],
+            ]}
+          />
+          <FooterCol
+            title="Institutional Resources"
+            items={[
+              ["Placement Brochure PDF", "/#brochure"],
+              ["Academic Demographics & NIRF", "/#schools"],
+              ["Skill Training Modules", "/student#training"],
+            ]}
+          />
           <div className="flex flex-col gap-2">
             <p className="text-card font-semibold text-white">Office Contacts</p>
             <p className="text-body">

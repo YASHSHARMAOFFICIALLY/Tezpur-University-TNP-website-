@@ -1,17 +1,13 @@
 "use client";
 
-import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
+import { useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
 import { ApiError } from "@/lib/api";
 
 const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(" ");
 
 export function Icon({ name, className, filled }: { name: string; className?: string; filled?: boolean }) {
   return (
-    <span
-      aria-hidden
-      className={cx("icon select-none", className)}
-      style={filled ? { fontVariationSettings: "'FILL' 1" } : undefined}
-    >
+    <span aria-hidden className={cx("icon select-none", className)} style={filled ? { fontVariationSettings: "'FILL' 1" } : undefined}>
       {name}
     </span>
   );
@@ -209,3 +205,89 @@ export const initials = (name: string) =>
     .toUpperCase();
 
 export { cx };
+
+/** busy/message state for one-off actions: run("key", fn, "Done.") */
+export function useRun() {
+  const [busy, setBusy] = useState("");
+  const [msg, setMsg] = useState<{ tone: "ok" | "err"; text: string } | null>(null);
+  async function run(key: string, fn: () => Promise<unknown>, ok?: string) {
+    setBusy(key);
+    setMsg(null);
+    try {
+      await fn();
+      if (ok) setMsg({ tone: "ok", text: ok });
+      return true;
+    } catch (e) {
+      setMsg({ tone: "err", text: e instanceof Error ? e.message : "Something went wrong." });
+      return false;
+    } finally {
+      setBusy("");
+    }
+  }
+  return { busy, msg, setMsg, run };
+}
+
+export function Notice({ msg }: { msg: { tone: "ok" | "err"; text: string } | null }) {
+  if (!msg) return null;
+  return (
+    <p
+      role={msg.tone === "err" ? "alert" : "status"}
+      className={cx("rounded-xs px-3 py-2 text-body", msg.tone === "ok" ? "bg-primary-fixed text-primary" : "bg-error-container text-on-error-container")}
+    >
+      {msg.text}
+    </p>
+  );
+}
+
+export function Modal({ title, onClose, children, wide }: { title: string; onClose: () => void; children: ReactNode; wide?: boolean }) {
+  return (
+    <div
+      role="dialog"
+      aria-modal
+      aria-label={title}
+      className="fixed inset-0 z-50 grid place-items-center bg-primary/40 p-4"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className={cx("flex max-h-[90vh] w-full flex-col gap-4 overflow-y-auto rounded-lg bg-white p-6 shadow-pop", wide ? "max-w-2xl" : "max-w-lg")}>
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-title font-semibold text-primary">{title}</h2>
+          <button onClick={onClose} aria-label="Close" className="text-muted cursor-pointer">
+            <Icon name="close" />
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/** Page heading used by the admin sub-pages, in the console's header style. */
+export function PageHead({ eyebrow, title, sub, children }: { eyebrow: string; title: string; sub: string; children?: ReactNode }) {
+  return (
+    <div className="flex flex-col justify-between gap-3 pb-1 md:flex-row md:items-end">
+      <div>
+        <p className="flex items-center gap-1 text-body-lg tracking-[0.8px] text-muted uppercase">
+          <span className="size-2 rounded-xl bg-accent" /> {eyebrow}
+        </p>
+        <h1 className="pt-1 font-display text-headline font-bold text-primary">{title}</h1>
+        <p className="text-[14px] leading-5 text-muted">{sub}</p>
+      </div>
+      {children && <div className="flex flex-wrap gap-2">{children}</div>}
+    </div>
+  );
+}
+
+export function SectionTitle({ icon, title, sub, children }: { icon: string; title: string; sub?: string; children?: ReactNode }) {
+  return (
+    <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+      <div className="flex gap-2">
+        <Icon name={icon} className="pt-0.5 text-[20px] text-primary" />
+        <div>
+          <h2 className="font-display text-title font-semibold text-primary">{title}</h2>
+          {sub && <p className="text-body text-muted">{sub}</p>}
+        </div>
+      </div>
+      {children && <div className="flex flex-wrap items-center gap-2">{children}</div>}
+    </div>
+  );
+}

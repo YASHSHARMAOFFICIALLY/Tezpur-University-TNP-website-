@@ -114,13 +114,23 @@ function ProfileCard() {
                 <Photo id={s.photo_file_id} name={s.user.name} />
                 <div className="flex flex-col gap-1">
                   <div className="flex flex-wrap gap-1">
-                    <Badge tone="soft" className="rounded-xl uppercase">Enrolment: {s.enrolment_no}</Badge>
+                    <Badge tone="soft" className="rounded-xl uppercase">
+                      Enrolment: {s.enrolment_no}
+                    </Badge>
                     {s.academic_standing === "probation" ? (
-                      <Badge tone="error" icon="block" className="rounded-xl">Academic Probation</Badge>
+                      <Badge tone="error" icon="block" className="rounded-xl">
+                        Academic Probation
+                      </Badge>
                     ) : (
-                      <Badge tone="info" icon="verified" className="rounded-xl bg-primary/10">TPO Verified Profile</Badge>
+                      <Badge tone="info" icon="verified" className="rounded-xl bg-primary/10">
+                        TPO Verified Profile
+                      </Badge>
                     )}
-                    {s.user.status === "alumni" && <Badge tone="warn" className="rounded-xl">Alumnus • Read only</Badge>}
+                    {s.user.status === "alumni" && (
+                      <Badge tone="warn" className="rounded-xl">
+                        Alumnus • Read only
+                      </Badge>
+                    )}
                   </div>
                   <h1 className="font-display text-headline font-bold text-primary">{s.user.name}</h1>
                   <p className="max-w-[260px] text-body-lg leading-5 text-muted sm:max-w-none">
@@ -137,11 +147,16 @@ function ProfileCard() {
                   </div>
                   <div className="flex items-center gap-3 pt-2">
                     {s.resume_file_id ? (
-                      <button onClick={() => openFile(s.resume_file_id!)} className="flex items-center gap-1 rounded-xs bg-surface-high px-2 py-1 text-label font-semibold text-primary cursor-pointer">
+                      <button
+                        onClick={() => openFile(s.resume_file_id!)}
+                        className="flex items-center gap-1 rounded-xs bg-surface-high px-2 py-1 text-label font-semibold text-primary cursor-pointer"
+                      >
                         <Icon name="picture_as_pdf" /> Verified CV.pdf
                       </button>
                     ) : (
-                      <Badge tone="error" icon="warning">Resume not uploaded</Badge>
+                      <Badge tone="error" icon="warning">
+                        Resume not uploaded
+                      </Badge>
                     )}
                     {s.linkedin_url && (
                       <a href={s.linkedin_url} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="text-muted">
@@ -226,7 +241,13 @@ function EditProfile({ s, programmes, onClose }: { s: Profile; programmes: Progr
   const f = "bg-surface-low shadow-none";
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-primary/30" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <form onSubmit={submit} role="dialog" aria-modal aria-label="Edit profile" className="flex h-full w-full max-w-[544px] flex-col bg-white text-left shadow-pop">
+      <form
+        onSubmit={submit}
+        role="dialog"
+        aria-modal
+        aria-label="Edit profile"
+        className="flex h-full w-full max-w-[544px] flex-col bg-white text-left shadow-pop"
+      >
         <div className="flex items-start justify-between bg-primary px-5 py-5 text-white">
           <div>
             <h2 className="font-display text-title font-semibold">Edit Profile &amp; Documents</h2>
@@ -295,7 +316,11 @@ function EditProfile({ s, programmes, onClose }: { s: Profile; programmes: Progr
           <Field label="LinkedIn URL" className="col-span-2">
             <Input name="linkedin_url" type="url" defaultValue={s.linkedin_url ?? ""} className={f} />
           </Field>
-          {err && <p role="alert" className="col-span-2 rounded-xs bg-error-container px-3 py-2 text-body text-on-error-container">{err}</p>}
+          {err && (
+            <p role="alert" className="col-span-2 rounded-xs bg-error-container px-3 py-2 text-body text-on-error-container">
+              {err}
+            </p>
+          )}
         </div>
         <div className="flex justify-end gap-2 bg-surface-low px-5 py-3">
           <Button type="button" variant="ghost" onClick={onClose}>
@@ -349,7 +374,14 @@ function Tracker() {
               {active.length > 1 && (
                 <div className="flex flex-wrap gap-1">
                   {active.map((x, i) => (
-                    <button key={x.id} onClick={() => setPick(i)} className={cx("rounded-xs px-2 py-0.5 text-caption font-semibold cursor-pointer", i === pick ? "bg-primary text-white" : "bg-surface-low text-muted")}>
+                    <button
+                      key={x.id}
+                      onClick={() => setPick(i)}
+                      className={cx(
+                        "rounded-xs px-2 py-0.5 text-caption font-semibold cursor-pointer",
+                        i === pick ? "bg-primary text-white" : "bg-surface-low text-muted",
+                      )}
+                    >
                       {x.opportunity.company.name}
                     </button>
                   ))}
@@ -463,7 +495,9 @@ function Opportunities() {
               {() =>
                 list
                   .filter((o) => o.type === tab)
-                  .map((o) => <OppCard key={o.id} o={o} app={apps.data?.data.find((a) => a.opportunity.id === o.id)} onApplied={() => (apps.mutate(), opps.mutate())} />)
+                  .map((o) => (
+                    <OppCard key={o.id} o={o} app={apps.data?.data.find((a) => a.opportunity.id === o.id)} onApplied={() => (apps.mutate(), opps.mutate())} />
+                  ))
               }
             </State>
             <ClosedApps apps={apps.data?.data.filter((a) => a.opportunity.type === tab && !list.some((o) => o.id === a.opportunity.id)) ?? []} />
@@ -495,7 +529,12 @@ function OppCard({ o, app, onApplied }: { o: Opp; app?: App; onApplied: () => vo
   }
 
   return (
-    <article className={cx("flex flex-col justify-between gap-3 rounded-lg p-3 shadow-card sm:flex-row sm:items-center", !eligible && !app ? "bg-surface-low/70 opacity-90" : "bg-white")}>
+    <article
+      className={cx(
+        "flex flex-col justify-between gap-3 rounded-lg p-3 shadow-card sm:flex-row sm:items-center",
+        !eligible && !app ? "bg-surface-low/70 opacity-90" : "bg-white",
+      )}
+    >
       <div className="flex gap-3">
         <span
           className={cx(
@@ -540,7 +579,9 @@ function OppCard({ o, app, onApplied }: { o: Opp; app?: App; onApplied: () => vo
           </>
         ) : (
           <>
-            <Badge tone="error" icon="warning">Ineligible: {o.my_eligibility.reasons.map((r) => reasonText(r)).join("; ")}</Badge>
+            <Badge tone="error" icon="warning">
+              Ineligible: {o.my_eligibility.reasons.map((r) => reasonText(r)).join("; ")}
+            </Badge>
           </>
         )}
         {o.jd_file_id && (
@@ -619,7 +660,11 @@ function EventList({ data, error, retry }: { data?: Ev[]; error?: unknown; retry
                 </div>
               </div>
               <div className="flex shrink-0 flex-col items-start gap-1 sm:items-end">
-                {reg && <Badge tone="info" className="capitalize">{reg.status}</Badge>}
+                {reg && (
+                  <Badge tone="info" className="capitalize">
+                    {reg.status}
+                  </Badge>
+                )}
                 {reg && open ? (
                   <Button variant="ghost" busy={busy === e.id} onClick={() => act(e.id, "cancel-registration")}>
                     Cancel Registration
@@ -788,15 +833,16 @@ function Helpdesk() {
       <h2 className="flex gap-2 font-display text-title font-semibold text-primary">
         <Icon name="support_agent" className="pt-1" /> T&amp;P Helpdesk &amp; Student Coordinator
       </h2>
-      <p className="text-body text-muted">
-        Facing scheduling conflicts with university end-term labs or drive interviews? Submit instant emergency token.
-      </p>
+      <p className="text-body text-muted">Facing scheduling conflicts with university end-term labs or drive interviews? Submit instant emergency token.</p>
       <div className="flex items-center justify-between gap-2 rounded-xs bg-surface-low p-2">
         <div>
           <p className="text-body font-semibold text-ink">TPO Cell North Wing</p>
           <p className="text-caption font-semibold text-muted">Extension: +91 3712 273005</p>
         </div>
-        <a href="mailto:adtp@tezu.ernet.in?subject=Drive%20scheduling%20dispute" className="rounded-xs bg-primary px-2 py-1 text-label font-semibold text-white">
+        <a
+          href="mailto:adtp@tezu.ernet.in?subject=Drive%20scheduling%20dispute"
+          className="rounded-xs bg-primary px-2 py-1 text-label font-semibold text-white"
+        >
           Raise Dispute
         </a>
       </div>

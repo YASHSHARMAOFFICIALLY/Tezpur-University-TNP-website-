@@ -54,7 +54,7 @@ export function AppShell({ role, nav, active, children }: { role: Role; nav: Nav
         </div>
         <nav className="flex flex-1 flex-col gap-1 px-2">
           {nav.map((n) => (
-            <a
+            <Link
               key={n.href}
               href={n.href}
               className={cx(
@@ -64,7 +64,7 @@ export function AppShell({ role, nav, active, children }: { role: Role; nav: Nav
             >
               <Icon name={n.icon} filled={active === n.href} />
               {n.label}
-            </a>
+            </Link>
           ))}
         </nav>
         <div className="px-3 pt-2">
@@ -111,9 +111,13 @@ export function AppShell({ role, nav, active, children }: { role: Role; nav: Nav
       {/* below lg the aside is hidden: same links as a scroll strip */}
       <nav className="flex gap-1 overflow-x-auto bg-surface-low px-4 py-2 lg:hidden">
         {nav.map((n) => (
-          <a key={n.href} href={n.href} className={cx("shrink-0 rounded-xs px-3 py-1 text-body", active === n.href ? "bg-primary-container text-white" : "text-muted")}>
+          <Link
+            key={n.href}
+            href={n.href}
+            className={cx("shrink-0 rounded-xs px-3 py-1 text-body", active === n.href ? "bg-primary-container text-white" : "text-muted")}
+          >
             {n.label}
-          </a>
+          </Link>
         ))}
       </nav>
 
@@ -129,7 +133,9 @@ function NoticeBell() {
     <a href="#notices" aria-label={`${n} notices`} className="relative px-1 pt-1 pb-2.5 text-muted">
       <Icon name="notifications" className="text-[18px]" />
       {n > 0 && (
-        <span className="absolute top-0 -right-1 grid size-4 place-items-center rounded-xl bg-tertiary text-[10px] leading-none font-bold text-white">{n > 9 ? "9+" : n}</span>
+        <span className="absolute top-0 -right-1 grid size-4 place-items-center rounded-xl bg-tertiary text-[10px] leading-none font-bold text-white">
+          {n > 9 ? "9+" : n}
+        </span>
       )}
     </a>
   );
