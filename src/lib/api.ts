@@ -124,6 +124,21 @@ export async function call<T>(p: Promise<{ data?: T; error?: unknown; response: 
   throw new ApiError(e?.code ?? "INTERNAL", (e?.message ?? `Request failed (${res.response.status})`) + reason, e?.details);
 }
 
+type Page<T> = { data: T[]; page: { cursor: string | null; has_more: boolean } };
+
+/** Follow the backend's cursor until the list ends; a single page silently drops every row after the limit. */
+export async function listAll<T>(fetchPage: (cursor?: string) => Promise<Page<T>>, maxPages = 50): Promise<{ data: T[] }> {
+  const data: T[] = [];
+  let cursor: string | undefined;
+  for (let i = 0; i < maxPages; i++) {
+    const p = await fetchPage(cursor);
+    data.push(...p.data);
+    if (!p.page.has_more || !p.page.cursor) return { data };
+    cursor = p.page.cursor;
+  }
+  throw new ApiError("INTERNAL", "This list is too long to load in full. Contact the T&P cell.");
+}
+
 /** Multipart upload with one `file` field, as every upload endpoint expects. */
 export const fileBody = (file: File) => {
   const fd = new FormData();

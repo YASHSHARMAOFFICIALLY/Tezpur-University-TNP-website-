@@ -14,6 +14,13 @@ const NEW_PW = `E2e-${run}-pass`;
 const JOB = `E2E Cloud Engineer ${run}`;
 const NEW_NAME = "E2E Test Student";
 
+// The backend pages with real cursors; one row per page proves the UI follows them instead of stopping at page one.
+const onePerPage = (r) => {
+  const u = new URL(r.request().url());
+  u.searchParams.set("limit", "1");
+  return r.continue({ url: u.toString() });
+};
+
 // ---------- guest ----------
 const guest = await newPage();
 await step("public page renders live programmes + metrics", async () => {
@@ -194,16 +201,19 @@ await step("seeded student applies to new posting (one-click)", async () => {
 });
 
 // ---------- release -> shortlist -> interview -> results -> publish ----------
-await step("admin releases applicants to recruiter", async () => {
+await step("admin releases applicants to recruiter (counts span every page)", async () => {
+  await adm.route(/\/api\/v1\/admin\/opportunities\/[^/]+\/applications/, onePerPage);
   await adm.reload();
   await adm.getByLabel("Select Concluded Drive").selectOption({ label: `Cognizant Technology Solutions - ${JOB}` });
-  await adm.getByRole("button", { name: /Release \d+ Applicant/ }).click();
+  await adm.getByRole("button", { name: /Release 2 Applicant/ }).click();
   await adm.getByText("Applicants released to the recruiter.").waitFor();
 });
-await step("recruiter sees every released applicant by default, CGPA below 6 included", async () => {
+await step("recruiter sees every released applicant by default (all pages, CGPA below 6 included)", async () => {
+  await rec.route(/\/api\/v1\/company\/opportunities\/[^/]+\/applicants/, onePerPage);
   await rec.reload();
   await rec.getByLabel("Choose drive").selectOption({ label: `${JOB} (Live to students)` });
   await rec.getByLabel(`Select ${NEW_NAME}`).waitFor();
+  await rec.getByLabel("Select Priyanshu Sharma").waitFor();
 });
 await step("recruiter selection is scoped to the drive and the visible rows", async () => {
   const pick = rec.getByLabel("Choose drive");

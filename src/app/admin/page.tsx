@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { AppShell } from "@/components/AppShell";
 import { ADMIN_NAV } from "./nav";
 import { Badge, Button, Card, Empty, Field, Icon, Input, Notice, Select, State, cx, useRun } from "@/components/ui";
-import { api, call, openFile } from "@/lib/api";
+import { api, call, listAll, openFile } from "@/lib/api";
 import type { paths } from "@/lib/api-types";
 import { fmtDate, initialsOf } from "@/lib/format";
 
@@ -738,7 +738,9 @@ function EventRow({ ev, reload }: { ev: AdminEvent; reload: () => void }) {
 }
 
 function PublishResults() {
-  const opps = useOpps();
+  const opps = useSWR("admin/opportunities/all", () =>
+    listAll((cursor) => call(api.GET("/api/v1/admin/opportunities", { params: { query: { limit: 100, cursor } } }))),
+  );
   const companies = useCompanies();
   const [id, setId] = useState("");
   const [busy, setBusy] = useState("");
@@ -746,7 +748,7 @@ function PublishResults() {
   const drives = opps.data?.data.filter((o) => o.status === "approved" || o.status === "closed") ?? [];
   const drive = drives.find((o) => o.id === id) ?? drives[0];
   const apps = useSWR(drive ? ["admin-apps", drive.id] : null, () =>
-    call(api.GET("/api/v1/admin/opportunities/{id}/applications", { params: { path: { id: drive!.id }, query: { limit: 100 } } })),
+    listAll((cursor) => call(api.GET("/api/v1/admin/opportunities/{id}/applications", { params: { path: { id: drive!.id }, query: { limit: 100, cursor } } }))),
   );
   const coName = (cid: string) => companies.data?.data.find((c) => c.id === cid)?.name ?? "Company";
   const count = (s: string) => apps.data?.data.filter((a) => a.status === s).length ?? 0;

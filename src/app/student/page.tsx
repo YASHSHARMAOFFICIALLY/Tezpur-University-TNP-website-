@@ -4,7 +4,7 @@ import { useState } from "react";
 import useSWR, { mutate } from "swr";
 import { AppShell, type NavItem } from "@/components/AppShell";
 import { Badge, Button, Card, Empty, Field, Icon, Input, Select, State, Textarea, cx } from "@/components/ui";
-import { api, call, fileBody, fileUrl, openFile, type ApiError } from "@/lib/api";
+import { api, call, fileBody, fileUrl, listAll, openFile, type ApiError } from "@/lib/api";
 import type { components } from "@/lib/api-types";
 import { APP_STATUS, fmtDate, initialsOf, reasonText, timeLeft } from "@/lib/format";
 
@@ -24,7 +24,8 @@ const NAV: NavItem[] = [
 ];
 
 const useProfile = () => useSWR("students/me", () => call(api.GET("/api/v1/students/me")));
-const useApps = () => useSWR("applications/mine", () => call(api.GET("/api/v1/applications/mine", { params: { query: { limit: 100 } } })));
+const useApps = () =>
+  useSWR("applications/mine", () => listAll((cursor) => call(api.GET("/api/v1/applications/mine", { params: { query: { limit: 100, cursor } } }))));
 
 export default function StudentPage() {
   return (
@@ -451,7 +452,7 @@ type TabId = "job" | "internship" | "events";
 
 function Opportunities() {
   const [tab, setTab] = useState<TabId>("job");
-  const opps = useSWR("opportunities", () => call(api.GET("/api/v1/opportunities", { params: { query: { limit: 100 } } })));
+  const opps = useSWR("opportunities", () => listAll((cursor) => call(api.GET("/api/v1/opportunities", { params: { query: { limit: 100, cursor } } }))));
   const events = useSWR("events", () => call(api.GET("/api/v1/events", { params: { query: { limit: 100 } } })));
   const apps = useApps();
   const list = opps.data?.data ?? [];

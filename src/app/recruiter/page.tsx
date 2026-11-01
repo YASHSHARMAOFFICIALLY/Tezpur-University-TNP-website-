@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import useSWR from "swr";
 import { AppShell, type NavItem } from "@/components/AppShell";
 import { Badge, Button, Card, Empty, Field, Icon, Input, Modal, Notice, Select, State, Textarea, cx, useRun, type Tone } from "@/components/ui";
-import { api, call, fileBody, openFile } from "@/lib/api";
+import { api, call, fileBody, listAll, openFile } from "@/lib/api";
 import type { paths } from "@/lib/api-types";
 import { fmtDate, initialsOf } from "@/lib/format";
 
@@ -49,22 +49,14 @@ const STAGE_LABEL: Record<Applicant["status"], string> = {
 
 export default function RecruiterPage() {
   const postings = useSWR("company/opportunities", () =>
-    call(
-      api.GET("/api/v1/company/opportunities", {
-        params: { query: { limit: 100 } },
-      }),
-    ),
+    listAll((cursor) => call(api.GET("/api/v1/company/opportunities", { params: { query: { limit: 100, cursor } } }))),
   );
   const [pick, setPick] = useState<string | null>(null);
   const [studio, setStudio] = useState(false);
   const list = postings.data?.data ?? [];
   const drive = list.find((p) => p.id === pick) ?? list.find((p) => p.status === "approved") ?? list[0];
   const applicants = useSWR(drive ? ["applicants", drive.id] : null, () =>
-    call(
-      api.GET("/api/v1/company/opportunities/{id}/applicants", {
-        params: { path: { id: drive!.id }, query: { limit: 100 } },
-      }),
-    ),
+    listAll((cursor) => call(api.GET("/api/v1/company/opportunities/{id}/applicants", { params: { path: { id: drive!.id }, query: { limit: 100, cursor } } }))),
   );
 
   return (
