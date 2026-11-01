@@ -2,8 +2,8 @@
 // forced password change on first login (new teacher), and silent access-token renewal / expiry.
 // Same prerequisites as e2e.mjs. Re-runnable: every run uses fresh accounts.
 //
-// usage: node scripts/e2e-auth.mjs [--headed]   (12 steps)
-import { ADMIN, DOMAIN, PW, WEB, apiCall, browser, login, mailText, newPage, otpFor, run, step, summary } from "./e2e-lib.mjs";
+// usage: node scripts/e2e-auth.mjs [--headed]   (13 steps)
+import { ADMIN, DOMAIN, PW, SEED_STUDENT, WEB, apiCall, browser, login, mailText, newPage, otpFor, run, step, summary } from "./e2e-lib.mjs";
 
 const ENROL = `CSB7${run}`;
 const STUDENT = `${ENROL.toLowerCase()}@${DOMAIN}`;
@@ -172,6 +172,29 @@ await step("logout revokes tokens server-side (old refresh token rejected)", asy
     body: JSON.stringify({ refresh_token: s.refresh_token }),
   });
   if (r.ok) throw new Error("refresh token from before logout still works");
+});
+
+await step("next user in the same tab never sees the previous user's cached data", async () => {
+  const s = await newPage();
+  await login(s, SEED_STUDENT, PW);
+  await s.getByRole("heading", { name: "Priyanshu Sharma" }).waitFor();
+  await s.getByRole("button", { name: "Log out" }).click();
+  await s.waitForURL(/\/login$/);
+  await s.route("**/api/v1/students/me", async (r) => {
+    await new Promise((w) => setTimeout(w, 2500));
+    await r.continue();
+  });
+  // fill in place: page.goto would reload the app and drop the client cache this step is about
+  await s.getByLabel("Email *").fill(STUDENT);
+  await s.getByLabel("Password *").fill(STUDENT_PW);
+  await s.getByRole("button", { name: "Sign in" }).click();
+  await s.waitForURL(/\/student$/);
+  for (let i = 0; i < 8; i++) {
+    if ((await s.locator("body").innerText()).includes("Priyanshu Sharma")) throw new Error("previous student's profile shown to the next user");
+    await new Promise((w) => setTimeout(w, 250));
+  }
+  await s.unroute("**/api/v1/students/me");
+  await s.getByRole("heading", { name: `Auth Flow ${run}` }).waitFor();
 });
 
 await browser.close();

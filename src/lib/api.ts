@@ -1,5 +1,6 @@
 import createClient, { type Middleware } from "openapi-fetch";
 import { useSyncExternalStore } from "react";
+import { mutate } from "swr";
 import type { components, paths } from "./api-types";
 
 export type Session = components["schemas"]["Session"];
@@ -31,10 +32,14 @@ export function getSession(): Session | null {
 }
 
 export function setSession(s: Session | null) {
+  const userChanged = s?.user.id !== getSession()?.user.id;
   try {
     if (s) localStorage.setItem(KEY, JSON.stringify(s));
     else localStorage.removeItem(KEY);
   } catch {}
+  // SWR keys aren't per-user, so a different (or no) user starts from an empty cache. Revalidating also drops SWR's
+  // 2 s dedupe markers, without which the new user's pages would wait on the previous user's finished requests.
+  if (userChanged) void mutate(() => true, undefined, { revalidate: !!s });
   listeners.forEach((l) => l());
 }
 
