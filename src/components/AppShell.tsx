@@ -92,7 +92,7 @@ export function AppShell({ role, nav, active, children }: { role: Role; nav: Nav
               </Link>
             ))}
           </nav>
-          <NoticeBell />
+          {!user.must_change_password && <NoticeBell />}
           <div className="flex h-10 items-center gap-2 rounded-xs bg-surface-low py-1 pr-1 pl-2">
             <span className="grid size-8 place-items-center rounded-xl bg-primary-container text-label font-bold text-white">{initials(user.name)}</span>
             <div className="hidden pr-1 sm:block">

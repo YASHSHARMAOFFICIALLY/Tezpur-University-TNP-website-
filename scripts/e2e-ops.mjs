@@ -158,6 +158,9 @@ await step("admin changes a setting and resets it; health + audit render", async
     .getByRole("button", { name: "Reset" })
     .click();
   await adm.waitForFunction(() => document.querySelector('input[aria-label="Email code lifetime"]')?.value === "10");
+  await adm.reload();
+  await adm.getByLabel("Entity filter").selectOption("setting");
+  await adm.getByRole("cell", { name: "setting.reset" }).first().waitFor();
   await adm.getByRole("cell", { name: "setting.updated" }).first().waitFor();
 });
 

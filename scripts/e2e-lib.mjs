@@ -80,3 +80,31 @@ export async function login(page, email, password) {
   await page.getByLabel("Password *").fill(password);
   await page.getByRole("button", { name: "Sign in" }).click();
 }
+
+/** Text of the newest mail to `email` whose subject matches `subject` (waits up to 15 s). */
+export async function mailText(email, subject) {
+  for (let i = 0; i < 30; i++) {
+    const r = await fetch(`${MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:"${email}"`)}&limit=5`).then((r) => r.json());
+    const hit = r.messages?.find((m) => subject.test(m.Subject));
+    if (hit) return (await fetch(`${MAILPIT}/api/v1/message/${hit.ID}`).then((r) => r.json())).Text;
+    await new Promise((s) => setTimeout(s, 500));
+  }
+  throw new Error(`no mail to ${email} matching ${subject}`);
+}
+
+/** Direct API call for test setup (not the thing under test). */
+export async function apiCall(method, path, { token, body, file } = {}) {
+  const headers = token ? { authorization: `Bearer ${token}` } : {};
+  let payload;
+  if (file) {
+    payload = new FormData();
+    payload.append("file", new Blob([file.bytes], { type: file.type }), file.name);
+  } else if (body !== undefined) {
+    headers["content-type"] = "application/json";
+    payload = JSON.stringify(body);
+  }
+  const r = await fetch(`${WEB}/api/v1${path}`, { method, headers, body: payload });
+  const json = r.headers.get("content-type")?.includes("json") ? await r.json() : null;
+  if (!r.ok) throw new Error(`${method} ${path} -> ${r.status} ${json?.error?.code}`);
+  return json;
+}

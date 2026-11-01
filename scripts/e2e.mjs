@@ -23,7 +23,7 @@ await step("public page renders live programmes + metrics", async () => {
 });
 await step("login shows backend error for wrong password", async () => {
   await login(guest, ADMIN, "definitely-wrong");
-  await guest.getByRole("alert").waitFor();
+  await guest.getByRole("alert").filter({ hasText: "Email or password is wrong" }).waitFor();
 });
 await step("guest is redirected from /admin to /login", async () => {
   await guest.goto(`${WEB}/admin`);
@@ -45,7 +45,7 @@ await step("student self-registration + OTP verification (UI)", async () => {
 });
 await step("unapproved student can't sign in yet (pending message)", async () => {
   await login(guest, NEW_STUDENT, NEW_PW);
-  await guest.getByRole("alert").waitFor();
+  await guest.getByRole("alert").filter({ hasText: "Account awaiting admin approval" }).waitFor();
 });
 
 // ---------- recruiter creates a posting ----------

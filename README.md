@@ -43,5 +43,6 @@ Blocks with no backend data (JEE/NIRF analytics, logistics, NPS…) keep the Fig
 npx tsc --noEmit && npx eslint src scripts
 node scripts/e2e.mjs                         # 21-step UI test across all portals (needs API, web, Mailpit, seed)
 node scripts/e2e-ops.mjs                     # 15-step UI test: admin ops pages + recruiter self-service
+node scripts/e2e-auth.mjs                    # 11-step UI test: forgot/reset, forced first-login change, token renewal/expiry, logout revocation
 node scripts/shot.mjs student /student       # full-page screenshot as a demo user; W=390 for mobile
 ```
