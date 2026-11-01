@@ -89,8 +89,21 @@ export async function attachJd(companyId: string, id: string, userId: string, fi
   });
 }
 
+/**
+ * A posting can only go to the T&P cell, or live, while students still have time to apply.
+ * Checks only a real move: a no-op, a disallowed move or another company's posting falls through to move()'s own answer.
+ */
+export async function deadlineAhead(tx: Tx, id: string, to: "pending_admin" | "approved", where: Prisma.OpportunityWhereInput = {}) {
+  const o = await tx.opportunity.findFirst({ where: { ...where, id }, select: { apply_deadline: true, status: true } });
+  if (o && opportunityMachine.transitions[o.status].includes(to) && o.apply_deadline <= new Date())
+    fail("VALIDATION_FAILED", { field: "apply_deadline", apply_deadline: o.apply_deadline }, "The apply deadline has already passed. Set a later date.");
+}
+
 export async function recruiterMove(companyId: string, id: string, to: "pending_admin" | "closed", actor: Actor) {
-  return inTx((tx) => opportunityMachine.move(tx, id, to, actor, { where: own(companyId) }));
+  return inTx(async (tx) => {
+    if (to === "pending_admin") await deadlineAhead(tx, id, to, own(companyId));
+    return opportunityMachine.move(tx, id, to, actor, { where: own(companyId) });
+  });
 }
 
 const COMPANY = { company: { select: { id: true, name: true, website: true } } } as const;
