@@ -25,12 +25,23 @@ services:
 
   app:
     build: .
-    env_file: .env
+    env_file:
+      - .env
+      - path: deploy/local.env # laptop overrides, written by deploy/local-prod.sh
+        required: false
     environment:
       DATABASE_URL: "postgresql://tnp:${POSTGRES_PASSWORD:-}@db:5432/tnp"
       UPLOAD_DIR: /app/data/uploads
     volumes: [./data/uploads:/app/data/uploads]
     depends_on: { db: { condition: service_healthy } }
+    restart: unless-stopped
+    profiles: [prod]
+
+  web: # Next.js frontend; the frontend repo sits next to this one
+    build:
+      context: ${WEB_CONTEXT:-../frontend}
+      args: { BACKEND_URL: "http://app:3000" }
+    depends_on: [app]
     restart: unless-stopped
     profiles: [prod]
 
@@ -40,7 +51,7 @@ services:
       - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./deploy/certs:/etc/nginx/certs:ro
     ports: ["80:80", "443:443"]
-    depends_on: [app]
+    depends_on: [app, web]
     restart: unless-stopped
     profiles: [prod]
 
