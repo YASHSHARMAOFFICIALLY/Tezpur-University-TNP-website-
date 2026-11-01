@@ -27,14 +27,33 @@ npm test                          # end-to-end workflows against tnp_test DB
 
 ## Deploy (university server)
 
+The production stack is four containers behind one `docker compose --profile prod up`: `nginx` terminates TLS and sends `/api/`, `/healthz` and `/readyz` to `app` (this repo) and every other path to `web` (the Next.js frontend). `db` is PostgreSQL. Only `nginx` publishes ports.
+
 1. Ask IT for: an Ubuntu VM (2 vCPU, 4-8 GB RAM, 40 GB disk) with Docker, a DNS name, ports 80/443, a TLS certificate (or permission to use Let's Encrypt), SMTP relay credentials, and a backup destination on another disk or server.
-2. `git clone` the repo to `/srv/tnp`, create `.env`, and set `NODE_ENV=production`, the secrets, `POSTGRES_PASSWORD`, `CORS_ORIGIN` and the SMTP settings. With `NODE_ENV=production` the app refuses to start while a secret still contains `change-me` or `SMTP_HOST` is unset.
+2. Clone both repos side by side, as `/srv/tnp/backend` and `/srv/tnp/frontend`. Compose builds `web` from `../frontend`. To build it from somewhere else, set `WEB_CONTEXT=/path/to/frontend`.
+3. In `backend`, create `.env` and set `NODE_ENV=production`, the secrets, `POSTGRES_PASSWORD`, `CORS_ORIGIN` and the SMTP settings. With `NODE_ENV=production` the app refuses to start while a secret still contains `change-me` or `SMTP_HOST` is unset.
    - With the university relay, leave `SMTP_PER_DAY` empty.
    - With Gmail and an app password, set `SMTP_PER_DAY=450` and `SMTP_PER_MINUTE=20`.
-3. Put `fullchain.pem` and `privkey.pem` in `deploy/certs/`, and create the uploads folder for the container user (uid 1000): `sudo install -d -o 1000 -g 1000 data/uploads`. The app refuses to start if it cannot write there.
-4. Run `docker compose --profile prod up -d --build`. Migrations run on start with `migrate deploy`, which never resets data. The production database is the `db` service, which publishes no host port.
-5. Run `docker compose --profile prod exec app npx prisma db seed` once. It runs the compiled seed, `dist/prisma/seed.js`.
-6. Add the backup to cron: `30 2 * * * BACKUP_DIR=/mnt/backup/tnp /srv/tnp/backend/deploy/backup.sh`. `BACKUP_DIR` must be a mounted backup disk. **Do one real restore** with `deploy/restore.sh /mnt/backup/tnp/tnp-<time>`.
+4. Put `fullchain.pem` and `privkey.pem` in `deploy/certs/`, and create the uploads folder for the container user (uid 1000): `sudo install -d -o 1000 -g 1000 data/uploads`. The app refuses to start if it cannot write there.
+5. In `backend`, run `docker compose --profile prod up -d --build`. This builds both images. Migrations run on start with `migrate deploy`, which never resets data. The production database is the `db` service, which publishes no host port.
+6. Run `docker compose --profile prod exec app npx prisma db seed` once. It creates the first TPO admin from `SEED_ADMIN_*`, using the compiled seed `dist/prisma/seed.js`.
+7. Add the backup to cron: `30 2 * * * BACKUP_DIR=/mnt/backup/tnp /srv/tnp/backend/deploy/backup.sh`. `BACKUP_DIR` must be a mounted backup disk. **Do one real restore** with `deploy/restore.sh /mnt/backup/tnp/tnp-<time>`.
+
+To update, `git pull` in both repos and run step 5 again.
+
+### Test the production stack on your laptop
+
+`deploy/local-prod.sh` runs the same stack at https://localhost with a self-signed certificate. It needs Docker, the frontend repo at `../frontend`, and Mailpit listening on the host at :1025 (UI :8025) for OTP mail. Ports 80 and 443 must be free.
+
+```sh
+deploy/local-prod.sh up      # build, start, wait for /readyz, seed the admin
+deploy/local-prod.sh seed    # demo student, recruiter, posting, event and notice (frontend/scripts/seed-demo.mjs)
+deploy/local-prod.sh e2e     # the three frontend e2e suites against https://localhost
+deploy/local-prod.sh down    # stop, keep data
+deploy/local-prod.sh reset   # stop and delete the database volume
+```
+
+The first `up` writes `deploy/certs/` and `deploy/local.env` (production mode, random secrets and database password, mail to the host Mailpit). Both are gitignored. `app` reads `deploy/local.env` after `.env`, so your dev `.env` stays untouched. Your browser warns about the certificate once.
 
 Health checks: `GET /healthz` (process) and `GET /readyz` (DB).
 
