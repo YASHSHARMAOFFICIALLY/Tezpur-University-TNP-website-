@@ -1,0 +1,84 @@
+#!/bin/sh
+# Drive the T&P web portal on the production stack (nginx + Next.js + API + Postgres) at https://localhost.
+# usage: webctl up|doctor|suite <e2e|ops|auth|all>|journey FILE.mjs [--headed]|shot ROLE PATH [WIDTH]|down
+set -eu
+SKILL=$(cd "$(dirname "$0")" && pwd)
+WEB_DIR=$(cd "$SKILL/../../.." && pwd)
+DEPLOY=${DEPLOY_DIR:-$(cd "$WEB_DIR/../backend-deploy" && pwd)}
+STATE=${TMPDIR:-/tmp}/tnp-web-verify
+RUN=${WEB_RUN:-$(cat "$STATE/run" 2>/dev/null || date +%Y%m%d-%H%M%S)}
+ART="$WEB_DIR/.verify-artifacts/$RUN"
+export WEB=https://localhost NODE_TLS_REJECT_UNAUTHORIZED=0 E2E_TIMEOUT=${E2E_TIMEOUT:-30000}
+
+# Run "$@" in its own process group, capped at $1 seconds; on timeout kill the whole group (node + Chrome).
+cap() {
+  perl -e '$s=shift; $p=fork; if(!$p){setpgrp; exec @ARGV or exit 127} $SIG{ALRM}=sub{kill "TERM",-$p; sleep 2; kill "KILL",-$p; print STDERR "TIMEOUT after ${s}s\n"; exit 124}; alarm $s; waitpid $p,0; exit($?>>8)' "$@"
+}
+ok() { echo "ok   $1"; }
+bad() { echo "FAIL $1"; FAILED=1; }
+
+case "${1:-}" in
+up)
+  curl -fs http://localhost:8025/api/v1/info >/dev/null || { echo "Mailpit is not listening on :8025; start it first (backend: docker compose --profile dev up -d mailpit)" >&2; exit 1; }
+  mkdir -p "$STATE" "$ART"
+  echo "$RUN" >"$STATE/run"
+  if curl -fsk https://localhost/readyz >/dev/null 2>&1; then
+    echo reused >"$STATE/owner"
+    echo "reusing the stack already at https://localhost (webctl down will NOT stop it)" >&2
+  else
+    echo started >"$STATE/owner"
+    cap 600 "$DEPLOY/deploy/local-prod.sh" up
+  fi
+  cap 300 "$DEPLOY/deploy/local-prod.sh" seed >"$ART/seed.log" 2>&1 || { tail -20 "$ART/seed.log" >&2; exit 1; }
+  echo "run $RUN  web https://localhost  artifacts $ART" >&2
+  "$0" doctor
+  ;;
+doctor)
+  FAILED=0
+  code=$(curl -sk -o /dev/null -w '%{http_code}' https://localhost/readyz); [ "$code" = 200 ] && ok "api /readyz 200 via nginx" || bad "api /readyz -> $code"
+  code=$(curl -sk -o /dev/null -w '%{http_code}' https://localhost/login); [ "$code" = 200 ] && ok "web /login 200 via nginx" || bad "web /login -> $code"
+  for c in nginx web app db; do
+    docker ps --format '{{.Names}}' | grep -qx "backend-deploy-$c-1" && ok "container $c up" || bad "container backend-deploy-$c-1 not running"
+  done
+  docker inspect -f '{{index .Config.Labels "com.docker.compose.project.working_dir"}}' backend-deploy-nginx-1 2>/dev/null | grep -qx "$DEPLOY" && ok "stack is from $DEPLOY" || bad "port 443 is not served by the backend-deploy stack"
+  curl -fs http://localhost:8025/api/v1/info >/dev/null && ok "mailpit :8025" || bad "mailpit :8025 down (no OTP mail)"
+  grep -q '^DEMO_PASSWORD=.' "$WEB_DIR/.env.local" 2>/dev/null && ok "DEMO_PASSWORD present in .env.local" || bad "no DEMO_PASSWORD (run: webctl up)"
+  (cd "$WEB_DIR" && node -e '
+    import("./scripts/e2e-lib.mjs").then(async (l) => {
+      let bad = 0;
+      for (const [who, email] of [["admin", l.ADMIN], ["student", l.SEED_STUDENT], ["recruiter", l.RECRUITER]]) {
+        const r = await fetch(l.WEB + "/api/v1/auth/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email, password: l.PW }) });
+        console.log(r.ok ? `ok   seed ${who} can sign in` : `FAIL seed ${who} sign-in -> ${r.status}`); bad ||= !r.ok;
+      }
+      await l.browser.close(); process.exit(bad ? 1 : 0);
+    });') || FAILED=1
+  [ "$FAILED" = 0 ]
+  ;;
+suite)
+  mkdir -p "$ART"
+  case "${2:-}" in e2e) set -- e2e ;; ops) set -- e2e-ops ;; auth) set -- e2e-auth ;; all) set -- e2e e2e-ops e2e-auth ;; *) echo "suite e2e|ops|auth|all" >&2; exit 2 ;; esac
+  for s in "$@"; do
+    echo "== $s" | tee -a "$ART/suites.log"
+    (cd "$WEB_DIR" && cap 900 node "scripts/$s.mjs") 2>&1 | tee -a "$ART/suites.log"
+    grep -q "^FAIL" "$ART/suites.log" && exit 1
+  done
+  ;;
+journey)
+  mkdir -p "$ART"
+  f=$(cd "$(dirname "$2")" && pwd)/$(basename "$2")
+  shift 2
+  (cd "$WEB_DIR" && ARTIFACTS="$ART" cap 600 node "$f" "$@") 2>&1 | tee -a "$ART/journeys.log"
+  ;;
+shot)
+  mkdir -p "$ART"
+  out="$ART/$2$(echo "$3" | tr / _)-${4:-1280}.png"
+  (cd "$WEB_DIR" && W=${4:-1280} cap 120 node scripts/shot.mjs "$2" "$3" "$out")
+  ;;
+down)
+  if [ "$(cat "$STATE/owner" 2>/dev/null)" = started ]; then cap 120 "$DEPLOY/deploy/local-prod.sh" down; else echo "stack was not started by this run; left running" >&2; fi
+  rm -rf "$STATE"
+  pgrep -fl "scripts/(e2e|e2e-ops|e2e-auth|shot)\.mjs|verify-tnp-web/journeys" && echo "WARN leftover processes above (kill by PID)" >&2
+  echo "artifacts kept: $ART" >&2
+  ;;
+*) sed -n 3p "$0" >&2; exit 2 ;;
+esac
