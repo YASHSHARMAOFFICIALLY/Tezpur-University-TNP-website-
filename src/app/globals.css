@@ -1,5 +1,13 @@
 @import "tailwindcss";
-@import "material-symbols/outlined.css" layer(base);
+
+/* Material Symbols font, self-hosted from the npm package (no CDN on the university server). */
+@font-face {
+  font-family: "Material Symbols Outlined";
+  font-style: normal;
+  font-weight: 100 700;
+  font-display: block;
+  src: url("/fonts/material-symbols-outlined.woff2") format("woff2");
+}
 
 /* Tokens copied from the Figma CSS export (design/*.css). Names follow the Material 3 roles the file uses. */
 @theme {
@@ -59,9 +67,17 @@
     color: var(--color-ink);
   }
   /* in base layer so Tailwind text-* utilities can resize icons */
-  .material-symbols-outlined {
+  .icon {
+    font-family: "Material Symbols Outlined";
+    font-weight: normal;
+    font-style: normal;
     font-size: 1.15em;
     line-height: 1;
+    display: inline-block;
+    white-space: nowrap;
+    direction: ltr;
     vertical-align: middle;
+    font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
   }
 }

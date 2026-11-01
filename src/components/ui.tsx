@@ -9,7 +9,7 @@ export function Icon({ name, className, filled }: { name: string; className?: st
   return (
     <span
       aria-hidden
-      className={cx("material-symbols-outlined select-none", className)}
+      className={cx("icon select-none", className)}
       style={filled ? { fontVariationSettings: "'FILL' 1" } : undefined}
     >
       {name}

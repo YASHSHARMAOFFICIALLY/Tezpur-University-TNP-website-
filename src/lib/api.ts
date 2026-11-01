@@ -115,3 +115,9 @@ export async function logout() {
   await api.POST("/api/v1/auth/logout").catch(() => {});
   setSession(null);
 }
+
+/** Object URL for an auth-protected file (photos, etc.), cached by SWR. */
+export async function fileUrl(id: string) {
+  const blob = await call(api.GET("/api/v1/files/{id}", { params: { path: { id } }, parseAs: "blob" }));
+  return URL.createObjectURL(blob as Blob);
+}
