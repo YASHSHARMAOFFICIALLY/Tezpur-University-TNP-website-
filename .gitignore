@@ -5,3 +5,5 @@ data
 src/generated
 .vitest
 .verify-artifacts
+deploy/certs/
+deploy/local.env
