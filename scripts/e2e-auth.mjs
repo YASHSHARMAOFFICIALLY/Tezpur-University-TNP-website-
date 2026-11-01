@@ -2,7 +2,7 @@
 // forced password change on first login (new teacher), and silent access-token renewal / expiry.
 // Same prerequisites as e2e.mjs. Re-runnable: every run uses fresh accounts.
 //
-// usage: node scripts/e2e-auth.mjs [--headed]   (11 steps)
+// usage: node scripts/e2e-auth.mjs [--headed]   (12 steps)
 import { ADMIN, DOMAIN, PW, WEB, apiCall, browser, login, mailText, newPage, otpFor, run, step, summary } from "./e2e-lib.mjs";
 
 const ENROL = `CSB7${run}`;
@@ -127,6 +127,29 @@ await step("expired access token is renewed once, silently, before requests", as
   if (rejected.length) throw new Error(`requests went out with the stale token: ${rejected.join(", ")}`);
   const tok = await p.evaluate(() => JSON.parse(localStorage.getItem("tnp.session")).access_token);
   if (tok.endsWith("invalid-signature")) throw new Error("session still holds the expired token");
+});
+await step("refresh failing upstream (503 / connection reset) keeps the session and shows an error; recovers after", async () => {
+  const expire = () =>
+    p.evaluate((tok) => {
+      const s = JSON.parse(localStorage.getItem("tnp.session"));
+      localStorage.setItem("tnp.session", JSON.stringify({ ...s, access_token: tok }));
+    }, expiredJwt());
+  for (const fail of [(r) => r.fulfill({ status: 503, body: "upstream down" }), (r) => r.abort("connectionreset")]) {
+    await p.route("**/api/v1/auth/refresh", fail);
+    await expire();
+    await p.reload();
+    await p.waitForLoadState("networkidle");
+    if (!/\/student$/.test(p.url())) throw new Error(`failed refresh navigated to ${p.url()}`);
+    if (!(await p.evaluate(() => localStorage.getItem("tnp.session")))) throw new Error("failed refresh wiped the session");
+    await p.getByRole("alert").filter({ hasText: "The server isn't responding" }).first().waitFor();
+    await p.unroute("**/api/v1/auth/refresh");
+  }
+  await p.reload();
+  await p.getByRole("heading", { name: `Auth Flow ${run}` }).waitFor();
+  await p.waitForLoadState("networkidle");
+  if (await p.getByRole("alert").filter({ hasText: "The server isn't responding" }).count()) throw new Error("error still shown after refresh recovered");
+  const tok = await p.evaluate(() => JSON.parse(localStorage.getItem("tnp.session")).access_token);
+  if (tok.endsWith("invalid-signature")) throw new Error("session still holds the expired token after recovery");
 });
 await step("revoked refresh token sends the user back to sign in", async () => {
   await p.evaluate((tok) => {

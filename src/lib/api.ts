@@ -60,13 +60,19 @@ function expiresSoon(token: string) {
 }
 
 let refreshing: Promise<void> | null = null;
+// Only a 401 means the refresh token is dead; an outage or network error keeps the 30-day session for the next try.
 async function refresh(s: Session) {
+  const down = new ApiError("NETWORK", "The server isn't responding. Try again in a moment.");
   const r = await fetch("/api/v1/auth/refresh", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ refresh_token: s.refresh_token }),
+  }).catch(() => {
+    throw down;
   });
-  setSession(r.ok ? ((await r.json()) as Session) : null);
+  if (r.status === 401) return setSession(null);
+  if (!r.ok) throw down;
+  setSession((await r.json()) as Session);
 }
 
 // Refresh before the request instead of retrying after a 401: a retried request would need its body twice.
@@ -102,7 +108,8 @@ export async function call<T>(p: Promise<{ data?: T; error?: unknown; response: 
   let res;
   try {
     res = await p;
-  } catch {
+  } catch (e) {
+    if (e instanceof ApiError) throw e;
     throw new ApiError("NETWORK", "Can't reach the server. Check your connection and try again.");
   }
   if (res.response.ok) return res.data as T;
