@@ -122,6 +122,14 @@ describe("placement workflow", () => {
     await expect(db.auditLog.deleteMany({})).rejects.toThrow(/append-only/);
   });
 
+  it("admin student search exposes user_id for repairs; recruiter view does not", async () => {
+    const s = await db.student.findFirstOrThrow();
+    const row = (await admin.get(`/admin/students?q=${s.enrolment_no}`).expect(200)).body.data[0];
+    expect(row.user_id).toBe(s.user_id);
+    const applicant = (await recruiter.get(`/company/opportunities/${oppId}/applicants`).expect(200)).body.data[0];
+    expect(applicant.student.user_id).toBeUndefined();
+  });
+
   it("probation blocks applying and event registration", async () => {
     const s = await db.student.findFirstOrThrow();
     await admin.post(`/admin/students/${s.id}/probation`, { on: true, reason: "attendance" }).expect(200);

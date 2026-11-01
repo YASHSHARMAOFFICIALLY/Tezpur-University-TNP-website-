@@ -5,6 +5,9 @@ import { AdminStudentPatch, StudentProfile } from "../students/students.schemas.
 import { AuditEntry, Decision, EmailQueue, EventReport, Job, Pending, PlacementReport, Teacher } from "./admin.schemas.js";
 import * as svc from "./admin.service.js";
 
+/** Admin-only: user_id lets the console call the /admin/users/:id repairs for a student row. */
+const AdminStudent = StudentProfile.extend({ user_id: z.string() }).meta({ id: "AdminStudent" });
+
 export const adminModule: ModuleDef = {
   name: "admin",
   routes: [
@@ -49,7 +52,7 @@ export const adminModule: ModuleDef = {
     route({
       method: "get", path: "/admin/students", summary: "Search students", auth: ["admin"],
       query: PageQuery.extend({ q: z.string().max(100).optional(), status: z.enum(["pending_email_verify", "pending_admin", "active", "rejected", "alumni"]).optional() }),
-      response: pageOf(StudentProfile),
+      response: pageOf(AdminStudent),
       handler: ({ query }) => svc.searchStudents(query),
     }),
     route({

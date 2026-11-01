@@ -696,6 +696,319 @@
           "status"
         ]
       },
+      "AdminStudent": {
+        "type": "object",
+        "properties": {
+          "mobile": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 20
+          },
+          "gender": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 30
+          },
+          "category": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 30
+          },
+          "minority": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "specially_abled": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "regional_diversity": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "jee_rank": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "jee_score": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "jee_percentile": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "gate_qualified": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "gate_score": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "programme_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "department": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          },
+          "year_of_admission": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1990,
+            "maximum": 2100
+          },
+          "year_of_completion": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1990,
+            "maximum": 2100
+          },
+          "cgpa": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 10
+          },
+          "current_address": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 500
+          },
+          "permanent_address": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 500
+          },
+          "marks_10": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "yop_10": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "marks_12": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "yop_12": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "marks_ug": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "yop_ug": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "marks_pg": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "yop_pg": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "other_courses": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          },
+          "professional_interests": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          },
+          "certifications": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          },
+          "portfolio_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "linkedin_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "id": {
+            "type": "string"
+          },
+          "enrolment_no": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resume_file_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "photo_file_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "academic_standing": {
+            "type": "string",
+            "enum": [
+              "good",
+              "probation"
+            ]
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "email",
+              "status"
+            ]
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "mobile",
+          "gender",
+          "category",
+          "minority",
+          "specially_abled",
+          "regional_diversity",
+          "jee_rank",
+          "jee_score",
+          "jee_percentile",
+          "gate_qualified",
+          "gate_score",
+          "programme_id",
+          "department",
+          "year_of_admission",
+          "year_of_completion",
+          "cgpa",
+          "current_address",
+          "permanent_address",
+          "marks_10",
+          "yop_10",
+          "marks_12",
+          "yop_12",
+          "marks_ug",
+          "yop_ug",
+          "marks_pg",
+          "yop_pg",
+          "other_courses",
+          "professional_interests",
+          "certifications",
+          "portfolio_url",
+          "linkedin_url",
+          "id",
+          "enrolment_no",
+          "dob",
+          "resume_file_id",
+          "photo_file_id",
+          "academic_standing",
+          "user",
+          "user_id"
+        ]
+      },
       "Company": {
         "type": "object",
         "properties": {
@@ -8221,7 +8534,7 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/StudentProfile"
+                        "$ref": "#/components/schemas/AdminStudent"
                       }
                     },
                     "page": {
