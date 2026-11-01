@@ -51,6 +51,15 @@ async function req(method, path, { token, body, file, ok = [] } = {}) {
   throw new Error(`${method} ${path} -> ${r.status} ${json?.error?.code}: ${json?.error?.message}`);
 }
 
+async function apiList(path, token) {
+  const rows = [];
+  for (let cursor = ""; ;) {
+    const r = await req("GET", `${path}?limit=100${cursor && `&cursor=${cursor}`}`, { token });
+    rows.push(...r.data);
+    if (!r.page.has_more) return rows;
+    cursor = r.page.cursor;
+  }
+}
 async function otpFor(email) {
   for (let i = 0; i < 20; i++) {
     const r = await fetch(`${MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:"${email}"`)}&limit=1`).then((r) => r.json());
@@ -183,13 +192,15 @@ await req("PATCH", "/students/me", {
 step("student profile complete");
 
 // 6. recruiter posting -> submit -> admin approve
-let posts = (await req("GET", "/company/opportunities", { token: R })).data;
-if (!posts.length) {
+const SEED_TITLE = "Software Development Engineer - Cloud";
+const seedPost = async () => (await apiList("/company/opportunities", R)).find((o) => o.title === SEED_TITLE);
+let post = await seedPost();
+if (!post) {
   const o = await req("POST", "/company/opportunities", {
     token: R,
     body: {
       type: "job",
-      title: "Software Development Engineer - Cloud",
+      title: SEED_TITLE,
       job_profile: "SDE-1, Cloud Infrastructure",
       description: "Build and operate cloud services for enterprise clients.",
       expected_hires: 25,
@@ -204,14 +215,14 @@ if (!posts.length) {
   });
   await req("POST", `/company/opportunities/${o.id}/submit`, { token: R });
   await req("POST", `/admin/opportunities/${o.id}/decision`, { token: A, body: { decision: "approve" } });
-  posts = (await req("GET", "/company/opportunities", { token: R })).data;
+  post = await seedPost();
 }
-step(`posting approved (${posts[0].status})`);
+step(`posting approved (${post.status})`);
 
 // 7. student applies -> admin releases -> recruiter shortlists
-await req("POST", `/opportunities/${posts[0].id}/apply`, { token: S, ok: ["ALREADY_APPLIED"] });
-await req("POST", `/admin/opportunities/${posts[0].id}/release`, { token: A, body: {} });
-const applicants = (await req("GET", `/company/opportunities/${posts[0].id}/applicants`, { token: R })).data;
+await req("POST", `/opportunities/${post.id}/apply`, { token: S, ok: ["ALREADY_APPLIED"] });
+await req("POST", `/admin/opportunities/${post.id}/release`, { token: A, body: {} });
+const applicants = (await req("GET", `/company/opportunities/${post.id}/applicants`, { token: R })).data;
 const toShort = applicants.filter((a) => a.status === "released_to_recruiter").map((a) => a.id);
 if (toShort.length) await req("POST", "/company/applications/shortlist", { token: R, body: { application_ids: toShort } });
 step(`${applicants.length} applicant(s) visible to recruiter`);
