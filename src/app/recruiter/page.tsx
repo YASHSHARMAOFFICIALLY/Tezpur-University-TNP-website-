@@ -480,7 +480,7 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
   const progs = useSWR("programmes", () => call(api.GET("/api/v1/programmes")));
   const [sel, setSel] = useState<Set<string>>(new Set());
   const [prog, setProg] = useState("");
-  const [minCgpa, setMinCgpa] = useState(6);
+  const [minCgpa, setMinCgpa] = useState(0);
   const [kw, setKw] = useState("");
   const [page, setPage] = useState(0);
   const [busy, setBusy] = useState("");
@@ -493,7 +493,7 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
       (q.data?.data ?? []).filter((a) => {
         const s = a.student;
         const hay = `${(s.user as { name?: string }).name ?? ""} ${s.enrolment_no} ${s.professional_interests ?? ""}`.toLowerCase();
-        return (!prog || s.programme_id === prog) && (s.cgpa ?? 0) >= minCgpa && (!kw || hay.includes(kw.toLowerCase()));
+        return (!prog || s.programme_id === prog) && (!minCgpa || (s.cgpa ?? 0) >= minCgpa) && (!kw || hay.includes(kw.toLowerCase()));
       }),
     [q.data, prog, minCgpa, kw],
   );
@@ -592,7 +592,7 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
           </span>
           <input
             type="range"
-            min={6}
+            min={0}
             max={9.5}
             step={0.1}
             value={minCgpa}
@@ -600,7 +600,7 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
             className="accent-primary"
           />
           <span className="flex justify-between text-caption text-muted">
-            <span>6.0</span>
+            <span>0.0</span>
             <span>9.5</span>
           </span>
         </label>

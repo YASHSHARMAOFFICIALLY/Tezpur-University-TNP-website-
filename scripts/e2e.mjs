@@ -2,7 +2,7 @@
 // Needs API (:3000), web (:3001), Mailpit (:8025) and `node scripts/seed-demo.mjs` already run.
 // Every run uses fresh unique accounts/postings, so it can be re-run. Exit code 1 on the first failed step.
 //
-// usage: node scripts/e2e.mjs [--headed]   (22 steps)
+// usage: node scripts/e2e.mjs [--headed]   (23 steps)
 import { writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
@@ -12,6 +12,7 @@ const NEW_ENROL = `CSB9${run}`;
 const NEW_STUDENT = `${NEW_ENROL.toLowerCase()}@${DOMAIN}`;
 const NEW_PW = `E2e-${run}-pass`;
 const JOB = `E2E Cloud Engineer ${run}`;
+const NEW_NAME = "E2E Test Student";
 
 // ---------- guest ----------
 const guest = await newPage();
@@ -32,7 +33,7 @@ await step("guest is redirected from /admin to /login", async () => {
 await step("student self-registration + OTP verification (UI)", async () => {
   await guest.goto(`${WEB}/#register`);
   await guest.getByRole("tab", { name: "Student / Candidate" }).click();
-  await guest.getByLabel("Full Name *").fill("E2E Test Student");
+  await guest.getByLabel("Full Name *").fill(NEW_NAME);
   await guest.getByLabel("Enrolment Number *").fill(NEW_ENROL);
   await guest.getByLabel("University Email *").fill(NEW_STUDENT);
   await guest.getByLabel("Mobile *").fill("9876501234");
@@ -63,6 +64,7 @@ await step("recruiter creates + submits posting via Posting Studio", async () =>
   await d.getByLabel("JOB DESCRIPTION *").fill("E2E posting.");
   await d.getByLabel("Base Compensation (INR LPA)").fill("9");
   await d.getByLabel("B.Tech Computer Science & Engg").check();
+  await d.getByLabel("Minimum Cutoff CGPA").fill("5");
   await d.getByLabel("Passing-out Batch *").selectOption("2026");
   await d.getByLabel("Apply Deadline *").fill(new Date(Date.now() + 5 * 864e5).toISOString().slice(0, 10));
   await d.getByRole("button", { name: "Publish Opening to Students" }).click();
@@ -167,7 +169,7 @@ await step("new student completes profile (photo + resume upload) and applies wi
   await d.getByLabel(/Coloured Photo/).setInputFiles(resolve(here, "public/img/emblem.jpg"));
   await d.getByLabel(/Resume \(PDF/).setInputFiles(pdf);
   await d.getByLabel("Date of Birth *").fill("2004-02-10");
-  await d.getByLabel("Cumulative CGPA *").fill("8.4");
+  await d.getByLabel("Cumulative CGPA *").fill("5.5");
   await d.getByLabel("Year of Completion *").fill("2026");
   await d.getByRole("button", { name: "Save Profile" }).click();
   await d.waitFor({ state: "detached" });
@@ -198,8 +200,12 @@ await step("admin releases applicants to recruiter", async () => {
   await adm.getByRole("button", { name: /Release \d+ Applicant/ }).click();
   await adm.getByText("Applicants released to the recruiter.").waitFor();
 });
-await step("recruiter selection is scoped to the drive and the visible rows", async () => {
+await step("recruiter sees every released applicant by default, CGPA below 6 included", async () => {
   await rec.reload();
+  await rec.getByLabel("Choose drive").selectOption({ label: `${JOB} (Live to students)` });
+  await rec.getByLabel(`Select ${NEW_NAME}`).waitFor();
+});
+await step("recruiter selection is scoped to the drive and the visible rows", async () => {
   const pick = rec.getByLabel("Choose drive");
   await pick.selectOption({ label: `${JOB} (Live to students)` });
   await rec.getByLabel("Select Priyanshu Sharma").check();
