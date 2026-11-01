@@ -4,7 +4,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import { AppShell } from "@/components/AppShell";
 import { ADMIN_NAV } from "./nav";
-import { Badge, Button, Card, Empty, Field, Icon, Input, Select, State, cx } from "@/components/ui";
+import { Badge, Button, Card, Empty, Field, Icon, Input, Notice, Select, State, cx, useRun } from "@/components/ui";
 import { api, call, openFile } from "@/lib/api";
 import type { paths } from "@/lib/api-types";
 import { fmtDate, initialsOf } from "@/lib/format";
@@ -628,28 +628,20 @@ function EventRow({ ev, reload }: { ev: AdminEvent; reload: () => void }) {
   const regs = useSWR(open ? ["regs", ev.id] : null, () =>
     call(api.GET("/api/v1/admin/events/{id}/registrations", { params: { path: { id: ev.id }, query: { limit: 100 } } })),
   );
-  const [busy, setBusy] = useState("");
-  async function move(kind: "publish" | "complete" | "cancel") {
-    setBusy(kind);
-    try {
+  const { busy, msg, run } = useRun();
+  const move = (kind: "publish" | "complete" | "cancel") =>
+    run(kind, async () => {
       if (kind === "publish") await call(api.POST("/api/v1/admin/events/{id}/publish", { params: { path: { id: ev.id } } }));
       if (kind === "complete") await call(api.POST("/api/v1/admin/events/{id}/complete", { params: { path: { id: ev.id } } }));
       if (kind === "cancel") await call(api.POST("/api/v1/admin/events/{id}/cancel", { params: { path: { id: ev.id } } }));
       reload();
-    } finally {
-      setBusy("");
-    }
-  }
-  async function mark(kind: "confirm" | "attend", ids: string[]) {
-    setBusy(kind);
-    try {
+    });
+  const mark = (kind: "confirm" | "attend", ids: string[]) =>
+    run(kind, async () => {
       if (kind === "confirm") await call(api.POST("/api/v1/admin/registrations/confirm", { body: { registration_ids: ids } }));
       else await call(api.POST("/api/v1/admin/registrations/attend", { body: { registration_ids: ids } }));
       regs.mutate();
-    } finally {
-      setBusy("");
-    }
-  }
+    });
   return (
     <div className="rounded-xs bg-surface-low p-2">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -678,6 +670,7 @@ function EventRow({ ev, reload }: { ev: AdminEvent; reload: () => void }) {
           )}
         </div>
       </div>
+      <Notice msg={msg} />
       {open && (
         <div className="pt-2">
           <State data={regs.data} error={regs.error} rows={1}>

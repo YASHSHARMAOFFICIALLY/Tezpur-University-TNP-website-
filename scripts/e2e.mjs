@@ -93,6 +93,24 @@ await step("admin publishes a new event (Event Creator)", async () => {
   await adm.getByRole("button", { name: /Broadcast & Enlist Session/ }).click();
   await adm.getByText("Session published").waitFor();
 });
+await step("a failed event transition (Complete) shows the error to the admin", async () => {
+  await adm.route(
+    /\/api\/v1\/admin\/events\/[^/]+\/complete$/,
+    (r) =>
+      r.fulfill({
+        status: 409,
+        contentType: "application/json",
+        body: JSON.stringify({ error: { code: "INVALID_TRANSITION", message: "Event can't move to completed", details: {} } }),
+      }),
+    { times: 1 },
+  );
+  const row = adm
+    .locator("div")
+    .filter({ has: adm.getByRole("button", { name: `E2E Resume Clinic ${run}` }) })
+    .last();
+  await row.getByRole("button", { name: "Complete" }).click();
+  await adm.getByRole("alert").filter({ hasText: "Event can't move to completed" }).waitFor();
+});
 
 // ---------- students ----------
 const stuNew = await newPage();
