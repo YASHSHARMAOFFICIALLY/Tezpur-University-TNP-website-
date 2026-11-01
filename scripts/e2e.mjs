@@ -102,7 +102,7 @@ await step("approved new student logs in; posting shows ineligible (no CGPA yet)
   await card.getByText(/Ineligible: Cutoff CGPA/).waitFor();
   await card.getByRole("button", { name: /Apply Now/ }).waitFor({ state: "detached" });
 });
-await step("new student completes profile (photo + resume upload) and applies", async () => {
+await step("new student completes profile (photo + resume upload) and applies without a reload", async () => {
   const pdf = resolve(tmpdir(), `e2e-cv-${run}.pdf`);
   writeFileSync(
     pdf,
@@ -117,7 +117,6 @@ await step("new student completes profile (photo + resume upload) and applies", 
   await d.getByLabel("Year of Completion *").fill("2026");
   await d.getByRole("button", { name: "Save Profile" }).click();
   await d.waitFor({ state: "detached" });
-  await stuNew.reload();
   const card = stuNew.locator("article").filter({ hasText: JOB });
   await card.getByRole("button", { name: /Apply Now/ }).click();
   await card.getByText(/Applied • Awaiting T&P Release/).waitFor();

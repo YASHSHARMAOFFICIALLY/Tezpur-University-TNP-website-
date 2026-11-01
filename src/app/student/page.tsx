@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { AppShell, type NavItem } from "@/components/AppShell";
 import { Badge, Button, Card, Empty, Field, Icon, Input, Select, State, Textarea, cx } from "@/components/ui";
 import { api, call, fileBody, fileUrl, openFile, type ApiError } from "@/lib/api";
@@ -231,6 +231,8 @@ function EditProfile({ s, programmes, onClose }: { s: Profile; programmes: Progr
           },
         }),
       );
+      // Eligibility for each posting comes with /opportunities, so it must refetch too or Apply stays hidden.
+      void mutate("opportunities");
       onClose();
     } catch (e) {
       setErr((e as Error).message);
