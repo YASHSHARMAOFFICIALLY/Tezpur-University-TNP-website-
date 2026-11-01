@@ -70,7 +70,8 @@ export async function newPage() {
     "response",
     (r) => r.status() >= 400 && r.url().includes("/api/") && consoleErrors.push(`${r.status()} ${r.request().method()} ${new URL(r.url()).pathname}`),
   );
-  page.setDefaultTimeout(10_000);
+  page.setDefaultTimeout(Number(process.env.E2E_TIMEOUT ?? 10_000)); // raise on a loaded machine, e.g. E2E_TIMEOUT=30000
+  page.setDefaultNavigationTimeout(Number(process.env.E2E_TIMEOUT ?? 10_000));
   return page;
 }
 

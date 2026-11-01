@@ -115,7 +115,8 @@ function ProgrammeForm({ p, onDone }: { p?: Programme; onDone: () => void }) {
       className="grid items-end gap-2 sm:grid-cols-[1.2fr_1.6fr_90px_70px_90px_auto]"
       onSubmit={(e) => {
         e.preventDefault();
-        const fd = new FormData(e.currentTarget);
+        const form = e.currentTarget;
+        const fd = new FormData(form);
         const g = (k: string) => String(fd.get(k) ?? "").trim();
         const body = {
           department: g("department"),
@@ -127,6 +128,7 @@ function ProgrammeForm({ p, onDone }: { p?: Programme; onDone: () => void }) {
         run("save", async () => {
           if (p) await call(api.PATCH("/api/v1/admin/programmes/{id}", { params: { path: { id: p.id } }, body }));
           else await call(api.POST("/api/v1/admin/programmes", { body }));
+          if (!p) form.reset();
           onDone();
         });
       }}
@@ -166,7 +168,7 @@ function Programmes() {
       <SectionTitle icon="school" title="Programmes" sub="Drives eligibility, the public “Schools & Disciplines” cards and the recruiter talent pool." />
       <div className="rounded-xs bg-surface-low p-3">
         <p className="pb-2 text-label font-bold text-ink uppercase">Add programme</p>
-        <ProgrammeForm key={progs.data?.length} onDone={() => progs.mutate()} />
+        <ProgrammeForm onDone={() => progs.mutate()} />
       </div>
       <State data={progs.data} error={progs.error} retry={() => progs.mutate()} empty={(d) => !d.length}>
         {(ps) => (
