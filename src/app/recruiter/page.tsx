@@ -1358,7 +1358,7 @@ function PostingStudio({ onClose, onDone, initial }: { onClose: () => void; onDo
                 </Select>
               </Field>
               <Field label="Apply Deadline *">
-                <Input name="deadline" type="date" required defaultValue={initialDay} />
+                <Input name="deadline" type="date" required min={ymd(new Date())} defaultValue={initialDay} />
               </Field>
             </div>
           </fieldset>
