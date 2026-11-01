@@ -2,8 +2,8 @@
 // Needs API (:3000), web (:3001), Mailpit (:8025) and `node scripts/seed-demo.mjs` already run.
 // Every run uses fresh unique accounts/postings, so it can be re-run. Exit code 1 on the first failed step.
 //
-// usage: node scripts/e2e.mjs [--headed]   (24 steps)
-import { writeFileSync } from "node:fs";
+// usage: node scripts/e2e.mjs [--headed]   (25 steps)
+import { readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import assert from "node:assert/strict";
@@ -31,7 +31,7 @@ const NEW_ENROL = `CSB9${run}`;
 const NEW_STUDENT = `${NEW_ENROL.toLowerCase()}@${DOMAIN}`;
 const NEW_PW = `E2e-${run}-pass`;
 const JOB = `E2E Cloud Engineer ${run}`;
-const NEW_NAME = "E2E Test Student";
+const NEW_NAME = `=1+1 E2E ${run}`; // a formula-looking name: CSV exports must neutralise it
 const DEADLINE = ymd(new Date(Date.now() + 5 * 864e5));
 
 // The backend pages with real cursors; one row per page proves the UI follows them instead of stopping at page one.
@@ -40,6 +40,20 @@ const onePerPage = (r) => {
   u.searchParams.set("limit", "1");
   return r.continue({ url: u.toString() });
 };
+
+/** Downloads the CSV behind `button` and checks the formula-looking name is escaped and no cell starts a formula. */
+async function exportedCsvIsSafe(page, button) {
+  const [dl] = await Promise.all([page.waitForEvent("download"), button.click()]);
+  const cells = readFileSync(await dl.path(), "utf8")
+    .split("\n")
+    .flatMap((l) => l.slice(1, -1).split('","'));
+  assert.ok(cells.includes(`'${NEW_NAME}`), `no escaped '${NEW_NAME} cell`);
+  assert.deepEqual(
+    cells.filter((c) => /^[=+\-@\t\r]/.test(c)),
+    [],
+    "cells starting a formula",
+  );
+}
 
 // ---------- guest ----------
 const guest = await newPage();
@@ -132,9 +146,10 @@ await step("admin dashboard counts only active students and active recruiters", 
     else await adm.waitForTimeout(1000);
   }
 });
-await step("admin queue shows the new student's real programme, then approves", async () => {
+await step("admin queue shows the new student's real programme, exports formula-safe CSV, then approves", async () => {
   const row = adm.getByRole("row").filter({ hasText: NEW_STUDENT });
   await row.getByRole("cell", { name: "School of Engineering B.Tech Computer Science & Engg" }).waitFor();
+  await exportedCsvIsSafe(adm, adm.getByRole("button", { name: "Export CSV" }));
   await row.getByRole("button", { name: "Approve" }).click();
   await row.waitFor({ state: "detached" });
 });
@@ -246,6 +261,9 @@ await step("recruiter sees every released applicant by default (all pages, CGPA 
   await rec.getByLabel("Choose drive").selectOption({ label: `${JOB} (Live to students)` });
   await rec.getByLabel(`Select ${NEW_NAME}`).waitFor();
   await rec.getByLabel("Select Priyanshu Sharma").waitFor();
+});
+await step("recruiter CSV export is formula-safe", async () => {
+  await exportedCsvIsSafe(rec, rec.getByRole("button", { name: /Export CSV/ }));
 });
 await step("recruiter selection is scoped to the drive and the visible rows", async () => {
   const pick = rec.getByLabel("Choose drive");

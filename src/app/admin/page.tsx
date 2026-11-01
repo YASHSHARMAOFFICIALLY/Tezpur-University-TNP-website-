@@ -6,6 +6,7 @@ import { AppShell } from "@/components/AppShell";
 import { ADMIN_NAV } from "./nav";
 import { Badge, Button, Card, Empty, Field, Icon, Input, Notice, Select, State, cx, useRun } from "@/components/ui";
 import { api, call, listAll, openFile } from "@/lib/api";
+import { downloadCsv } from "@/lib/csv";
 import type { paths } from "@/lib/api-types";
 import { fmtDate, initialsOf } from "@/lib/format";
 
@@ -209,10 +210,7 @@ function Queue() {
 
   function exportCsv() {
     const rows = visible.map((x) => Object.values(x).map((v) => (typeof v === "object" ? JSON.stringify(v) : v)));
-    const csv = [Object.keys(visible[0] ?? {}), ...rows].map((r) => r.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
-    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    Object.assign(document.createElement("a"), { href: url, download: `pending-${tab}.csv` }).click();
-    URL.revokeObjectURL(url);
+    downloadCsv(`pending-${tab}.csv`, [Object.keys(visible[0] ?? {}), ...rows]);
   }
 
   const actions = (id: string) =>

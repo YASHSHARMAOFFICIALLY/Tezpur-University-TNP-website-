@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { AppShell, type NavItem } from "@/components/AppShell";
 import { Badge, Button, Card, Empty, Field, Icon, Input, Modal, Notice, Select, State, Textarea, cx, useRun, type Tone } from "@/components/ui";
 import { api, call, fileBody, listAll, openFile } from "@/lib/api";
+import { downloadCsv } from "@/lib/csv";
 import type { paths } from "@/lib/api-types";
 import { fmtDate, initialsOf, ymd } from "@/lib/format";
 
@@ -542,13 +543,7 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
       const u = a.student.user as { name?: string; email?: string };
       return [u.name, u.email, a.student.enrolment_no, progName(a.student.programme_id), a.student.cgpa, a.created_at.slice(0, 10), STAGE_LABEL[a.status]];
     });
-    const csv = [head, ...lines].map((r) => r.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
-    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    Object.assign(document.createElement("a"), {
-      href: url,
-      download: `${drive.title}-candidates.csv`,
-    }).click();
-    URL.revokeObjectURL(url);
+    downloadCsv(`${drive.title}-candidates.csv`, [head, ...lines]);
   }
 
   return (
