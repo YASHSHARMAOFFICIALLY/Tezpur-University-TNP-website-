@@ -100,6 +100,11 @@ for (const [department, name, code, student_count] of want)
   if (!progs.some((p) => p.code === code)) await req("POST", "/admin/programmes", { token: A, body: { department, name, code, year: 4, student_count } });
 const programmes = await req("GET", "/programmes");
 const cse = programmes.find((p) => p.code === "CSB");
+if (!(await req("GET", "/placement-records")).some((r) => r.year === 2024))
+  await req("POST", "/admin/placement-records", {
+    token: A,
+    body: { year: 2024, data: { placement_rate: 87.4, corporate_partners: 180, highest_ctc_lpa: 21.5, summer_internships: 450, cohort: "Academic Cohort 2023-24" } },
+  });
 step(`university + ${programmes.length} programmes`);
 
 // 3. student: register -> OTP -> admin approve -> complete profile

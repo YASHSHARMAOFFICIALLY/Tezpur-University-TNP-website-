@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "material-symbols/outlined.css";
+@import "material-symbols/outlined.css" layer(base);
 
 /* Tokens copied from the Figma CSS export (design/*.css). Names follow the Material 3 roles the file uses. */
 @theme {
@@ -53,13 +53,15 @@
   --shadow-pop: 0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -2px rgba(0, 0, 0, 0.1);
 }
 
-body {
-  background: var(--color-bg);
-  color: var(--color-ink);
-}
-
-.material-symbols-outlined {
-  font-size: 1.15em;
-  line-height: 1;
-  vertical-align: middle;
+@layer base {
+  body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+  }
+  /* in base layer so Tailwind text-* utilities can resize icons */
+  .material-symbols-outlined {
+    font-size: 1.15em;
+    line-height: 1;
+    vertical-align: middle;
+  }
 }
