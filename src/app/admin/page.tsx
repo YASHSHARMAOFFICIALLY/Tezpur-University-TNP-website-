@@ -832,7 +832,7 @@ function PublishResults() {
                 variant="tertiary"
                 icon="send"
                 busy={busy === "publish"}
-                disabled={!count("shortlisted") || drive.status === "closed"}
+                disabled={!count("shortlisted")}
                 title="Publishes the selections the recruiter submitted"
                 onClick={() => act("publish")}
                 className="py-2.5"

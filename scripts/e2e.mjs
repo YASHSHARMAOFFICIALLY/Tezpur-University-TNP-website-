@@ -248,7 +248,9 @@ await step("recruiter submits final selection", async () => {
   await rec.getByRole("button", { name: "Submit as Final Selections" }).click();
   await rec.getByText("Final selections sent").waitFor();
 });
-await step("admin publishes results", async () => {
+await step("recruiter closes the drive; admin still publishes results", async () => {
+  await rec.getByRole("button", { name: "Stop Accepting Applications" }).click();
+  await rec.getByLabel("Choose drive").getByRole("option", { name: `${JOB} (Closed)` }).waitFor({ state: "attached" });
   await adm.reload();
   await adm.getByLabel("Select Concluded Drive").selectOption({ label: `Cognizant Technology Solutions - ${JOB}` });
   await adm.getByRole("button", { name: /Execute Select Rollout/ }).click();
