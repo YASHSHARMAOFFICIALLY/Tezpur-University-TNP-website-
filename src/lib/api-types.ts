@@ -5889,7 +5889,7 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * All organisations
+         * All organisations, optionally only those with a recruiter account in `status`
          * @description Roles: admin
          */
         get: {
@@ -5897,6 +5897,7 @@ export interface paths {
                 query?: {
                     cursor?: string;
                     limit?: number;
+                    status?: "pending_email_verify" | "pending_admin" | "active" | "rejected" | "alumni";
                 };
                 header?: never;
                 path?: never;

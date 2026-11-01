@@ -71,9 +71,27 @@ await step("recruiter creates + submits posting via Posting Studio", async () =>
 
 // ---------- admin approves ----------
 const adm = await newPage();
-await step("admin queue shows the new student's real programme, then approves", async () => {
+await step("admin dashboard counts only active students and active recruiters", async () => {
   await login(adm, ADMIN, PW);
   await adm.waitForURL(/\/admin$/);
+  const { access_token } = await apiCall("POST", "/auth/login", { body: { email: ADMIN, password: PW } });
+  const capped = async (path) => {
+    const r = await apiCall("GET", `${path}?limit=100&status=active`, { token: access_token });
+    return `${r.data.length}${r.page.has_more ? "+" : ""}`;
+  };
+  const big = (label) => adm.getByText(label, { exact: true }).locator("..").locator("span.font-display");
+  // Stats load independently and other suites share the database, so poll, reloading now and then, before calling it wrong.
+  for (let i = 0; ; i++) {
+    await big("Registered Candidates").filter({ hasNotText: "…" }).waitFor();
+    const shown = [await big("Registered Candidates").innerText(), await big("Approved Recruiters").innerText()];
+    const want = [await capped("/admin/students"), await capped("/admin/companies")];
+    if (shown.join() === want.join()) break;
+    if (i === 8) throw new Error(`dashboard shows students/recruiters ${shown.join("/")}, active counts are ${want.join("/")}`);
+    if (i % 3 === 2) await adm.reload();
+    else await adm.waitForTimeout(1000);
+  }
+});
+await step("admin queue shows the new student's real programme, then approves", async () => {
   const row = adm.getByRole("row").filter({ hasText: NEW_STUDENT });
   await row.getByRole("cell", { name: "School of Engineering B.Tech Computer Science & Engg" }).waitFor();
   await row.getByRole("button", { name: "Approve" }).click();

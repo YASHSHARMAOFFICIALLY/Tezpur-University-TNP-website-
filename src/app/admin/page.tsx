@@ -104,8 +104,8 @@ const Big = ({ v, unit, tone = "text-primary" }: { v: string | number; unit: str
 function Stats() {
   const pending = usePending();
   const opps = useOpps();
-  const companies = useCompanies();
-  const students = useSWR("admin/students?count", () => call(api.GET("/api/v1/admin/students", { params: { query: { limit: 100 } } })));
+  const companies = useSWR("admin/companies?active", () => call(api.GET("/api/v1/admin/companies", { params: { query: { limit: 100, status: "active" } } })));
+  const students = useSWR("admin/students?active", () => call(api.GET("/api/v1/admin/students", { params: { query: { limit: 100, status: "active" } } })));
   const report = useSWR("reports/placements", () => call(api.GET("/api/v1/admin/reports/placements")));
 
   const live = opps.data?.data.filter((o) => o.status === "approved") ?? [];
