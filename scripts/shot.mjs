@@ -25,7 +25,10 @@ const EMAIL = {
 };
 
 const browser = await chromium.launch({ executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
-const page = await browser.newPage({ viewport: { width: Number(process.env.W ?? 1280), height: 800 } });
+const page = await browser.newPage({
+  viewport: { width: Number(process.env.W ?? 1280), height: 800 },
+  ignoreHTTPSErrors: WEB.startsWith("https:"),
+});
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
 page.on("console", (m) => m.type() === "error" && errors.push(m.text()));

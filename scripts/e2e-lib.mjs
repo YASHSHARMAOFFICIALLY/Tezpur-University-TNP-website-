@@ -63,7 +63,11 @@ export async function otpFor(email) {
 }
 
 export async function newPage() {
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, acceptDownloads: true });
+  const ctx = await browser.newContext({
+    viewport: { width: 1280, height: 900 },
+    acceptDownloads: true,
+    ignoreHTTPSErrors: WEB.startsWith("https:"),
+  });
   const page = await ctx.newPage();
   page.on("pageerror", (e) => consoleErrors.push(e.message));
   page.on(
