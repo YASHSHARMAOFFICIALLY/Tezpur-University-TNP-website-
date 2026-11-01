@@ -29,7 +29,10 @@ descends_from() {
 log() { mkdir -p "$ART"; printf '%s\n' "$*" >> "$ART/transcript.log"; }
 
 cmd_launch() {
-  docker compose -f "$BACKEND/docker-compose.yml" --profile dev up -d postgres mailpit >/dev/null 2>&1 || die "docker compose up failed"
+  # Reuse Postgres/Mailpit already listening (native installs hold these ports and the containers can't bind them).
+  if ! pg_isready -h localhost -p 5434 -q || ! curl -sf "$MAILPIT/api/v1/info" >/dev/null; then
+    docker compose -f "$BACKEND/docker-compose.yml" --profile dev up -d postgres mailpit >/dev/null 2>&1 || die "docker compose up failed"
+  fi
   for _ in $(seq 1 30); do pg_isready -h localhost -p 5434 -q && break; sleep 1; done
   curl -sf "$MAILPIT/api/v1/info" >/dev/null || die "mailpit not reachable on :8025"
 
