@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tezpur University T&P Portal: frontend
 
-## Getting Started
+Next.js 16 (App Router) + Tailwind v4, built from the approved Figma file. Talks to `../backend` through a same-origin proxy (`/api/v1/*` → `BACKEND_URL`, default `http://localhost:3000`).
 
-First, run the development server:
+## Run
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```sh
+./scripts/backend-up.sh      # Postgres + Mailpit + API on :3000 (idempotent)
+npm ci
+npm run dev                  # http://localhost:3001
+node scripts/seed-demo.mjs   # optional demo data via the real API; test password goes to .env.local (gitignored)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Routes
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Route | Who | Figma frame |
+| --- | --- | --- |
+| `/` | public | Public Portal & Dual Registration Flow |
+| `/login` | all | not in Figma (styled like the registration desk) |
+| `/student` | student | Student & Alumnus Placement Hub |
+| `/recruiter` | company | Recruiter Corporate Desk |
+| `/admin` | admin | TPO Admin Governance Workspace |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+After login each user is sent to their portal by `user.role`. `must_change_password` shows the change-password form before anything else.
 
-## Learn More
+## Code map
 
-To learn more about Next.js, take a look at the following resources:
+- `src/lib/api.ts`: typed client (`openapi-fetch`), session, token refresh, `call()` error unwrapping, file helpers.
+- `src/lib/api-types.ts`: generated; run `npm run types` after the backend's `openapi.json` changes.
+- `src/components/ui.tsx`: Button, Badge, Card, Field, Input, `State` (loading / empty / error for every data block).
+- `src/components/AppShell.tsx`, `PublicShell.tsx`: layouts from the Figma frames.
+- `src/app/globals.css`: design tokens copied from the Figma CSS export.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Design source
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`design/` holds the Figma exports: per-frame CSS (all layers), SVG and PNG. `python3 scripts/figma-outline.py design/admin.css` prints one line per layer.
+Blocks with no backend data (JEE/NIRF analytics, logistics, NPS…) keep the Figma text by decision.
 
-## Deploy on Vercel
+## Checks
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```sh
+npx tsc --noEmit && npx eslint src scripts
+node scripts/e2e.mjs                         # 20-step UI test across all portals (needs API, web, Mailpit, seed)
+node scripts/shot.mjs student /student       # full-page screenshot as a demo user; W=390 for mobile
+```

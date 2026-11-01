@@ -3,7 +3,7 @@
 import { useState } from "react";
 import useSWR from "swr";
 import { AppShell, type NavItem } from "@/components/AppShell";
-import { Badge, Button, Card, Empty, Icon, State, Tabs, cx } from "@/components/ui";
+import { Badge, Button, Card, Empty, Icon, State, cx } from "@/components/ui";
 import { api, call, fileUrl, openFile, type ApiError } from "@/lib/api";
 import type { components } from "@/lib/api-types";
 import { APP_STATUS, fmtDate, initialsOf, reasonText, timeLeft } from "@/lib/format";

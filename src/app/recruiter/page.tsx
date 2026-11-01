@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
 import { AppShell, type NavItem } from "@/components/AppShell";
@@ -176,9 +177,9 @@ function TalentPool() {
         </p>
         <div className="mt-auto flex justify-between text-caption font-semibold">
           <span>Assam, India • PIN 784028</span>
-          <a href="/#brochure" className="flex items-center gap-1 text-white">
+          <Link href="/#brochure" className="flex items-center gap-1 text-white">
             View Institutional Brochure <Icon name="arrow_forward" />
-          </a>
+          </Link>
         </div>
       </div>
       <Card className="flex flex-col gap-4 p-5">

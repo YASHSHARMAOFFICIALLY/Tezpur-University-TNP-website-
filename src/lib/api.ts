@@ -95,6 +95,7 @@ export async function call<T>(p: Promise<{ data?: T; error?: unknown; response: 
   }
   if (res.response.ok) return res.data as T;
   const e = (res.error as { error?: ErrorBody } | undefined)?.error;
+  if (!e && res.response.status >= 500) throw new ApiError("NETWORK", "The server isn't responding. Try again in a moment.");
   const reason = typeof e?.details?.reason === "string" ? `: ${e.details.reason}` : "";
   throw new ApiError(e?.code ?? "INTERNAL", (e?.message ?? `Request failed (${res.response.status})`) + reason, e?.details);
 }

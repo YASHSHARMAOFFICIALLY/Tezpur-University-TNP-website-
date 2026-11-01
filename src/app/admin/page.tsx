@@ -9,7 +9,6 @@ import type { paths } from "@/lib/api-types";
 import { fmtDate, initialsOf } from "@/lib/format";
 
 type Json<P extends keyof paths> = paths[P] extends { get: { responses: { 200: { content: { "application/json": infer T } } } } } ? T : never;
-type Pending = Json<"/api/v1/admin/pending">;
 
 const NAV: NavItem[] = [
   { label: "Admin Console", icon: "dashboard", href: "#console" },
