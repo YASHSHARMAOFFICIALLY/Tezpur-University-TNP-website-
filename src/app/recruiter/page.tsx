@@ -478,6 +478,7 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
   const [busy, setBusy] = useState("");
   const [msg, setMsg] = useState<{ tone: "ok" | "err"; text: string } | null>(null);
   const [iv, setIv] = useState(false);
+  const [confirming, setConfirming] = useState(false);
   const PER = 5;
 
   const rows = useMemo(
@@ -496,6 +497,7 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
   const progName = (id: string | null) => progs.data?.find((p) => p.id === id)?.name ?? "—";
 
   async function bulk(kind: "shortlist" | "reject" | "results") {
+    setConfirming(false);
     setBusy(kind);
     setMsg(null);
     try {
@@ -520,7 +522,10 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
         );
       setMsg({
         tone: "ok",
-        text: kind === "results" ? "Final selections sent. The T&P cell publishes them to students." : `${ids.length} candidate(s) updated.`,
+        text:
+          kind === "results"
+            ? `Final selections sent: ${ids.length} candidate(s). The T&P cell publishes them to students.`
+            : `${ids.length} candidate(s) updated.`,
       });
       setSel(new Set());
       q.mutate();
@@ -741,7 +746,7 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
           <Button size="sm" variant="ghost" icon="close" busy={busy === "reject"} disabled={!ids.length} onClick={() => bulk("reject")}>
             Reject Selected
           </Button>
-          <Button size="sm" icon="workspace_premium" busy={busy === "results"} disabled={!ids.length} onClick={() => bulk("results")}>
+          <Button size="sm" icon="workspace_premium" busy={busy === "results"} disabled={!ids.length} onClick={() => setConfirming(true)}>
             Submit as Final Selections
           </Button>
           <span className="mx-2 h-5 w-px bg-surface-highest" />
@@ -770,6 +775,24 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
           </button>
         </div>
       </div>
+      {confirming && (
+        <Modal title="Submit final selections" onClose={() => setConfirming(false)}>
+          <p className="text-body text-ink">
+            Submit {ids.length} candidate(s) as the final selections for {drive.title}? This replaces any selection submitted earlier for this drive.
+          </p>
+          <p className="text-body text-ink">
+            Every other shortlisted or released applicant on this drive is rejected when the T&amp;P cell publishes the results.
+          </p>
+          <div className="flex justify-end gap-2">
+            <Button variant="ghost" onClick={() => setConfirming(false)}>
+              Cancel
+            </Button>
+            <Button icon="workspace_premium" onClick={() => bulk("results")}>
+              Confirm
+            </Button>
+          </div>
+        </Modal>
+      )}
       {iv && (
         <InterviewDialog
           drive={drive}

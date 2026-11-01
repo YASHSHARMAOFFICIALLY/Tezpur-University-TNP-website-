@@ -273,6 +273,15 @@ await step("recruiter bulk-shortlists + schedules interview", async () => {
 await step("recruiter submits final selection", async () => {
   await rec.getByLabel("Select Priyanshu Sharma").check();
   await rec.getByRole("button", { name: "Submit as Final Selections" }).click();
+  const d = rec.getByRole("dialog", { name: "Submit final selections" });
+  await d.getByText(/1 candidate/).waitFor();
+  await d.getByText(/replaces any selection submitted earlier/).waitFor();
+  await d.getByText(/rejected when the T&P cell publishes/).waitFor();
+  await d.getByRole("button", { name: "Cancel" }).click();
+  await d.waitFor({ state: "detached" });
+  assert.equal(await rec.getByText("Final selections sent").count(), 0, "cancel must not submit");
+  await rec.getByRole("button", { name: "Submit as Final Selections" }).click();
+  await d.getByRole("button", { name: "Confirm" }).click();
   await rec.getByText("Final selections sent").waitFor();
 });
 await step("recruiter closes the drive; admin still publishes results", async () => {
