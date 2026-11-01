@@ -2,17 +2,37 @@
 // Needs API (:3000), web (:3001), Mailpit (:8025) and `node scripts/seed-demo.mjs` already run.
 // Every run uses fresh unique accounts/postings, so it can be re-run. Exit code 1 on the first failed step.
 //
-// usage: node scripts/e2e.mjs [--headed]   (23 steps)
+// usage: node scripts/e2e.mjs [--headed]   (24 steps)
 import { writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
-import { ADMIN, DOMAIN, PW, RECRUITER, SEED_STUDENT, WEB, apiCall, browser, here, login, newPage, otpFor, run, step, summary } from "./e2e-lib.mjs";
+import assert from "node:assert/strict";
+import {
+  ADMIN,
+  DOMAIN,
+  PW,
+  RECRUITER,
+  SEED_STUDENT,
+  WEB,
+  apiCall,
+  apiList,
+  browser,
+  here,
+  login,
+  newPage,
+  otpFor,
+  run,
+  step,
+  summary,
+  ymd,
+} from "./e2e-lib.mjs";
 
 const NEW_ENROL = `CSB9${run}`;
 const NEW_STUDENT = `${NEW_ENROL.toLowerCase()}@${DOMAIN}`;
 const NEW_PW = `E2e-${run}-pass`;
 const JOB = `E2E Cloud Engineer ${run}`;
 const NEW_NAME = "E2E Test Student";
+const DEADLINE = ymd(new Date(Date.now() + 5 * 864e5));
 
 // The backend pages with real cursors; one row per page proves the UI follows them instead of stopping at page one.
 const onePerPage = (r) => {
@@ -73,9 +93,16 @@ await step("recruiter creates + submits posting via Posting Studio", async () =>
   await d.getByLabel("B.Tech Computer Science & Engg").check();
   await d.getByLabel("Minimum Cutoff CGPA").fill("5");
   await d.getByLabel("Passing-out Batch *").selectOption("2026");
-  await d.getByLabel("Apply Deadline *").fill(new Date(Date.now() + 5 * 864e5).toISOString().slice(0, 10));
+  await d.getByLabel("Apply Deadline *").fill(DEADLINE);
   await d.getByRole("button", { name: "Publish Opening to Students" }).click();
   await d.waitFor({ state: "detached" });
+});
+
+await step("posting deadline is 23:59 local time on the chosen day", async () => {
+  const { access_token } = await apiCall("POST", "/auth/login", { body: { email: RECRUITER, password: PW } });
+  const [p] = (await apiList("/company/opportunities", access_token)).filter((o) => o.title === JOB);
+  const at = new Date(p.apply_deadline);
+  assert.deepEqual([ymd(at), at.getHours(), at.getMinutes()], [DEADLINE, 23, 59], `deadline is ${at.toString()}, want ${DEADLINE} 23:59 local`);
 });
 
 // ---------- admin approves ----------
@@ -250,7 +277,10 @@ await step("recruiter submits final selection", async () => {
 });
 await step("recruiter closes the drive; admin still publishes results", async () => {
   await rec.getByRole("button", { name: "Stop Accepting Applications" }).click();
-  await rec.getByLabel("Choose drive").getByRole("option", { name: `${JOB} (Closed)` }).waitFor({ state: "attached" });
+  await rec
+    .getByLabel("Choose drive")
+    .getByRole("option", { name: `${JOB} (Closed)` })
+    .waitFor({ state: "attached" });
   await adm.reload();
   await adm.getByLabel("Select Concluded Drive").selectOption({ label: `Cognizant Technology Solutions - ${JOB}` });
   await adm.getByRole("button", { name: /Execute Select Rollout/ }).click();

@@ -113,3 +113,17 @@ export async function apiCall(method, path, { token, body, file } = {}) {
   if (!r.ok) throw new Error(`${method} ${path} -> ${r.status} ${json?.error?.code}`);
   return json;
 }
+
+/** Every row of a cursor-paginated list endpoint. */
+export async function apiList(path, token) {
+  const rows = [];
+  for (let cursor = ""; ;) {
+    const r = await apiCall("GET", `${path}?limit=100${cursor && `&cursor=${cursor}`}`, { token });
+    rows.push(...r.data);
+    if (!r.page.has_more) return rows;
+    cursor = r.page.cursor;
+  }
+}
+
+/** Local calendar date (YYYY-MM-DD), as a date input shows it. */
+export const ymd = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;

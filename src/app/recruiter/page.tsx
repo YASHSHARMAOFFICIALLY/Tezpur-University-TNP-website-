@@ -1186,7 +1186,8 @@ function PostingStudio({ onClose, onDone, initial }: { onClose: () => void; onDo
         expected_hires: g("hires") ? Number(g("hires")) : undefined,
         ctc_benefits: ctc || undefined,
         bond_details: g("bond") || undefined,
-        apply_deadline: new Date(g("deadline")).toISOString(),
+        // A date-only string parses as UTC midnight; the deadline is the end of that day in the recruiter's time zone.
+        apply_deadline: new Date(`${g("deadline")}T23:59:59`).toISOString(),
         eligibility: {
           min_cgpa: Number(g("min_cgpa") || 0),
           programmes,
