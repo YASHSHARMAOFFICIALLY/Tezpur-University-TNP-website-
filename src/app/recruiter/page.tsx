@@ -7,7 +7,7 @@ import { AppShell, type NavItem } from "@/components/AppShell";
 import { Badge, Button, Card, Empty, Field, Icon, Input, Modal, Notice, Select, State, Textarea, cx, useRun, type Tone } from "@/components/ui";
 import { api, call, fileBody, listAll, openFile } from "@/lib/api";
 import type { paths } from "@/lib/api-types";
-import { fmtDate, initialsOf } from "@/lib/format";
+import { fmtDate, initialsOf, ymd } from "@/lib/format";
 
 type Json<P extends keyof paths, M extends "get"> = paths[P][M] extends {
   responses: { 200: { content: { "application/json": infer T } } };
@@ -1163,6 +1163,9 @@ function PostingStudio({ onClose, onDone, initial }: { onClose: () => void; onDo
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const year = new Date().getFullYear();
+  // Edit keeps what the form can't show (several batches, the exact deadline time) unless the recruiter changes that field.
+  const batches = initial?.eligibility.completion_years?.join(",");
+  const initialDay = initial && ymd(new Date(initial.apply_deadline));
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -1178,7 +1181,7 @@ function PostingStudio({ onClose, onDone, initial }: { onClose: () => void; onDo
     setErr("");
     try {
       const body = {
-        type: g("type") as "job" | "internship",
+        type: g("type") as Posting["type"],
         title: g("title"),
         designation: g("designation") || undefined,
         location: g("location") || undefined,
@@ -1187,11 +1190,12 @@ function PostingStudio({ onClose, onDone, initial }: { onClose: () => void; onDo
         ctc_benefits: ctc || undefined,
         bond_details: g("bond") || undefined,
         // A date-only string parses as UTC midnight; the deadline is the end of that day in the recruiter's time zone.
-        apply_deadline: new Date(`${g("deadline")}T23:59:59`).toISOString(),
+        apply_deadline: g("deadline") === initialDay ? initial!.apply_deadline : new Date(`${g("deadline")}T23:59:59`).toISOString(),
         eligibility: {
+          ...initial?.eligibility,
           min_cgpa: Number(g("min_cgpa") || 0),
           programmes,
-          completion_years: [Number(g("batch"))],
+          completion_years: g("batch").split(",").map(Number),
         },
         selection_process: Object.fromEntries(ROUNDS.map(([k]) => [k, fd.has(k)])) as never,
       };
@@ -1253,6 +1257,7 @@ function PostingStudio({ onClose, onDone, initial }: { onClose: () => void; onDo
               <Select name="type" defaultValue={initial?.type} className="bg-surface-low shadow-none">
                 <option value="job">Full-time Job</option>
                 <option value="internship">Internship</option>
+                <option value="competition">Competition</option>
               </Select>
             </Field>
           </div>
@@ -1335,14 +1340,16 @@ function PostingStudio({ onClose, onDone, initial }: { onClose: () => void; onDo
                 <Input name="min_cgpa" type="number" step="0.1" min="0" max="10" defaultValue={initial?.eligibility.min_cgpa ?? 7.5} />
               </Field>
               <Field label="Passing-out Batch *">
-                <Select name="batch" defaultValue={initial?.eligibility.completion_years?.[0] ?? year}>
-                  {[year, year + 1, year + 2].map((y) => (
-                    <option key={y}>{y}</option>
+                <Select name="batch" defaultValue={batches ?? year}>
+                  {[...new Set([batches, year, year + 1, year + 2].filter(Boolean).map(String))].map((y) => (
+                    <option key={y} value={y}>
+                      {y.split(",").join(", ")}
+                    </option>
                   ))}
                 </Select>
               </Field>
               <Field label="Apply Deadline *">
-                <Input name="deadline" type="date" required defaultValue={initial?.apply_deadline.slice(0, 10)} />
+                <Input name="deadline" type="date" required defaultValue={initialDay} />
               </Field>
             </div>
           </fieldset>

@@ -7,14 +7,14 @@
 import { writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
-import { ADMIN, DOMAIN, PW, RECRUITER, SEED_STUDENT, WEB, browser, login, newPage, otpFor, run, step, summary } from "./e2e-lib.mjs";
+import assert from "node:assert/strict";
+import { ADMIN, DOMAIN, PW, RECRUITER, SEED_STUDENT, WEB, apiCall, apiList, browser, login, newPage, otpFor, run, step, summary } from "./e2e-lib.mjs";
 
 const NOTICE = `E2E Notice ${run}`;
 const JOB2 = `E2E Returned Role ${run}`;
 const NEW_REC = `hr${run}@e2e-${run}.test`;
 const NEW_REC_PW = `Rec-${run}-pass`;
 const CSV_ENROL = `CSB8${run}`;
-const day = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
 
 const adm = await newPage();
 const rec = await newPage();
@@ -179,16 +179,25 @@ await step("recruiter edits organisation profile and contacts", async () => {
   await d.getByText(`E2E Contact ${run}`).waitFor({ state: "detached" });
   await d.getByRole("button", { name: "Close" }).click();
 });
-await step("posting returned by admin is edited and resubmitted", async () => {
-  await rec.getByRole("button", { name: "Create New Job Opening" }).click();
-  let d = rec.getByRole("dialog", { name: "Job & Internship Posting Studio" });
-  await d.getByLabel("ROLE PROFILE / JOB TITLE *").fill(JOB2);
-  await d.getByLabel("TENTATIVE WORK LOCATION *").fill("Guwahati");
-  await d.getByLabel("JOB DESCRIPTION *").fill("Draft that needs a fix.");
-  await d.getByLabel("B.Tech Computer Science & Engg").check();
-  await d.getByLabel("Apply Deadline *").fill(day(9));
-  await d.getByRole("button", { name: "Publish Opening to Students" }).click();
-  await d.waitFor({ state: "detached" });
+await step("posting returned by admin is edited and resubmitted; untouched fields survive", async () => {
+  const { access_token: token } = await apiCall("POST", "/auth/login", { body: { email: RECRUITER, password: PW } });
+  const cse = (await apiCall("GET", "/programmes")).find((p) => p.name === "B.Tech Computer Science & Engg");
+  const deadline = new Date(Date.now() + 9 * 864e5);
+  deadline.setHours(15, 0, 0, 0);
+  const eligibility = { min_cgpa: 6, programmes: [cse.id], completion_years: [2026, 2027], max_age: 28 };
+  const { id } = await apiCall("POST", "/company/opportunities", {
+    token,
+    body: {
+      type: "competition",
+      title: JOB2,
+      location: "Guwahati",
+      description: "Draft that needs a fix.",
+      apply_deadline: deadline.toISOString(),
+      eligibility,
+      selection_process: {},
+    },
+  });
+  await apiCall("POST", `/company/opportunities/${id}/submit`, { token });
 
   await adm.goto(`${WEB}/admin`);
   await adm.getByRole("tab", { name: /Job & Internship Postings/ }).click();
@@ -202,7 +211,7 @@ await step("posting returned by admin is edited and resubmitted", async () => {
   await rec.getByLabel("Choose drive").selectOption({ label: `${JOB2} (Returned for edits)` });
   await rec.getByText("Add the CTC breakdown").waitFor();
   await rec.getByRole("button", { name: "Edit Posting" }).click();
-  d = rec.getByRole("dialog", { name: "Edit posting" });
+  const d = rec.getByRole("dialog", { name: "Edit posting" });
   await d.getByLabel("CTC & Benefits").fill("₹8 LPA base + ₹1 LPA variable");
   await d.getByRole("button", { name: "Save & Resubmit for Approval" }).click();
   await d.waitFor({ state: "detached" });
@@ -210,6 +219,9 @@ await step("posting returned by admin is edited and resubmitted", async () => {
   await adm.reload();
   await adm.getByRole("tab", { name: /Job & Internship Postings/ }).click();
   await adm.getByRole("row").filter({ hasText: JOB2 }).getByText("₹8 LPA base").waitFor();
+  const p = (await apiList("/company/opportunities", token)).find((o) => o.id === id);
+  const got = { type: p.type, eligibility: p.eligibility, apply_deadline: new Date(p.apply_deadline).toISOString() };
+  assert.deepEqual(got, { type: "competition", eligibility, apply_deadline: deadline.toISOString() }, `after edit: ${JSON.stringify(got)}`);
 });
 await step("recruiter 4-step registration (UI) + OTP", async () => {
   await guest.goto(`${WEB}/#register`);

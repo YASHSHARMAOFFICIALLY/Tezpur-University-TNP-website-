@@ -49,3 +49,6 @@ export const initialsOf = (s: string) =>
     .map((w) => w[0])
     .join("")
     .toUpperCase();
+
+/** Local calendar date as YYYY-MM-DD, the value a date input holds. */
+export const ymd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
