@@ -71,10 +71,11 @@ await step("recruiter creates + submits posting via Posting Studio", async () =>
 
 // ---------- admin approves ----------
 const adm = await newPage();
-await step("admin approves new student in queue", async () => {
+await step("admin queue shows the new student's real programme, then approves", async () => {
   await login(adm, ADMIN, PW);
   await adm.waitForURL(/\/admin$/);
   const row = adm.getByRole("row").filter({ hasText: NEW_STUDENT });
+  await row.getByRole("cell", { name: "School of Engineering B.Tech Computer Science & Engg" }).waitFor();
   await row.getByRole("button", { name: "Approve" }).click();
   await row.waitFor({ state: "detached" });
 });

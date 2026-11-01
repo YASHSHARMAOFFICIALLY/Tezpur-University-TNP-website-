@@ -198,7 +198,7 @@ function Queue() {
   }
 
   const match = (s: string) => !q || s.toLowerCase().includes(q.toLowerCase());
-  const students = d?.students.filter((s) => match(`${s.name} ${s.email} ${(s.student as { enrolment_no?: string } | null)?.enrolment_no ?? ""}`)) ?? [];
+  const students = d?.students.filter((s) => match(`${s.name} ${s.email} ${s.student?.enrolment_no ?? ""}`)) ?? [];
   const recruiters = d?.recruiters.filter((r) => match(`${r.name} ${r.email} ${(r.company as { name?: string } | null)?.name ?? ""}`)) ?? [];
   const opps = d?.opportunities.filter((o) => match(`${o.title} ${o.company.name}`)) ?? [];
   const visible = { students, recruiters, opportunities: opps }[tab];
@@ -354,10 +354,10 @@ function Queue() {
                   </thead>
                   <tbody>
                     {students.map((s) => {
-                      const st = (s.student ?? {}) as { enrolment_no?: string; department?: string; cgpa?: number; resume_file_id?: string | null };
+                      const st = s.student;
                       return (
                         <tr key={s.id} className="border-t border-surface">
-                          <td className="px-3 py-3 font-bold">{st.enrolment_no ?? "—"}</td>
+                          <td className="px-3 py-3 font-bold">{st?.enrolment_no ?? "—"}</td>
                           <td className="px-3 py-3">
                             <span className="flex items-center gap-2">
                               <span className="grid size-6 shrink-0 place-items-center rounded-xl bg-surface-high text-caption font-bold">
@@ -366,14 +366,17 @@ function Queue() {
                               <span className="font-semibold">{s.name}</span>
                             </span>
                           </td>
-                          <td className="px-3 py-3 text-muted">{st.department ?? "—"}</td>
-                          <td className="px-3 py-3 font-bold">{st.cgpa?.toFixed(2) ?? "—"}</td>
+                          <td className="px-3 py-3 text-muted">
+                            {st?.department ?? st?.programme?.department ?? "—"}
+                            {st?.programme && <p className="text-caption">{st.programme.name}</p>}
+                          </td>
+                          <td className="px-3 py-3 font-bold">{st?.cgpa?.toFixed(2) ?? "—"}</td>
                           <td className="px-3 py-3">
                             <span className="rounded-xs bg-surface-high px-2 py-0.5 text-caption">0 Cleared</span>
                           </td>
                           <td className="px-3 py-3 text-muted">{s.email}</td>
                           <td className="px-3 py-3">
-                            {st.resume_file_id ? (
+                            {st?.resume_file_id ? (
                               <button
                                 onClick={() => openFile(st.resume_file_id!)}
                                 className="flex items-center gap-1 rounded-xs bg-surface-high px-2 py-1 text-caption font-semibold cursor-pointer"

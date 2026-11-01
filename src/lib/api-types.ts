@@ -4377,6 +4377,15 @@ export interface paths {
                                 created_at: string;
                                 student: {
                                     enrolment_no: string;
+                                    department: string | null;
+                                    cgpa: number | null;
+                                    programme_id: string | null;
+                                    programme: {
+                                        name: string;
+                                        department: string;
+                                    } | null;
+                                    resume_file_id: string | null;
+                                    photo_file_id: string | null;
                                 } | null;
                             }[];
                             recruiters: {
