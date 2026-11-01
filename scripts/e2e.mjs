@@ -2,7 +2,7 @@
 // Needs API (:3000), web (:3001), Mailpit (:8025) and `node scripts/seed-demo.mjs` already run.
 // Every run uses fresh unique accounts/postings, so it can be re-run. Exit code 1 on the first failed step.
 //
-// usage: node scripts/e2e.mjs [--headed]   (21 steps)
+// usage: node scripts/e2e.mjs [--headed]   (22 steps)
 import { writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
@@ -197,6 +197,21 @@ await step("admin releases applicants to recruiter", async () => {
   await adm.getByLabel("Select Concluded Drive").selectOption({ label: `Cognizant Technology Solutions - ${JOB}` });
   await adm.getByRole("button", { name: /Release \d+ Applicant/ }).click();
   await adm.getByText("Applicants released to the recruiter.").waitFor();
+});
+await step("recruiter selection is scoped to the drive and the visible rows", async () => {
+  await rec.reload();
+  const pick = rec.getByLabel("Choose drive");
+  await pick.selectOption({ label: `${JOB} (Live to students)` });
+  await rec.getByLabel("Select Priyanshu Sharma").check();
+  await rec.getByRole("button", { name: /Bulk Shortlist \( 1 \)/ }).waitFor();
+  const other = await pick.locator("option").evaluateAll((os, job) => os.find((o) => !o.textContent.includes(job)).value, JOB);
+  await pick.selectOption(other);
+  await rec.getByRole("button", { name: /Bulk Shortlist \( 0 \)/ }).waitFor();
+  await pick.selectOption({ label: `${JOB} (Live to students)` });
+  await rec.getByLabel("Select Priyanshu Sharma").check();
+  await rec.getByPlaceholder(/Filter: name/).fill(NEW_ENROL);
+  await rec.getByRole("button", { name: /Bulk Shortlist \( 0 \)/ }).waitFor();
+  await rec.getByPlaceholder(/Filter: name/).fill("");
 });
 await step("recruiter bulk-shortlists + schedules interview", async () => {
   await rec.reload();

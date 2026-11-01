@@ -81,7 +81,7 @@ export default function RecruiterPage() {
           error={postings.error}
           loading={!postings.data}
         />
-        {drive && <Candidates drive={drive} q={applicants} />}
+        {drive && <Candidates key={drive.id} drive={drive} q={applicants} />}
         <div className="grid gap-6 lg:grid-cols-[1fr_350px]">
           <Dispatch />
           <Logistics />
@@ -499,7 +499,8 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
   );
   const pages = Math.max(1, Math.ceil(rows.length / PER));
   const shown = rows.slice(page * PER, page * PER + PER);
-  const ids = [...sel];
+  // Only rows the filters still show count as selected, so bulk actions never touch hidden candidates.
+  const ids = rows.filter((a) => sel.has(a.id)).map((a) => a.id);
   const progName = (id: string | null) => progs.data?.find((p) => p.id === id)?.name ?? "—";
 
   async function bulk(kind: "shortlist" | "reject" | "results") {
@@ -648,7 +649,7 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
                         aria-label="Select all on this page"
                         checked={shown.every((a) => sel.has(a.id))}
                         onChange={(e) =>
-                          setSel(new Set(e.target.checked ? [...sel, ...shown.map((a) => a.id)] : ids.filter((id) => !shown.some((a) => a.id === id))))
+                          setSel(new Set(e.target.checked ? [...sel, ...shown.map((a) => a.id)] : [...sel].filter((id) => !shown.some((a) => a.id === id))))
                         }
                       />
                     </th>
@@ -678,7 +679,7 @@ function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applican
                             type="checkbox"
                             aria-label={`Select ${u.name}`}
                             checked={sel.has(a.id)}
-                            onChange={(e) => setSel(new Set(e.target.checked ? [...ids, a.id] : ids.filter((x) => x !== a.id)))}
+                            onChange={(e) => setSel(new Set(e.target.checked ? [...sel, a.id] : [...sel].filter((x) => x !== a.id)))}
                           />
                         </td>
                         <td className="px-2 py-3">
