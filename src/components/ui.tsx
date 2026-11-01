@@ -202,6 +202,7 @@ export function Empty({ icon = "inbox", text = "Nothing here yet." }: { icon?: s
 export const initials = (name: string) =>
   name
     .split(/\s+/)
+    .filter((w) => /^[a-z]/i.test(w))
     .map((w) => w[0])
     .join("")
     .slice(0, 2)
