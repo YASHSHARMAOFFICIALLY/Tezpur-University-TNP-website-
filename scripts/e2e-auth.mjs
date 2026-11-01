@@ -87,6 +87,13 @@ await step("new teacher: one-time password forces a change before anything else"
   await t.waitForURL(/\/admin$/);
   await t.getByRole("heading", { name: "Set a new password" }).waitFor();
   if (await t.getByRole("heading", { name: "TPO Administrative Control Center" }).count()) throw new Error("console visible before password change");
+  await t.getByLabel("Current (one-time) password").fill("not-the-otp");
+  await t.getByLabel(/^New password/).fill(TEACHER_PW);
+  await t.getByLabel(/^Repeat new password/).fill(TEACHER_PW);
+  await t.getByRole("button", { name: "Save password" }).click();
+  await t.getByText("Email or password is wrong").waitFor();
+  await t.getByRole("heading", { name: "Set a new password" }).waitFor();
+  if (!/\/admin$/.test(t.url())) throw new Error(`wrong current password navigated away to ${t.url()}`);
   await t.getByLabel("Current (one-time) password").fill(otp);
   await t.getByLabel(/^New password/).fill(TEACHER_PW);
   await t.getByLabel(/^Repeat new password/).fill(TEACHER_PW);

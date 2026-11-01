@@ -82,8 +82,16 @@ const auth: Middleware = {
     if (s) request.headers.set("Authorization", `Bearer ${s.access_token}`);
     return request;
   },
-  onResponse({ response }) {
-    if (response.status === 401 && getSession()) setSession(null);
+  // Only a rejected token ends the session (a wrong password is also a 401), and only if no newer login replaced it meanwhile.
+  async onResponse({ request, response }) {
+    if (response.status !== 401) return response;
+    const s = getSession();
+    if (!s || request.headers.get("Authorization") !== `Bearer ${s.access_token}`) return response;
+    const body = (await response
+      .clone()
+      .json()
+      .catch(() => null)) as { error?: ErrorBody } | null;
+    if (body?.error?.code === "UNAUTHENTICATED" || body?.error?.code === "REFRESH_INVALID") setSession(null);
     return response;
   },
 };
