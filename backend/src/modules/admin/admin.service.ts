@@ -5,7 +5,7 @@ import { mail } from "../../infrastructure/mailer.js";
 import { hashPassword, randomPassword } from "../../infrastructure/password.js";
 import { paginate, type PageQuery } from "../../http/route.js";
 import { userMachine } from "../auth/auth.service.js";
-import { opportunityMachine } from "../opportunities/opportunities.service.js";
+import { deadlineAhead, opportunityMachine } from "../opportunities/opportunities.service.js";
 import type { AdminStudentPatch } from "../students/students.schemas.js";
 import type { Decision } from "./admin.schemas.js";
 
@@ -32,6 +32,7 @@ export async function decideOpportunity(id: string, d: Decision, actor: Actor) {
   return inTx(async (tx) => {
     const to = { approve: "approved", reject: "rejected", return: "draft" } as const;
     const reason = d.decision === "approve" ? null : d.reason;
+    if (d.decision === "approve") await deadlineAhead(tx, id, "approved");
     const r = await opportunityMachine.move(tx, id, to[d.decision], actor, { meta: { reason }, extra: { review_note: reason } });
     if (!r.changed) return { changed: false };
     const o = await tx.opportunity.findUniqueOrThrow({ where: { id }, include: { company: { include: { users: { select: { email: true } } } } } });

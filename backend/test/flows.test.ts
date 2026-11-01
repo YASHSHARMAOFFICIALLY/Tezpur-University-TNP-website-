@@ -72,6 +72,40 @@ describe("placement workflow", () => {
     expect((await student.get("/noticeboard")).body.data[0].title).toMatch(/Graduate Engineer/);
   });
 
+  it("a posting whose deadline has passed can be drafted but not submitted or approved", async () => {
+    const body = (days: number) => ({
+      type: "job", title: "Late Posting", description: "Deadline checks for submit and approve.", apply_deadline: new Date(Date.now() + days * 86_400_000).toISOString(),
+      eligibility: { min_cgpa: 7, programmes: [programmeId] }, selection_process: { technical_interview: true },
+    });
+    const past = (await recruiter.post("/company/opportunities", body(-1)).expect(201)).body.id;
+    expect(code(await recruiter.post(`/company/opportunities/${past}/submit`))).toBe("VALIDATION_FAILED");
+    expect((await db.opportunity.findUniqueOrThrow({ where: { id: past } })).status).toBe("draft");
+
+    const lapsed = (await recruiter.post("/company/opportunities", body(1)).expect(201)).body.id;
+    await recruiter.post(`/company/opportunities/${lapsed}/submit`).expect(200);
+    await db.opportunity.update({ where: { id: lapsed }, data: { apply_deadline: new Date(Date.now() - 60_000) } });
+    expect(code(await admin.post(`/admin/opportunities/${lapsed}/decision`, { decision: "approve" }))).toBe("VALIDATION_FAILED");
+    await admin.post(`/admin/opportunities/${lapsed}/decision`, { decision: "return", reason: "Move the deadline" }).expect(200);
+
+    // Once the deadline passes, a repeat submit or approve is still a no-op, not an error.
+    const live = (await recruiter.post("/company/opportunities", body(1)).expect(201)).body.id;
+    await recruiter.post(`/company/opportunities/${live}/submit`).expect(200);
+    await db.opportunity.update({ where: { id: live }, data: { apply_deadline: new Date(Date.now() - 60_000) } });
+    expect((await recruiter.post(`/company/opportunities/${live}/submit`).expect(200)).body).toEqual({ changed: false });
+    await db.opportunity.update({ where: { id: live }, data: { apply_deadline: new Date(Date.now() + 86_400_000) } });
+    await admin.post(`/admin/opportunities/${live}/decision`, { decision: "approve" }).expect(200);
+    await db.opportunity.update({ where: { id: live }, data: { apply_deadline: new Date(Date.now() - 60_000) } });
+    expect((await admin.post(`/admin/opportunities/${live}/decision`, { decision: "approve" }).expect(200)).body).toEqual({ changed: false });
+
+    // Another company sees NOT_FOUND, never this company's deadline.
+    const email = "hr@other.example";
+    await request(app).post(api("/auth/register/recruiter")).send({ email, password: "recruiter-pass", name: "O. Ther", company: { name: "Other Ltd", category: "private" } }).expect(201);
+    await request(app).post(api("/auth/verify-otp")).send({ email, code: await lastOtp(email) }).expect(200);
+    await admin.post(`/admin/users/${(await admin.get("/admin/pending")).body.recruiters[0].id}/decision`, { decision: "approve" }).expect(200);
+    const other = as(await login(email, "recruiter-pass"));
+    expect(code(await other.post(`/company/opportunities/${past}/submit`))).toBe("NOT_FOUND");
+  });
+
   it("apply enforces profile, then eligibility with reasons, then uniqueness", async () => {
     expect(code(await student.post(`/opportunities/${oppId}/apply`))).toBe("PROFILE_INCOMPLETE");
     expect(code(await student.upload("/students/me/resume", PNG, "cv.pdf"))).toBe("FILE_TYPE_NOT_ALLOWED"); // sniffed, not trusted
