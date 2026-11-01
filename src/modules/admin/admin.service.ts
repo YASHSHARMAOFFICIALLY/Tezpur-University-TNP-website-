@@ -47,7 +47,7 @@ export async function decideOpportunity(id: string, d: Decision, actor: Actor) {
 
 export async function pendingQueue() {
   const [students, recruiters, opportunities] = await Promise.all([
-    db.user.findMany({ where: { role: "student", status: "pending_admin" }, include: { student: { select: { enrolment_no: true } } }, orderBy: { id: "asc" }, take: 200 }),
+    db.user.findMany({ where: { role: "student", status: "pending_admin" }, include: { student: { select: { enrolment_no: true, department: true, cgpa: true, programme_id: true, programme: { select: { name: true, department: true } }, resume_file_id: true, photo_file_id: true } } }, orderBy: { id: "asc" }, take: 200 }),
     db.user.findMany({ where: { role: "company", status: "pending_admin" }, include: { company: true }, orderBy: { id: "asc" }, take: 200 }),
     db.opportunity.findMany({ where: { status: "pending_admin" }, include: { company: { select: { name: true } } }, orderBy: { id: "asc" }, take: 200 }),
   ]);

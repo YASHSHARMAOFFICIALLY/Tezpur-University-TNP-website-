@@ -10,8 +10,14 @@ export const Decision = z.discriminatedUnion("decision", [
 ]);
 export type Decision = z.infer<typeof Decision>;
 
+/** What the admin checks before approving a student account. */
+const PendingStudent = z.object({
+  enrolment_no: z.string(), department: z.string().nullable(), cgpa: z.number().nullable(), programme_id: z.string().nullable(),
+  programme: z.object({ name: z.string(), department: z.string() }).nullable(), resume_file_id: z.string().nullable(), photo_file_id: z.string().nullable(),
+});
+
 export const Pending = z.object({
-  students: z.array(z.object({ id: z.string(), name: z.string(), email: z.string(), created_at: Ts, student: z.object({ enrolment_no: z.string() }).nullable() })),
+  students: z.array(z.object({ id: z.string(), name: z.string(), email: z.string(), created_at: Ts, student: PendingStudent.nullable() })),
   recruiters: z.array(z.object({ id: z.string(), name: z.string(), email: z.string(), created_at: Ts, review_note: z.string().nullable(), company: z.object({ id: z.string(), name: z.string(), website: z.string().nullable(), category: z.string() }).nullable() })),
   opportunities: z.array(Opportunity.extend({ company: z.object({ name: z.string() }) })),
 });

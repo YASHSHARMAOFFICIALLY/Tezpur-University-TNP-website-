@@ -7412,10 +7412,64 @@
                             "properties": {
                               "enrolment_no": {
                                 "type": "string"
+                              },
+                              "department": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "cgpa": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "programme_id": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "programme": {
+                                "type": [
+                                  "object",
+                                  "null"
+                                ],
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "department": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "name",
+                                  "department"
+                                ]
+                              },
+                              "resume_file_id": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "photo_file_id": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
                               }
                             },
                             "required": [
-                              "enrolment_no"
+                              "enrolment_no",
+                              "department",
+                              "cgpa",
+                              "programme_id",
+                              "programme",
+                              "resume_file_id",
+                              "photo_file_id"
                             ]
                           }
                         },
