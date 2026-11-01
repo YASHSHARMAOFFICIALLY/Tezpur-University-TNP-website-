@@ -1,0 +1,839 @@
+     1 Recruiter Corporate Desk | dir=column ai=flex-start pad=0px 0px 0px 256px w=1280px h=2134.5px bg=linear-gradient(0deg, #FAF8FF, #FAF8FF), #FFFFFF
+    18 Main | dir=column ai=flex-start pad=80px 24px 20px w=1024px h=2134.5px bg=#FAF8FF
+    40 Container | dir=column ai=flex-start pad=0px w=976px h=2034.5px
+    59 Top Corporate Strategic Overview Bento | dir=column ai=flex-start pad=20px gap=20px w=976px h=249.5px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+    83 Gradient+Blur | w=320px h=320px bg=linear-gradient(135deg, rgba(213, 227, 255, 0.3) 0%, rgba(218, 226, 253, 0.1) 100%) r=12px
+   102 Container | dir=row jc=space-between ai=center pad=0px gap=12px w=936px h=88px
+   124 Container | dir=row ai=center pad=0px gap=12px w=616.91px h=88px
+   143 Background+Shadow | dir=row jc=center ai=center pad=0px w=56px h=56px bg=#EAEDFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=4px
+   165 Container | dir=column ai=flex-start pad=0px w=26.67px h=24px
+   183 Icon | w=26.67px h=24px bg=#00142F
+   196 Container | dir=column ai=flex-start pad=0px w=548.91px h=88px
+   214 Container | w=548.91px h=50px
+   227 Container | dir=column ai=flex-start pad=0px w=316.31px h=28px
+   243 Text | w=316.31px h=28px ff=Public Sans fw=600 fs=22px lh=28px ai=center ls=-0.55px c=#00142F
+   267 Background | dir=row ai=center pad=2px 4px gap=4px w=124.33px h=18px bg=#E2E7FF r=2px
+   286 Container | dir=column ai=flex-start pad=0px w=10.83px h=9.75px
+   304 Icon | w=10.83px h=9.75px bg=#44474E
+   317 Text | w=101.5px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+   341 Background | dir=row ai=center pad=2px 4px gap=4px w=267.01px h=18px bg=#DAE2FD r=2px
+   360 Container | dir=column ai=flex-start pad=0px w=11.92px h=11.38px
+   378 Icon | w=11.92px h=11.38px bg=#904D00
+   391 Text | w=243.09px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+   415 Margin | dir=column ai=flex-start pad=2px 0px 0px w=548.91px h=38px
+   434 Container | dir=column ai=flex-start pad=0px w=548.91px h=36px
+   453 Recruiting Node: SDE-1 & Cloud Infrastructure Tracks • T&P Liaison: Tezpur Central Placement Cell | w=548.91px h=36px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+   477 Container | dir=row ai=center pad=0px gap=7.99px w=301.09px h=48px
+   496 Button | dir=row ai=center pad=8px 17.45px 8px 12px gap=9.42px w=150.63px h=48px bg=#00142F sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=2px
+   518 Container | dir=column ai=center pad=0px w=15px h=15px
+   536 Icon | w=15px h=15px bg=#FFFFFF
+   549 Text | w=96.76px h=32px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#FFFFFF
+   574 Button | dir=row ai=center pad=8px 22.73px 8px 12px gap=14.72px w=142.47px h=48px bg=#EAEDFF r=2px
+   595 Container | dir=column ai=center pad=0px w=15px h=15px
+   613 Icon | w=15px h=15px bg=#131B2E
+   626 Text | w=78.02px h=32px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+   651 Quick Metric Cards | dir=row jc=center ai=flex-start pad=0px gap=12px w=936px h=101.5px
+   673 Background | dir=column jc=space-between ai=flex-start pad=12px w=225px h=100px bg=#F2F3FF r=4px
+   694 Margin | dir=column ai=flex-start pad=0px 0px 4px w=201px h=20px
+   713 Container | dir=row jc=space-between ai=center pad=0px gap=62.06px w=201px h=16px
+   734 Container | dir=column ai=flex-start pad=0px w=118.94px h=16px
+   752 Text | w=118.94px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.6px tt=uppercase c=#44474E
+   777 Container | dir=column ai=flex-start pad=0px w=16.67px h=13.33px
+   795 Icon | w=16.67px h=13.33px bg=#00142F
+   808 Paragraph | dir=row ai=baseline pad=0px gap=4px w=201px h=38px
+   828 Text | w=41.11px h=38px ff=Public Sans fw=700 fs=30px lh=38px ai=center ls=-0.45px c=#00142F
+   852 Text | w=96.3px h=14px ff=Inter fw=500 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+   876 Margin | dir=column ai=flex-start pad=4px 0px 0px w=201px h=18px
+   895 Container | dir=row ai=center pad=0px gap=6px w=201px h=14px
+   915 Background | w=8px h=8px bg=#904D00 r=12px
+   929 Text | w=149.02px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+   953 Background | dir=column ai=flex-start pad=12px gap=4px w=225px h=100px bg=#F2F3FF r=4px
+   974 Margin | dir=column ai=flex-start pad=0px 0px 4px w=201px h=20px
+   993 Container | dir=row jc=space-between ai=center pad=0px gap=18.27px w=201px h=16px
+  1014 Container | dir=column ai=flex-start pad=0px w=162.73px h=16px
+  1032 Text | w=162.73px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.6px tt=uppercase c=#44474E
+  1057 Container | dir=column ai=flex-start pad=0px w=20px h=10px
+  1075 Icon | w=20px h=10px bg=#00142F
+  1088 Paragraph | dir=row ai=baseline pad=0px gap=4px w=201px h=38px
+  1108 Text | w=61.66px h=38px ff=Public Sans fw=700 fs=30px lh=38px ai=center ls=-0.45px c=#00142F
+  1132 Text | w=81.19px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#904D00
+  1156 Margin | dir=column ai=flex-start pad=4px 0px 0px w=201px h=10px
+  1175 Background | w=201px h=6px bg=#EAEDFF r=12px
+  1190 Background | bg=#00142F
+  1201 Background | dir=column jc=space-between ai=flex-start pad=12px w=225px h=100.67px bg=#F2F3FF r=4px
+  1222 Margin | dir=column ai=flex-start pad=0px 0px 4px w=201px h=20.67px
+  1241 Container | dir=row jc=space-between ai=center pad=0px gap=45.56px w=201px h=16.67px
+  1262 Container | dir=column ai=flex-start pad=0px w=135.44px h=16px
+  1280 Text | w=135.44px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.6px tt=uppercase c=#44474E
+  1305 Container | dir=column ai=flex-start pad=0px w=15.84px h=16.67px
+  1323 Icon | w=15.84px h=16.67px bg=#904D00
+  1336 Paragraph | dir=row ai=baseline pad=0px gap=4px w=201px h=38px
+  1356 Text | w=41.11px h=38px ff=Public Sans fw=700 fs=30px lh=38px ai=center ls=-0.45px c=#904D00
+  1380 Text | w=88.86px h=14px ff=Inter fw=500 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  1404 Margin | dir=column ai=flex-start pad=4px 0px 0px w=201px h=18px
+  1423 Container | dir=row jc=space-between ai=center pad=0px gap=4.12px w=201px h=14px
+  1444 Container | dir=column ai=flex-start pad=0px w=128.08px h=14px
+  1462 Text | w=128.08px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  1486 Container | dir=column ai=flex-start pad=0px w=68.8px h=14px
+  1504 Text | w=68.8px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+  1528 Background | dir=column ai=flex-start pad=12px gap=4px w=225px h=101.5px bg=#F2F3FF r=4px
+  1549 Margin | dir=column ai=flex-start pad=0px 0px 4px w=201px h=21.5px
+  1568 Container | dir=row jc=space-between ai=center pad=0px gap=61.25px w=201px h=17.5px
+  1589 Container | dir=column ai=flex-start pad=0px w=119.75px h=16px
+  1607 Text | w=119.75px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.6px tt=uppercase c=#44474E
+  1632 Container | dir=column ai=flex-start pad=0px w=18.33px h=17.5px
+  1650 Icon | w=18.33px h=17.5px bg=#00142F
+  1663 Paragraph | dir=row ai=baseline pad=0px gap=4px w=201px h=38px
+  1683 Text | w=41.11px h=38px ff=Public Sans fw=700 fs=30px lh=38px ai=center ls=-0.45px c=#00142F
+  1707 Text | w=97.41px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  1731 Margin | dir=column ai=flex-start pad=4px 0px 0px w=201px h=10px
+  1750 Background | w=201px h=6px bg=#EAEDFF r=12px
+  1765 Background | bg=#904D00
+  1776 Academic Prestige Banner & Talent Pool Directory:margin | dir=column ai=flex-start pad=32px 0px 0px w=976px h=434px
+  1795 Academic Prestige Banner & Talent Pool Directory | w=976px h=402px
+  1808 Department Talent Pools | dir=column jc=space-between ai=flex-start pad=20px h=402px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  1828 Margin | dir=column ai=flex-start pad=0px 0px 12px w=604px h=70px
+  1847 Container | dir=row jc=space-between ai=center pad=0px gap=0px w=604px h=58px
+  1868 Container | dir=column ai=flex-start pad=0px w=398.36px h=58px
+  1886 Container | dir=column ai=flex-start pad=0px w=398.36px h=22px
+  1905 Text | w=233.17px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+  1928 Container | dir=column ai=flex-start pad=0px w=398.36px h=36px
+  1947 Text | w=398.36px h=36px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  1970 Background | dir=column ai=flex-start pad=4px 47.33px 4px 8px w=154.83px h=36px bg=#F2F3FF r=2px
+  1990 Text | w=99.5px h=28px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  2014 Container | w=604px h=292px
+  2027 B.Tech CSE | dir=column jc=space-between ai=flex-start pad=12px h=139.5px bg=#F2F3FF r=4px
+  2046 Container | dir=row jc=space-between ai=flex-start pad=0px gap=31.22px w=272px h=37.5px
+  2067 Container | dir=column ai=flex-start pad=0px w=218.78px h=37.5px
+  2085 Container | dir=column ai=flex-start pad=0px w=218.78px h=14px
+  2105 Text | w=153.53px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#00142F
+  2130 Text | w=218.78px h=24px ff=Public Sans fw=700 fs=18px lh=24px ai=center c=#00142F
+  2153 Icon | w=18.33px h=11px bg=#00142F
+  2166 Margin | dir=column ai=flex-start pad=12px 0px 0px w=272px h=50px
+  2185 Container | dir=row jc=space-between ai=center pad=0px gap=48.64px w=272px h=38px
+  2206 Paragraph | w=152.53px h=24px
+  2218 Text | w=31.03px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+  2239 Text | w=117px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  2260 Container | dir=column ai=flex-start pad=0px 0px 1px gap=1px w=70.83px h=38px
+  2279 Container | dir=column ai=flex-end pad=0px w=70.83px h=14px
+  2298 Text | w=56.38px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  2323 Text | w=70.83px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+  2347 Margin | dir=column ai=flex-start pad=8px 0px 0px w=272px h=28px
+  2366 Container | dir=row jc=space-between ai=center pad=4px 0px 0px gap=122.45px w=272px h=20px
+  2387 Container | dir=column ai=flex-start pad=0px w=133.55px h=16px
+  2405 Text | w=133.55px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#904D00
+  2429 Container | dir=column ai=flex-start pad=0px w=10.67px h=10.67px
+  2447 Icon | w=10.67px h=10.67px bg=#904D00
+  2460 B.Tech ECE | dir=column jc=space-between ai=flex-start pad=12px h=139.5px bg=#F2F3FF r=4px
+  2479 Container | dir=row jc=space-between ai=flex-start pad=0px gap=10.33px w=272px h=37.5px
+  2500 Container | dir=column ai=flex-start pad=0px w=239.67px h=37.5px
+  2518 Container | dir=column ai=flex-start pad=0px w=239.67px h=14px
+  2538 Text | w=153.53px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#00142F
+  2563 Text | w=239.67px h=24px ff=Public Sans fw=700 fs=18px lh=24px ai=center c=#00142F
+  2586 Icon | w=16.5px h=16.5px bg=#00142F
+  2599 Margin | dir=column ai=flex-start pad=12px 0px 0px w=272px h=50px
+  2618 Container | dir=row jc=space-between ai=center pad=0px gap=58.98px w=272px h=38px
+  2639 Paragraph | w=142.19px h=24px
+  2651 Text | w=20.69px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+  2672 Text | w=117px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  2693 Container | dir=column ai=flex-start pad=0px 0px 1px gap=1px w=70.83px h=38px
+  2712 Container | dir=column ai=flex-end pad=0px w=70.83px h=14px
+  2731 Text | w=56.38px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  2756 Text | w=70.83px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+  2780 Margin | dir=column ai=flex-start pad=8px 0px 0px w=272px h=28px
+  2799 Container | dir=row jc=space-between ai=center pad=4px 0px 0px gap=122.45px w=272px h=20px
+  2820 Container | dir=column ai=flex-start pad=0px w=133.55px h=16px
+  2838 Text | w=133.55px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#904D00
+  2862 Container | dir=column ai=flex-start pad=0px w=10.67px h=10.67px
+  2880 Icon | w=10.67px h=10.67px bg=#904D00
+  2893 MBA | dir=column jc=space-between ai=flex-start pad=12px h=139.5px bg=#F2F3FF r=4px
+  2912 Container | dir=row jc=space-between ai=flex-start pad=0px gap=26.86px w=272px h=37.5px
+  2933 Paragraph | dir=column ai=flex-start pad=0px w=223.14px h=37.5px
+  2951 Text | w=223.14px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#00142F
+  2977 Text | w=207.31px h=24px ff=Public Sans fw=700 fs=18px lh=24px ai=center c=#00142F
+  3000 Icon | w=16.5px h=16.5px bg=#00142F
+  3013 Margin | dir=column ai=flex-start pad=12px 0px 0px w=272px h=50px
+  3032 Container | dir=row jc=space-between ai=center pad=0px gap=58.98px w=272px h=38px
+  3053 Paragraph | w=142.19px h=24px
+  3065 Text | w=20.69px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+  3086 Text | w=117px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  3107 Container | dir=column ai=flex-start pad=0px 0px 1px gap=1px w=70.83px h=38px
+  3126 Container | dir=column ai=flex-end pad=0px w=70.83px h=14px
+  3145 Text | w=56.38px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  3170 Text | w=70.83px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+  3194 Margin | dir=column ai=flex-start pad=8px 0px 0px w=272px h=28px
+  3213 Container | dir=row jc=space-between ai=center pad=4px 0px 0px gap=122.45px w=272px h=20px
+  3234 Container | dir=column ai=flex-start pad=0px w=133.55px h=16px
+  3252 Text | w=133.55px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#904D00
+  3276 Container | dir=column ai=flex-start pad=0px w=10.67px h=10.67px
+  3294 Icon | w=10.67px h=10.67px bg=#904D00
+  3307 M.Tech & MCA Pool | dir=column jc=space-between ai=flex-start pad=12px h=139.5px bg=#F2F3FF r=4px
+  3326 Container | dir=row jc=space-between ai=flex-start pad=0px gap=45.08px w=272px h=37.5px
+  3347 Paragraph | dir=column ai=flex-start pad=0px w=204.92px h=37.5px
+  3365 Text | w=204.92px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#00142F
+  3391 Text | w=200.41px h=24px ff=Public Sans fw=700 fs=18px lh=24px ai=center c=#00142F
+  3414 Icon | w=18.33px h=14.67px bg=#00142F
+  3427 Margin | dir=column ai=flex-start pad=12px 0px 0px w=272px h=50px
+  3446 Container | dir=row jc=space-between ai=center pad=0px gap=58.98px w=272px h=38px
+  3467 Paragraph | w=142.19px h=24px
+  3479 Text | w=20.69px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+  3500 Text | w=117px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  3521 Container | dir=column ai=flex-start pad=0px 0px 1px gap=1px w=70.83px h=38px
+  3540 Container | dir=column ai=flex-end pad=0px w=70.83px h=14px
+  3559 Text | w=56.38px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  3584 Text | w=70.83px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+  3608 Margin | dir=column ai=flex-start pad=8px 0px 0px w=272px h=28px
+  3627 Container | dir=row jc=space-between ai=center pad=4px 0px 0px gap=122.45px w=272px h=20px
+  3648 Container | dir=column ai=flex-start pad=0px w=133.55px h=16px
+  3666 Text | w=133.55px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#904D00
+  3690 Container | dir=column ai=flex-start pad=0px w=10.67px h=10.67px
+  3708 Icon | w=10.67px h=10.67px bg=#904D00
+  3721 University Standing Banner | dir=column ai=flex-start pad=20px gap=40.5px h=401.5px bg=#00142F sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  3742 Overlay+Blur | w=176px h=176px bg=rgba(15, 41, 74, 0.6) r=12px
+  3761 Container | dir=column ai=flex-start pad=2px 0px 0px gap=12px w=272px h=281px
+  3782 Overlay | dir=row ai=center pad=2px 8px gap=4px w=177.09px h=18px bg=rgba(218, 226, 253, 0.2) r=2px
+  3803 Container | dir=column ai=flex-start pad=0px w=11.67px h=11.67px
+  3821 Icon | w=11.67px h=11.67px bg=#D5E3FF
+  3834 Text | w=145.42px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#D5E3FF
+  3859 Container | dir=column ai=flex-start pad=3px 0px 0px gap=4px w=272px h=71px
+  3879 Container | dir=column ai=flex-start pad=0px w=272px h=28px
+  3898 Tezpur Central University | w=272px h=28px ff=Public Sans fw=700 fs=22px lh=28px ai=center ls=-0.22px c=#FFFFFF
+  3923 Container | dir=column ai=flex-start pad=0px w=272px h=36px
+  3942 Estd. 1994 • Central University under Act of Parliament | w=272px h=36px ff=Inter fw=400 fs=13px lh=18px ai=center c=#D2D9F4
+  3966 Container | dir=row jc=center ai=flex-start pad=4px 0px 0px gap=8px w=272px h=82px
+  3987 Overlay | dir=column ai=flex-start pad=8px w=132px h=77.5px bg=rgba(218, 226, 253, 0.1) r=2px
+  4007 Container | dir=column ai=flex-start pad=0px w=116px h=14px
+  4027 NAAC GRADE | w=116px h=14px ff=Inter fw=500 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#DAE2FD
+  4053 Text | w=116.66px h=48px ff=Public Sans fw=700 fs=18px lh=24px ai=center c=#FFFFFF
+  4076 Overlay | dir=column ai=flex-start pad=8px 8px 32.5px w=132px h=78px bg=rgba(218, 226, 253, 0.1) r=2px
+  4096 Container | dir=column ai=flex-start pad=0px w=116px h=14px
+  4116 NIRF RANKING | w=116px h=14px ff=Inter fw=500 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#DAE2FD
+  4142 Text | w=113.58px h=24px ff=Public Sans fw=700 fs=18px lh=24px ai=center c=#FFFFFF
+  4165 Container | dir=column ai=flex-start pad=0px w=272px h=72px
+  4184 Direct campus access to top-tier technical scholars, rigorous core research laboratories, and pre-evaluated software talent ready for nationwide deployment. | w=272px h=72px ff=Inter fw=400 fs=13px lh=18px ai=center c=#D2D9F4
+  4208 Container | dir=row jc=space-between ai=center pad=12px 0px 0px w=272px h=40px
+  4229 Container | dir=column ai=flex-start pad=0px 24px 0px 0px w=127.27px h=28px
+  4248 Text | w=103.27px h=28px ff=Inter fw=500 fs=11px lh=14px ai=center ls=0.33px c=#DAE2FD
+  4272 Link | dir=row ai=center pad=0px gap=32.96px w=140.04px h=28px
+  4291 Text | w=97.75px h=28px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#D5E3FF
+  4315 Container | dir=column ai=flex-start pad=0px w=9.33px h=9.33px
+  4333 Icon | w=9.33px h=9.33px bg=#D5E3FF
+  4346 Interactive Recruitment Stepper Progress Header:margin | dir=column ai=flex-start pad=32px 0px 0px w=976px h=162px
+  4365 Interactive Recruitment Stepper Progress Header | dir=column ai=flex-start pad=12px gap=12px w=976px h=130px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  4388 Container | dir=row jc=space-between ai=center pad=0px gap=268.04px w=952px h=42px
+  4409 Paragraph | dir=column ai=flex-start pad=1px 0px 0px gap=1px w=400.27px h=42px
+  4428 Text | w=372.66px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+  4451 Text | w=400.27px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  4474 Container | dir=row ai=center pad=0px gap=4px w=283.69px h=18px
+  4493 Container | dir=column ai=flex-start pad=0px w=84.61px h=14px
+  4511 Text | w=84.61px h=14px ff=Inter fw=500 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  4535 Background | dir=column ai=flex-start pad=2px 4px w=195.08px h=18px bg=#E2E7FF r=2px
+  4555 Text | w=187.08px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+  4579 Stepper Graphic | dir=row jc=center ai=center pad=0px gap=8px w=952px h=52px
+  4600 Background | dir=column ai=flex-start pad=8px w=152px h=52px bg=#F2F3FF r=2px
+  4620 Container | dir=row jc=space-between ai=center pad=0px gap=28.84px w=136px h=14px
+  4641 Container | dir=column ai=flex-start pad=0px w=91.16px h=14px
+  4659 Text | w=91.16px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  4683 Container | dir=column ai=flex-start pad=0px w=13.33px h=13.33px
+  4701 Icon | w=13.33px h=13.33px bg=#00142F
+  4714 Margin | dir=column ai=flex-start pad=4px 0px 0px w=136px h=22px
+  4733 Container | dir=column ai=flex-start pad=0px w=136px h=18px
+  4752 342 Registered | w=136px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#00142F
+  4776 Background | dir=column ai=flex-start pad=8px w=152px h=52px bg=#F2F3FF r=2px
+  4796 Container | dir=row jc=space-between ai=center pad=0px gap=10.41px w=136px h=14px
+  4817 Container | dir=column ai=flex-start pad=0px w=109.59px h=14px
+  4835 Text | w=109.59px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  4859 Container | dir=column ai=flex-start pad=0px w=13.33px h=13.33px
+  4877 Icon | w=13.33px h=13.33px bg=#00142F
+  4890 Margin | dir=column ai=flex-start pad=4px 0px 0px w=136px h=22px
+  4909 Container | dir=column ai=flex-start pad=0px w=136px h=18px
+  4928 210 Qualified | w=136px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#00142F
+  4952 Background | dir=column ai=flex-start pad=8px w=152px h=52px bg=#F2F3FF r=2px
+  4972 Container | dir=row jc=space-between ai=center pad=0px gap=34.3px w=136px h=14px
+  4993 Container | dir=column ai=flex-start pad=0px w=85.7px h=14px
+  5011 Text | w=85.7px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  5035 Container | dir=column ai=flex-start pad=0px w=13.33px h=13.33px
+  5053 Icon | w=13.33px h=13.33px bg=#00142F
+  5066 Margin | dir=column ai=flex-start pad=4px 0px 0px w=136px h=22px
+  5085 Container | dir=column ai=flex-start pad=0px w=136px h=18px
+  5104 82 Cutoff Pass | w=136px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#00142F
+  5128 Background | dir=column ai=flex-start pad=8px w=152px h=52px bg=#00142F r=2px
+  5148 Container | dir=row jc=space-between ai=center pad=0px gap=35.33px w=136px h=14px
+  5169 Container | dir=column ai=flex-start pad=0px w=90.67px h=14px
+  5187 Text | w=90.67px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#DAE2FD
+  5211 Background | w=10px h=10px bg=#FE932C r=12px
+  5225 Margin | dir=column ai=flex-start pad=4px 0px 0px w=136px h=22px
+  5244 Container | dir=column ai=flex-start pad=0px w=136px h=18px
+  5263 48 Shortlisted | w=136px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#FFFFFF
+  5287 Background | dir=column ai=flex-start pad=8px w=152px h=52px bg=#F2F3FF op=0.75 r=2px
+  5308 Container | dir=row jc=space-between ai=center pad=0px gap=8.69px w=136px h=14px
+  5329 Container | dir=column ai=flex-start pad=0px w=111.31px h=14px
+  5347 Text | w=111.31px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  5371 Container | dir=column ai=flex-start pad=0px w=10.67px h=13.33px
+  5389 Icon | w=10.67px h=13.33px bg=#74777F
+  5402 Margin | dir=column ai=flex-start pad=4px 0px 0px w=136px h=22px
+  5421 Container | dir=column ai=flex-start pad=0px w=136px h=18px
+  5440 Scheduled Oct 18 | w=136px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#44474E
+  5464 Background | dir=column ai=flex-start pad=8px w=152px h=52px bg=#F2F3FF op=0.75 r=2px
+  5485 Container | dir=row jc=space-between ai=center pad=0px gap=32.55px w=136px h=14px
+  5506 Container | dir=column ai=flex-start pad=0px w=87.45px h=14px
+  5524 Text | w=87.45px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  5548 Container | dir=column ai=flex-start pad=0px w=14.67px h=14px
+  5566 Icon | w=14.67px h=14px bg=#74777F
+  5579 Margin | dir=column ai=flex-start pad=4px 0px 0px w=136px h=22px
+  5598 Container | dir=column ai=flex-start pad=0px w=136px h=18px
+  5617 16 Rolled Out | w=136px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#44474E
+  5641 Candidate Shortlisting Database Workspace:margin | dir=column ai=flex-start pad=32px 0px 0px w=976px h=685px
+  5660 Candidate Shortlisting Database Workspace | dir=column ai=flex-start pad=0px w=976px h=653px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  5682 Filter Panel Header | dir=column ai=flex-start pad=20px w=976px h=165px bg=#FFFFFF
+  5702 Container | dir=row jc=space-between ai=center pad=0px gap=76.63px w=936px h=42px
+  5723 Paragraph | dir=column ai=flex-start pad=1px 0px 0px gap=1px w=446.73px h=42px
+  5742 Text | w=252.67px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+  5765 Text | w=446.73px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  5788 Container | dir=row ai=center pad=0px gap=4px w=401.32px h=28px
+  5809 Button | dir=row ai=center pad=6px 8px gap=4px w=143.71px h=28px bg=#00142F r=2px
+  5830 Container | dir=column ai=center pad=0px w=13.33px h=10.93px
+  5848 Icon | w=13.33px h=10.93px bg=#FFFFFF
+  5861 Text | w=89.38px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#FFFFFF
+  5886 Container | dir=column ai=center pad=0px w=8.22px h=16px
+  5904 Text | w=8.22px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#FFFFFF
+  5929 Text | w=4.78px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#FFFFFF
+  5954 Button | dir=row ai=center pad=6px 8px gap=4px w=149.42px h=28px bg=#904D00 r=2px
+  5975 Container | dir=column ai=center pad=0px w=12.67px h=13.33px
+  5993 Icon | w=12.67px h=13.33px bg=#FFFFFF
+  6006 Text | w=116.75px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#FFFFFF
+  6031 Button | dir=row ai=center pad=6px 8px gap=4px w=100.19px h=28px bg=#EAEDFF r=2px
+  6052 Container | dir=column ai=center pad=0px w=10.67px h=10.67px
+  6070 Icon | w=10.67px h=10.67px bg=#131B2E
+  6083 Text | w=69.52px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  6108 Multifaceted Filter Controls:margin | dir=column ai=flex-start pad=12px 0px 0px w=936px h=83px
+  6127 Multifaceted Filter Controls | dir=row jc=center ai=flex-start pad=4px 12px 12px gap=12px w=936px h=71px bg=#F2F3FF r=4px
+  6150 Dept Select | dir=column ai=flex-start pad=0px 0px 7px w=219px h=55px
+  6168 Label | dir=column ai=flex-start pad=0px w=219px h=14px
+  6187 DEGREE / DEPARTMENT | w=219px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+  6213 Options:margin | dir=column ai=flex-start pad=4px 0px 0px w=219px h=34px
+  6232 Options | dir=column jc=center ai=flex-start pad=6px 24px 6px 12px w=219px h=30px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=2px
+  6255 Container | dir=column ai=flex-start pad=1px 0px w=183px h=18px
+  6274 Text | w=198.09px h=16px ff=Inter fw=400 fs=13px lh=16px ai=center c=#131B2E
+  6297 CGPA Slider | dir=column ai=flex-start pad=0px w=219px h=55px
+  6315 Container | dir=row jc=space-between ai=center pad=0px gap=68.48px w=219px h=16px
+  6336 Label | dir=column ai=flex-start pad=0px w=130.88px h=14px
+  6354 Text | w=130.88px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+  6379 Container | dir=column ai=flex-start pad=0px w=19.64px h=16px
+  6397 Text | w=19.64px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+  6421 Input:margin | dir=column ai=flex-start pad=4px 0px 0px w=219px h=20px
+  6440 Input | dir=column ai=flex-start pad=0px w=219px h=16px bg=#FFFFFF
+  6460 Container | dir=row ai=center pad=0px w=219px h=16px
+  6479 Container | w=219px h=16px
+  6491 Margin | dir=column ai=flex-start pad=4px 0px 0px w=219px h=19px
+  6510 Container | dir=row jc=space-between ai=flex-start pad=0px gap=84.8px w=219px h=15px
+  6531 Container | dir=column ai=flex-start pad=0px w=14.81px h=15px
+  6550 Text | w=14.81px h=15px ff=Inter fw=400 fs=10px lh=15px ai=center c=#44474E
+  6573 Container | dir=column ai=flex-start pad=0px w=13.09px h=15px
+  6592 Text | w=13.09px h=15px ff=Inter fw=400 fs=10px lh=15px ai=center c=#44474E
+  6615 Container | dir=column ai=flex-start pad=0px w=21.5px h=15px
+  6634 Text | w=21.5px h=15px ff=Inter fw=400 fs=10px lh=15px ai=center c=#44474E
+  6657 Active Backlogs | dir=column ai=flex-start pad=0px 0px 7px w=219px h=55px
+  6675 Label | dir=column ai=flex-start pad=0px w=219px h=14px
+  6694 ACTIVE BACKLOGS ALLOWED | w=219px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+  6720 Options:margin | dir=column ai=flex-start pad=4px 0px 0px w=219px h=34px
+  6739 Options | dir=column jc=center ai=flex-start pad=6px 24px 6px 12px w=219px h=30px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=2px
+  6762 Container | dir=column ai=flex-start pad=1px 0px w=183px h=18px
+  6781 Strictly 0 Backlogs | w=183px h=16px ff=Inter fw=400 fs=13px lh=16px ai=center c=#131B2E
+  6805 Skills Filter | dir=column ai=flex-start pad=0px 0px 7px w=219px h=55px
+  6823 Label | dir=column ai=flex-start pad=0px w=219px h=14px
+  6842 SKILL KEYWORDS | w=219px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+  6868 Margin | dir=column ai=flex-start pad=4px 0px 0px w=219px h=34px
+  6887 Container | dir=column ai=flex-start pad=0px w=219px h=30px
+  6907 Input | dir=row jc=center ai=flex-start pad=7px 32px 7px 8px w=219px h=30px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=2px
+  6931 Container | dir=column ai=flex-start pad=0px w=179px h=16px
+  6949 Filter: Python, Cloud, Java... | w=179px h=16px ff=Inter fw=400 fs=13px lh=16px ai=center c=#44474E
+  6973 Container | dir=column ai=flex-start pad=0px w=12px h=12px
+  6995 Icon | w=12px h=12px bg=#44474E
+  7008 Candidate Evaluation Table → Table | dir=column ai=flex-start pad=0px w=976px h=442px
+  7028 Header | dir=column ai=flex-start pad=0px w=976px h=48px bg=#EAEDFF
+  7048 Row | dir=row jc=center ai=flex-start pad=0px w=976px h=48px
+  7068 Cell | dir=column ai=flex-start pad=15.5px 12px 19.5px w=40px h=48px
+  7086 Input | w=13px h=13px bg=#FFFFFF bd=1px solid #767676 r=2.5px
+  7103 Cell | dir=column ai=flex-start pad=15.5px 12px 16.5px w=185px h=48px
+  7121 Text | w=123.7px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.6px tt=uppercase c=#44474E
+  7146 Cell | dir=column ai=flex-start pad=8px 12px w=108.94px h=48px
+  7164 Text | w=80.98px h=32px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.6px tt=uppercase c=#44474E
+  7189 Cell | dir=column ai=flex-start pad=8px 12px w=116.89px h=48px
+  7207 Text | w=65.61px h=32px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.6px tt=uppercase c=#44474E
+  7232 Cell | dir=column ai=flex-end pad=15.5px 12px 16.5px w=59.75px h=48px
+  7250 Text | w=35.75px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.6px tt=uppercase c=#44474E
+  7276 Cell | dir=column ai=flex-start pad=8px 12px w=116.59px h=48px
+  7294 Text | w=74.87px h=32px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.6px tt=uppercase c=#44474E
+  7319 Cell | dir=column ai=center pad=8px 12px w=93.59px h=48px
+  7337 Text | w=56.12px h=32px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.6px tt=uppercase c=#44474E
+  7363 Cell | dir=column ai=flex-start pad=8px 12px w=87.19px h=48px
+  7381 Text | w=54.45px h=32px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.6px tt=uppercase c=#44474E
+  7406 Cell | dir=column ai=flex-start pad=15.5px 12px 16.5px w=168.05px h=48px
+  7424 Text | w=84.55px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.6px tt=uppercase c=#44474E
+  7449 Body | dir=column ai=flex-start pad=0px w=976px h=394px bg=#FFFFFF
+  7469 Row 1 | dir=row jc=center ai=center pad=0px w=976px h=90.5px
+  7490 Data | dir=column ai=flex-start pad=37px 12px 40.5px w=40px h=90.5px
+  7508 Input | w=13px h=13px bg=#FFFFFF bd=1px solid #767676 r=2.5px
+  7525 Data | dir=row ai=center pad=0px 0px 0px 12px gap=8px w=173px h=49px
+  7544 Background | dir=row jc=center ai=center pad=7.5px 0px 8.5px w=30.45px h=32px bg=#E2E7FF r=12px
+  7565 Text | w=16.33px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+  7590 Container | dir=column ai=flex-start pad=0px w=117.39px h=49px
+  7608 Container | dir=column ai=flex-start pad=0px w=117.39px h=35px
+  7627 Text | w=85.57px h=35px ff=Inter fw=700 fs=14px lh=18px ai=center c=#00142F
+  7650 Container | dir=column ai=flex-start pad=0px w=117.39px h=14px
+  7669 Text | w=117.39px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  7693 Data | dir=column ai=flex-start pad=36px 12px 36.5px 24px w=120.94px h=90.5px
+  7711 Text | w=64.64px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#44474E
+  7734 Data | dir=column ai=flex-start pad=18px 12px 18.5px w=116.89px h=90.5px
+  7752 Text | w=61.75px h=54px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  7775 Data | dir=column ai=flex-end pad=36px 12px 36.5px w=59.75px h=90.5px
+  7793 Text | w=29.42px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#00142F
+  7817 Data | dir=column jc=center ai=flex-start pad=0px 0px 0px 12px gap=4px w=104.59px h=74px
+  7837 Background | dir=column ai=flex-start pad=2px 6px w=45.25px h=22px bg=#EAEDFF r=2px
+  7857 Text | w=33.25px h=18px ff=Inter fw=400 fs=10px lh=18px ai=center c=#44474E
+  7880 Background | dir=column ai=flex-start pad=2px 6px w=65.19px h=22px bg=#EAEDFF r=2px
+  7900 Text | w=53.19px h=18px ff=Inter fw=400 fs=10px lh=18px ai=center c=#44474E
+  7923 Background | dir=column ai=flex-start pad=2px 6px w=31.72px h=22px bg=#EAEDFF r=2px
+  7943 Text | w=19.72px h=18px ff=Inter fw=400 fs=10px lh=18px ai=center c=#44474E
+  7966 Data | dir=column ai=center pad=27px 12px 27.5px 24px w=105.59px h=90.5px
+  7984 Button | dir=row ai=center pad=4px 11.9px 4px 4px gap=11.89px w=67.24px h=36px bg=#EAEDFF r=2px
+  8005 Container | dir=column ai=center pad=0px w=11.67px h=11.67px
+  8023 Icon | w=11.67px h=11.67px bg=#00142F
+  8036 Text | w=27.78px h=28px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+  8061 Data | dir=column ai=flex-start pad=28.5px 12px 30px w=87.19px h=90.5px
+  8079 Text | w=44.54px h=32px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#44474E
+  8103 Data | dir=column ai=flex-start pad=33px 12px 33.5px w=168.05px h=90.5px
+  8121 Options | dir=row ai=center pad=4px 20px 4px 8px w=144px h=24px bg=#EAEDFF r=2px
+  8141 Container | dir=column ai=flex-start pad=1px 47.75px 1px 0px w=116px h=16px
+  8159 Text | w=68.25px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+  8183 Row 2 | dir=row jc=center ai=center pad=0px w=976px h=92px bdt=1px solid #EAEDFF
+  8207 Data | dir=column ai=flex-start pad=37.5px 12px 40.5px w=40px h=91px
+  8225 Input | w=13px h=13px bg=#FFFFFF bd=1px solid #767676 r=2.5px
+  8242 Data | dir=row ai=center pad=0px 0px 0px 12px gap=8px w=173px h=32px
+  8261 Background | dir=row jc=center ai=center pad=7.5px 0px 8.5px w=32px h=32px bg=#E2E7FF r=12px
+  8282 Text | w=18.2px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+  8307 Container | dir=column ai=flex-start pad=0px w=118.03px h=32px
+  8325 Container | dir=column ai=flex-start pad=0px w=118.03px h=18px
+  8344 Text | w=94.63px h=18px ff=Inter fw=700 fs=14px lh=18px ai=center c=#00142F
+  8367 Container | dir=column ai=flex-start pad=0px w=118.03px h=14px
+  8386 Text | w=118.03px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  8410 Data | dir=column ai=flex-start pad=36.5px 12px 36.5px 24px w=120.94px h=91px
+  8428 Text | w=61.69px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#44474E
+  8451 Data | dir=column ai=flex-start pad=18.5px 12px w=116.89px h=91px
+  8469 Text | w=61.75px h=54px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  8492 Data | dir=column ai=flex-end pad=36.5px 12px w=59.75px h=91px
+  8510 Text | w=25.16px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#00142F
+  8534 Data | dir=column jc=center ai=flex-start pad=0px 0px 0px 12px gap=4px w=104.59px h=74px
+  8554 Background | dir=column ai=flex-start pad=2px 6px w=34.38px h=22px bg=#EAEDFF r=2px
+  8574 Text | w=22.38px h=18px ff=Inter fw=400 fs=10px lh=18px ai=center c=#44474E
+  8597 Background | dir=column ai=flex-start pad=2px 6px w=67.48px h=22px bg=#EAEDFF r=2px
+  8617 Text | w=55.48px h=18px ff=Inter fw=400 fs=10px lh=18px ai=center c=#44474E
+  8640 Background | dir=column ai=flex-start pad=2px 6px w=31.72px h=22px bg=#EAEDFF r=2px
+  8660 Text | w=19.72px h=18px ff=Inter fw=400 fs=10px lh=18px ai=center c=#44474E
+  8683 Data | dir=column ai=center pad=27.5px 12px 27.5px 24px w=105.59px h=91px
+  8701 Button | dir=row ai=center pad=4px 11.9px 4px 4px gap=11.89px w=67.24px h=36px bg=#EAEDFF r=2px
+  8722 Container | dir=column ai=center pad=0px w=11.67px h=11.67px
+  8740 Icon | w=11.67px h=11.67px bg=#00142F
+  8753 Text | w=27.78px h=28px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+  8778 Data | dir=column ai=flex-start pad=29px 12px 30px w=87.19px h=91px
+  8796 Text | w=44.45px h=32px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#44474E
+  8820 Data | dir=column ai=flex-start pad=33.5px 12px w=168.05px h=91px
+  8838 Options | dir=row ai=center pad=4px 20px 4px 8px w=144px h=24px bg=#EAEDFF r=2px
+  8858 Container | dir=column ai=flex-start pad=1px 47.75px 1px 0px w=116px h=16px
+  8876 Text | w=68.25px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+  8900 Row 3 | dir=row jc=center ai=center pad=0px w=976px h=72px bdt=1px solid #EAEDFF
+  8924 Data | dir=column ai=flex-start pad=27.5px 12px 30.5px w=40px h=71px
+  8942 Input | w=13px h=13px bg=#FFFFFF bd=1px solid #767676 r=2.5px
+  8959 Data | dir=row ai=center pad=0px 0px 0px 12px gap=8px w=173px h=32px
+  8978 Background | dir=row jc=center ai=center pad=7.5px 0px 8.5px w=32px h=32px bg=#E2E7FF r=12px
+  8999 Text | w=17.16px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+  9024 Container | dir=column ai=flex-start pad=0px w=111.75px h=32px
+  9042 Container | dir=column ai=flex-start pad=0px w=111.75px h=18px
+  9061 Text | w=82.28px h=18px ff=Inter fw=700 fs=14px lh=18px ai=center c=#00142F
+  9084 Container | dir=column ai=flex-start pad=0px w=111.75px h=14px
+  9103 Text | w=111.75px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  9127 Data | dir=column ai=flex-start pad=26.5px 12px 26.5px 24px w=120.94px h=71px
+  9145 Text | w=63.91px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#44474E
+  9168 Data | dir=column ai=flex-start pad=8.5px 12px w=116.89px h=71px
+  9186 Text | w=80.87px h=54px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  9209 Data | dir=column ai=flex-end pad=26.5px 12px w=59.75px h=71px
+  9227 Text | w=26.66px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#00142F
+  9251 Data | w=104.59px h=48px
+  9263 Background | dir=column ai=flex-start pad=2px 6px w=32.55px bg=#EAEDFF r=2px
+  9281 Text | w=20.55px h=18px ff=Inter fw=400 fs=10px lh=18px ai=center c=#44474E
+  9304 Background | dir=column ai=flex-start pad=2px 6px w=45.25px bg=#EAEDFF r=2px
+  9322 Text | w=33.25px h=18px ff=Inter fw=400 fs=10px lh=18px ai=center c=#44474E
+  9345 Background | dir=column ai=flex-start pad=2px 6px w=56.94px bg=#EAEDFF r=2px
+  9363 Text | w=44.94px h=18px ff=Inter fw=400 fs=10px lh=18px ai=center c=#44474E
+  9386 Data | dir=column ai=center pad=17.5px 12px 17.5px 24px w=105.59px h=71px
+  9404 Button | dir=row ai=center pad=4px 11.9px 4px 4px gap=11.89px w=67.24px h=36px bg=#EAEDFF r=2px
+  9425 Container | dir=column ai=center pad=0px w=11.67px h=11.67px
+  9443 Icon | w=11.67px h=11.67px bg=#00142F
+  9456 Text | w=27.78px h=28px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+  9481 Data | dir=column ai=flex-start pad=19px 12px 20px w=87.19px h=71px
+  9499 Text | w=44.67px h=32px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#44474E
+  9523 Data | dir=column ai=flex-start pad=23.5px 12px w=168.05px h=71px
+  9541 Options | dir=row ai=center pad=4px 20px 4px 8px w=143.73px h=24px bg=#EAEDFF r=2px
+  9561 Container | dir=column ai=flex-start pad=1px 0px w=115.73px h=16px
+  9579 Text | w=115.73px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+  9603 Row 4 | dir=row jc=center ai=center pad=0px w=976px h=72px bdt=1px solid #EAEDFF
+  9627 Data | dir=column ai=flex-start pad=27.5px 12px 30.5px w=40px h=71px
+  9645 Input | w=13px h=13px bg=#FFFFFF bd=1px solid #767676 r=2.5px
+  9662 Data | dir=row ai=center pad=0px 0px 0px 12px gap=8px w=173px h=32px
+  9681 Background | dir=row jc=center ai=center pad=7.5px 0px 8.5px w=32px h=32px bg=#E2E7FF r=12px
+  9702 Text | w=17.47px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+  9727 Container | dir=column ai=flex-start pad=0px w=115.95px h=32px
+  9745 Container | dir=column ai=flex-start pad=0px w=115.95px h=18px
+  9764 Text | w=114.56px h=18px ff=Inter fw=700 fs=14px lh=18px ai=center c=#00142F
+  9787 Container | dir=column ai=flex-start pad=0px w=115.95px h=14px
+  9806 Text | w=115.95px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  9830 Data | dir=column ai=flex-start pad=26.5px 12px 26.5px 24px w=120.94px h=71px
+  9848 Text | w=70.94px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#44474E
+  9871 Data | dir=column ai=flex-start pad=8.5px 12px w=116.89px h=71px
+  9889 Text | w=61.75px h=54px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  9912 Data | dir=column ai=flex-end pad=26.5px 12px w=59.75px h=71px
+  9930 Text | w=24.94px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#00142F
+  9954 Data | w=104.59px h=48px
+  9966 Background | dir=column ai=flex-start pad=2px 6px w=50.58px bg=#EAEDFF r=2px
+  9984 Text | w=38.58px h=18px ff=Inter fw=400 fs=10px lh=18px ai=center c=#44474E
+ 10007 Background | dir=column ai=flex-start pad=2px 6px w=33.16px bg=#EAEDFF r=2px
+ 10025 Text | w=21.16px h=18px ff=Inter fw=400 fs=10px lh=18px ai=center c=#44474E
+ 10048 Background | dir=column ai=flex-start pad=2px 6px w=31.72px bg=#EAEDFF r=2px
+ 10066 Text | w=19.72px h=18px ff=Inter fw=400 fs=10px lh=18px ai=center c=#44474E
+ 10089 Data | dir=column ai=center pad=17.5px 12px 17.5px 24px w=105.59px h=71px
+ 10107 Button | dir=row ai=center pad=4px 11.9px 4px 4px gap=11.89px w=67.24px h=36px bg=#EAEDFF r=2px
+ 10128 Container | dir=column ai=center pad=0px w=11.67px h=11.67px
+ 10146 Icon | w=11.67px h=11.67px bg=#00142F
+ 10159 Text | w=27.78px h=28px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+ 10184 Data | dir=column ai=flex-start pad=19px 12px 20px w=87.19px h=71px
+ 10202 Text | w=44.54px h=32px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#44474E
+ 10226 Data | dir=column ai=flex-start pad=23.5px 12px w=168.05px h=71px
+ 10244 Options | dir=row ai=center pad=4px 20px 4px 8px w=144px h=24px bg=#EAEDFF r=2px
+ 10264 Container | dir=column ai=flex-start pad=1px 27.25px 1px 0px w=116px h=16px
+ 10282 Text | w=88.75px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+ 10306 Row 5 | dir=row jc=center ai=center pad=0px w=976px h=71.5px bdt=1px solid #EAEDFF
+ 10329 Data | dir=column ai=flex-start pad=27.5px 12px 30px w=40px h=70.5px
+ 10347 Input | w=13px h=13px bg=#FFFFFF bd=1px solid #767676 r=2.5px
+ 10364 Data | dir=row ai=center pad=0px 0px 0px 12px gap=8px w=173px h=32px
+ 10383 Background | dir=row jc=center ai=center pad=7.5px 0px 8.5px w=32px h=32px bg=#E2E7FF r=12px
+ 10404 Text | w=16.41px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+ 10429 Container | dir=column ai=flex-start pad=0px w=118.61px h=32px
+ 10447 Container | dir=column ai=flex-start pad=0px w=118.61px h=18px
+ 10466 Text | w=99.16px h=18px ff=Inter fw=700 fs=14px lh=18px ai=center c=#00142F
+ 10489 Container | dir=column ai=flex-start pad=0px w=118.61px h=14px
+ 10508 Text | w=118.61px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 10532 Data | dir=column ai=flex-start pad=26.5px 12px 26px 24px w=120.94px h=70.5px
+ 10550 Text | w=64.64px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#44474E
+ 10573 Data | dir=column ai=flex-start pad=8px 12px w=116.89px h=70px
+ 10591 Text | w=61.75px h=54px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+ 10614 Data | dir=column ai=flex-end pad=26.5px 12px 26px w=59.75px h=70.5px
+ 10632 Text | w=26.53px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#00142F
+ 10656 Data | w=104.59px h=48px
+ 10668 Background | dir=column ai=flex-start pad=2px 6px w=34.38px bg=#EAEDFF r=2px
+ 10686 Text | w=22.38px h=18px ff=Inter fw=400 fs=10px lh=18px ai=center c=#44474E
+ 10709 Background | dir=column ai=flex-start pad=2px 6px w=45.8px bg=#EAEDFF r=2px
+ 10727 Text | w=33.8px h=18px ff=Inter fw=400 fs=10px lh=18px ai=center c=#44474E
+ 10750 Background | dir=column ai=flex-start pad=2px 6px w=46.42px bg=#EAEDFF r=2px
+ 10768 Text | w=34.42px h=18px ff=Inter fw=400 fs=10px lh=18px ai=center c=#44474E
+ 10791 Data | dir=column ai=center pad=17.5px 12px 17px 24px w=105.59px h=70.5px
+ 10809 Button | dir=row ai=center pad=4px 11.9px 4px 4px gap=11.89px w=67.24px h=36px bg=#EAEDFF r=2px
+ 10830 Container | dir=column ai=center pad=0px w=11.67px h=11.67px
+ 10848 Icon | w=11.67px h=11.67px bg=#00142F
+ 10861 Text | w=27.78px h=28px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+ 10886 Data | dir=column ai=flex-start pad=19px 12px 19.5px w=87.19px h=70.5px
+ 10904 Text | w=44.14px h=32px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#44474E
+ 10928 Data | dir=column ai=flex-start pad=23.5px 12px 23px w=168.05px h=70.5px
+ 10946 Options | dir=row ai=center pad=4px 20px 4px 8px w=144px h=24px bg=#EAEDFF r=2px
+ 10966 Container | dir=column ai=flex-start pad=1px 54.36px 1px 0px w=116px h=16px
+ 10984 Text | w=61.64px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+ 11008 Table Footer Pagination / Status | dir=row jc=space-between ai=center pad=12px gap=467.56px w=976px h=46px bg=#F2F3FF
+ 11030 Container | dir=column ai=flex-start pad=0px w=293.67px h=18px
+ 11048 Text | w=293.67px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+ 11071 Container | dir=row ai=center pad=0px gap=4px w=190.76px h=22px
+ 11090 Button | dir=column jc=center ai=center pad=4px 8px w=64.98px h=22px bg=#EAEDFF op=0.5 r=2px
+ 11112 Text | w=48.98px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 11137 Background | dir=column ai=flex-start pad=4px 8px w=20.98px h=22px bg=#00142F r=2px
+ 11157 Text | w=4.98px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#FFFFFF
+ 11181 Button | dir=column jc=center ai=center pad=4px 8px w=23.19px h=22px bg=#EAEDFF r=2px
+ 11202 Text | w=7.19px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 11227 Button | dir=column jc=center ai=center pad=4px 8px w=23.34px h=22px bg=#EAEDFF r=2px
+ 11248 Text | w=7.34px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 11273 Button | dir=column jc=center ai=center pad=4px 8px w=42.27px h=22px bg=#EAEDFF r=2px
+ 11294 Text | w=26.27px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 11319 Integrated Communication & Liaison Trigger:margin | dir=column ai=flex-start pad=32px 0px 0px w=976px h=504px
+ 11338 Integrated Communication & Liaison Trigger | w=976px h=472px
+ 11351 Message Composer to TPO / Student Batch | dir=column ai=flex-start pad=20px gap=12px h=388px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+ 11371 Container | dir=row jc=space-between ai=center pad=0px w=521px h=60px
+ 11391 Paragraph | dir=column ai=flex-start pad=1px 50.15px 0px 0px gap=1px w=496.98px h=60px
+ 11410 Text | w=379.7px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+ 11433 Text | w=446.83px h=36px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+ 11456 Container | dir=column ai=flex-start pad=0px w=20px h=20.5px
+ 11474 Icon | w=20px h=20.5px bg=#00142F
+ 11487 Container | dir=column ai=flex-start pad=0px gap=8px w=521px h=276px
+ 11507 Container | dir=row jc=center ai=flex-start pad=0px gap=8px w=521px h=52px
+ 11528 Container | dir=column ai=flex-start pad=0px gap=4px w=256.5px h=52px
+ 11547 Label | dir=column ai=flex-start pad=0px w=256.5px h=14px
+ 11566 TARGET RECIPIENT | w=256.5px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+ 11592 Options | dir=row jc=center ai=center pad=8px 24px 8px 12px w=256.5px h=34px bg=#F2F3FF r=2px
+ 11614 Container | dir=column ai=flex-start pad=1px 0px w=220.5px h=18px
+ 11632 Text | w=286.88px h=16px ff=Inter fw=400 fs=13px lh=16px ai=center c=#131B2E
+ 11655 Container | dir=column ai=flex-start pad=0px gap=4px w=256.5px h=52px
+ 11674 Label | dir=column ai=flex-start pad=0px w=256.5px h=14px
+ 11693 DISPATCH PROTOCOL | w=256.5px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+ 11719 Options | dir=row jc=center ai=center pad=8px 24px 8px 12px w=256.5px h=34px bg=#F2F3FF r=2px
+ 11741 Container | dir=column ai=flex-start pad=1px 0px w=220.5px h=18px
+ 11759 Text | w=222.23px h=16px ff=Inter fw=400 fs=13px lh=16px ai=center c=#131B2E
+ 11782 Container | dir=column ai=flex-start pad=0px gap=4px w=521px h=52px
+ 11802 Label | dir=column ai=flex-start pad=0px w=521px h=14px
+ 11821 SUBJECT HEADER | w=521px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+ 11847 Input | dir=row jc=center ai=flex-start pad=8px w=521px h=34px bg=#F2F3FF r=2px
+ 11869 Container | dir=column ai=flex-start pad=0px w=505px h=18px
+ 11888 Interview Slot Allotment: Cognizant Technical PI Round (Room 102 & 104) | w=505px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+ 11912 Container | dir=column ai=flex-start pad=0px 0px 6px gap=4px w=521px h=112px
+ 11932 Label | dir=column ai=flex-start pad=0px w=521px h=14px
+ 11951 DISPATCH CONTENT | w=521px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+ 11977 Textarea | dir=row jc=center ai=flex-start pad=8px w=521px h=88px bg=#F2F3FF r=2px
+ 12000 Paragraph | dir=column ai=flex-start pad=0px gap=18px w=505px h=108px
+ 12019 Text | w=106.11px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+ 12042 Text | w=503.63px h=72px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+ 12065 Container | dir=row jc=space-between ai=center pad=4px 0px 0px gap=82.75px w=521px h=36px
+ 12086 Container | dir=row ai=center pad=0px gap=4px w=236.43px h=15px
+ 12105 Container | dir=column ai=flex-start pad=0px w=9.38px h=15px
+ 12123 Icon | w=9.38px h=15px bg=#44474E
+ 12136 Container | dir=column ai=flex-start pad=0px w=223.05px h=14px
+ 12154 Text | w=223.05px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 12178 Button | dir=row ai=center pad=8px 12px gap=4px w=190.53px h=32px bg=#00142F sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=2px
+ 12200 Container | dir=column ai=center pad=0px w=13.33px h=10.67px
+ 12218 Icon | w=13.33px h=10.67px bg=#FFFFFF
+ 12231 Text | w=149.2px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#FFFFFF
+ 12256 Live Corporate Support & Logistics Card | dir=column ai=flex-start pad=20px gap=12px h=470px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+ 12276 Container | dir=row jc=space-between ai=center pad=0px gap=88.39px w=355px h=42px
+ 12297 Container | dir=column ai=flex-start pad=1px 0px 0px gap=1px w=242.59px h=42px
+ 12316 Text | w=242.59px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+ 12339 Container | dir=column ai=flex-start pad=0px w=242.59px h=18px
+ 12358 Text | w=225.81px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+ 12381 Container | dir=column ai=flex-start pad=0px w=20px h=18px
+ 12399 Icon | w=20px h=18px bg=#904D00
+ 12412 Container | dir=column ai=flex-start pad=0px 0px 4px gap=8px w=355px h=332px
+ 12432 Background | dir=row ai=flex-start pad=8px gap=8px w=355px h=104px bg=#F2F3FF r=2px
+ 12454 Margin | dir=column ai=flex-start pad=2px 0px 0px w=13.33px h=18.67px
+ 12472 Icon | w=13.33px h=16.67px bg=#00142F
+ 12485 Paragraph | w=311px h=88px
+ 12497 Text | w=161.59px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+ 12519 Text | w=238.8px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+ 12540 Text | w=274.33px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+ 12561 Text | w=52.95px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+ 12582 Background | dir=row ai=flex-start pad=8px gap=8px w=355px h=128px bg=#F2F3FF r=2px
+ 12604 Margin | dir=column ai=flex-start pad=2px 0px 0px w=16.67px h=18.67px
+ 12622 Icon | w=16.67px h=16.67px bg=#00142F
+ 12635 Paragraph | w=311px h=112px
+ 12647 Text | w=192.66px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+ 12669 Text | w=274.89px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+ 12690 Text | w=44.34px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+ 12711 Text | w=277.67px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+ 12732 Text | w=44.34px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+ 12753 Background | dir=row ai=flex-start pad=8px gap=8px w=355px h=80px bg=#F2F3FF r=2px
+ 12775 Margin | dir=column ai=flex-start pad=2px 0px 0px w=16.67px h=18.67px
+ 12793 Icon | w=16.67px h=16.67px bg=#00142F
+ 12806 Paragraph | w=311px h=64px
+ 12818 Text | w=110.53px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+ 12840 Text | w=280.73px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+ 12861 Text | w=197.48px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+ 12882 Button | dir=row jc=center ai=center pad=8px 0px gap=4px w=355px h=32px bg=#EAEDFF r=2px
+ 12905 Container | dir=column ai=center pad=0px w=13.5px h=13.5px
+ 12923 Icon | w=13.5px h=13.5px bg=#00142F
+ 12936 Text | w=249.81px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+ 12961 Header | dir=row jc=space-between ai=center pad=0px 24px gap=69.92px h=80px bg=rgba(255, 255, 255, 0.95) sh=0px 1px 8px rgba(0, 0, 0, 0.04)
+ 12989 Container | dir=column ai=flex-start pad=0px w=225.22px h=36px
+ 13007 Container | dir=column ai=flex-start pad=0px w=225.22px h=22px
+ 13026 Text | w=225.22px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center ls=-0.4px c=#00142F
+ 13050 Container | dir=column ai=flex-start pad=0px w=225.22px h=14px
+ 13069 Text | w=151.08px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 13093 Container | dir=row ai=center pad=0px gap=12px w=668.35px h=40px
+ 13112 Background | dir=row ai=center pad=2px w=403.8px h=22px bg=#F2F3FF r=2px
+ 13132 Link | dir=column ai=flex-start pad=2px 8px w=94.61px h=18px
+ 13150 Text | w=78.61px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 13174 Background | dir=column ai=flex-start pad=2px 8px w=86.38px h=18px bg=#00142F r=2px
+ 13194 Text | w=70.38px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#FFFFFF
+ 13218 Link | dir=column ai=flex-start pad=2px 8px w=120.11px h=18px
+ 13236 Text | w=104.11px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 13260 Link | dir=column ai=flex-start pad=2px 8px w=98.7px h=18px
+ 13278 Text | w=82.7px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 13302 Button - Notifications | dir=column jc=center ai=center pad=4px 4px 10px w=24px h=34px
+ 13322 Container | dir=row jc=center ai=flex-start pad=0px w=16px h=20px
+ 13342 Icon | w=16px h=20px bg=#44474E
+ 13355 Background | dir=row jc=center ai=center pad=0px w=16px h=16px bg=#904D00 r=12px
+ 13380 Text | w=5.83px h=10px ff=Inter fw=700 fs=10px lh=10px ai=center c=#FFFFFF
+ 13404 Background | dir=row ai=center pad=4px 4px 4px 8px gap=8px w=216.55px h=40px bg=#F2F3FF r=2px
+ 13425 Profile | w=32px h=32px bg=url(.jpg) r=12px
+ 13440 Container | dir=column ai=flex-start pad=0px 4px 0px 0px w=135.05px h=26px
+ 13458 Container | dir=column ai=flex-start pad=0px w=131.05px h=12px
+ 13477 Text | w=131.05px h=12px ff=Inter fw=600 fs=12px lh=12px ai=center ls=0.3px c=#131B2E
+ 13501 Container | dir=column ai=flex-start pad=0px w=131.05px h=14px
+ 13520 Text | w=57.06px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 13544 Link | dir=column ai=flex-start pad=4px 4px 10px w=21.5px h=27.5px
+ 13562 Icon | w=13.5px h=13.5px bg=#44474E
+ 13575 Aside | dir=column ai=flex-start pad=12px 0px 20px w=256px h=800px bg=#F2F3FF sh=0px 1px 8px rgba(0, 0, 0, 0.04)
+ 13599 Margin | dir=column ai=flex-start pad=0px 0px 20px w=256px h=54px
+ 13618 Container | dir=row ai=center pad=0px 20px gap=8px w=256px h=34px
+ 13638 TU T&P Cell Emblem | w=32px h=32px bg=url(.jpg)
+ 13652 Container | dir=column ai=flex-start pad=0px w=120.17px h=34px
+ 13670 Container | dir=column ai=flex-start pad=0px w=120.17px h=20px
+ 13689 Text | w=120.17px h=20px ff=Public Sans fw=700 fs=16px lh=20px ai=center ls=-0.4px tt=uppercase c=#00142F
+ 13714 Container | dir=column ai=flex-start pad=0px w=120.17px h=14px
+ 13733 Text | w=107.91px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+ 13758 Margin | dir=column ai=flex-start pad=0px 12px 12px w=256px h=52px
+ 13777 Background | dir=column ai=flex-start pad=4px 8px w=232px h=40px bg=#EAEDFF r=2px
+ 13798 Container | dir=column ai=flex-start pad=0px w=216px h=14px
+ 13817 ACTIVE CONSOLE | w=216px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+ 13843 Container | dir=column ai=flex-start pad=0px w=216px h=18px
+ 13862 T&P Administrative Node | w=216px h=18px ff=Inter fw=600 fs=13px lh=18px ai=center c=#00142F
+ 13886 Nav | dir=column ai=flex-start pad=0px 8px gap=4px w=256px h=630px
+ 13907 Link | dir=row ai=center pad=8px 12px gap=8px w=240px h=40px r=2px
+ 13928 Container | dir=column ai=flex-start pad=0px w=15px h=15px
+ 13946 Icon | w=15px h=15px bg=#44474E
+ 13959 Text | w=114.66px h=24px ff=Inter fw=400 fs=16px lh=24px ai=center c=#44474E
+ 13982 Link | dir=row ai=center pad=8px 12px gap=8px w=240px h=40px r=2px
+ 14003 Container | dir=column ai=flex-start pad=0px w=18.33px h=15px
+ 14021 Icon | w=18.33px h=15px bg=#44474E
+ 14034 Text | w=111.81px h=24px ff=Inter fw=400 fs=16px lh=24px ai=center c=#44474E
+ 14057 Link | dir=row ai=center pad=8px 12px gap=8px w=240px h=40px bg=#0F294A r=2px
+ 14079 Container | dir=column ai=flex-start pad=0px w=15px h=15px
+ 14097 Icon | w=15px h=15px bg=#FFFFFF
+ 14110 Text | w=124.23px h=24px ff=Inter fw=600 fs=16px lh=24px ai=center c=#FFFFFF
+ 14133 Link | dir=row ai=center pad=8px 12px gap=8px w=240px h=40px r=2px
+ 14154 Container | dir=column ai=flex-start pad=0px w=16.67px h=15.83px
+ 14172 Icon | w=16.67px h=15.83px bg=#44474E
+ 14185 Text | w=112.53px h=24px ff=Inter fw=400 fs=16px lh=24px ai=center c=#44474E
+ 14208 Link | dir=row ai=center pad=8px 12px gap=8px w=240px h=40px r=2px
+ 14229 Container | dir=column ai=flex-start pad=0px w=15px h=16.67px
+ 14247 Icon | w=15px h=16.67px bg=#44474E
+ 14260 Text | w=113.16px h=24px ff=Inter fw=400 fs=16px lh=24px ai=center c=#44474E
+ 14283 Link | dir=row ai=center pad=8px 12px gap=8px w=240px h=40px r=2px
+ 14304 Container | dir=column ai=flex-start pad=0px w=15px h=15px
+ 14322 Icon | w=15px h=15px bg=#44474E
+ 14335 Text | w=147.23px h=24px ff=Inter fw=400 fs=16px lh=24px ai=center c=#44474E
+ 14358 Container | dir=column ai=flex-start pad=8px 12px 0px w=256px h=32px
+ 14377 Link | dir=row jc=center ai=center pad=4px 0px gap=4px w=232px h=24px bg=#E2E7FF r=2px
+ 14400 Container | dir=column ai=flex-start pad=0px w=13.33px h=13.33px
+ 14418 Icon | w=13.33px h=13.33px bg=#131B2E
+ 14431 Text | w=112.38px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+ 14456 DRAWER: Interactive Job / Internship Posting Studio | dir=column ai=flex-start pad=0px w=580px bg=#FFFFFF
+ 14480 DRAWER: Interactive Job / Internship Posting Studio:shadow | w=580px bg=rgba(255, 255, 255, 0.002) sh=0px 25px 50px -12px rgba(0, 0, 0, 0.25)
+ 14498 Background | dir=row jc=space-between ai=center pad=20px gap=111.44px w=580px h=86px bg=#00142F
+ 14521 Container | dir=row ai=center pad=0px gap=8px w=394.55px h=46px
+ 14540 Container | dir=column ai=flex-start pad=0px w=18px h=18px
+ 14558 Icon | w=18px h=18px bg=#FFFFFF
+ 14571 Container | dir=column ai=flex-start pad=0px 0px 3px gap=7px w=368.55px h=46px
+ 14590 Container | dir=column ai=flex-start pad=0px w=368.55px h=22px
+ 14609 Text | w=244.59px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#FFFFFF
+ 14632 Text | w=368.55px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#DAE2FD
+ 14656 Button | dir=column jc=center ai=center pad=4px 4px 10px w=19.67px h=25.67px r=2px
+ 14676 Container | dir=row jc=center ai=flex-start pad=0px w=11.67px h=11.67px
+ 14695 Icon | w=11.67px h=11.67px bg=#FFFFFF
+ 14708 Container | w=580px h=622px
+ 14723 Role Title | dir=column ai=flex-start pad=7px 0px 0px gap=7px h=62px
+ 14740 Label → Role Profile / Job Title * | w=158.7px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+ 14765 Input | dir=row jc=center ai=flex-start pad=8px w=540px h=34px bg=#F2F3FF r=2px
+ 14787 Container | dir=column ai=flex-start pad=0px w=524px h=18px
+ 14806 Software Development Engineer - Cloud | w=524px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+ 14830 Locations | dir=column ai=flex-start pad=7px 0px 0px gap=7px h=62px
+ 14847 Label → Tentative Work Location * | w=173.84px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+ 14872 Input | dir=row jc=center ai=flex-start pad=8px w=540px h=34px bg=#F2F3FF r=2px
+ 14894 Container | dir=column ai=flex-start pad=0px w=524px h=18px
+ 14913 Bangalore / Pune / Remote Hybrid | w=524px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+ 14937 CTC Breakdown | dir=column ai=flex-start pad=12px gap=8px h=162px bg=#F2F3FF r=4px
+ 14956 Container | dir=column ai=flex-start pad=0px w=516px h=16px
+ 14975 COMPENSATION & BENEFITS BREAKDOWN | w=516px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px tt=uppercase c=#00142F
+ 15001 Container | dir=row jc=center ai=flex-start pad=0px gap=8px w=516px h=44px
+ 15022 Container | dir=column ai=flex-start pad=0px w=254px h=44px
+ 15040 Label | dir=column ai=flex-start pad=0px w=254px h=14px
+ 15059 Base Compensation (INR LPA) | w=254px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 15084 Input | dir=row jc=center ai=flex-start pad=6px 8px w=254px h=30px bg=#FFFFFF r=2px
+ 15106 Container | dir=column ai=flex-start pad=0px w=238px h=18px
+ 15125 ₹10.5 LPA | w=238px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+ 15149 Container | dir=column ai=flex-start pad=0px w=254px h=44px
+ 15167 Label | dir=column ai=flex-start pad=0px w=254px h=14px
+ 15186 Variable / Performance Bonus | w=254px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 15211 Input | dir=row jc=center ai=flex-start pad=6px 8px w=254px h=30px bg=#FFFFFF r=2px
+ 15233 Container | dir=column ai=flex-start pad=0px w=238px h=18px
+ 15252 ₹1.5 LPA | w=238px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+ 15276 Container | dir=column ai=flex-start pad=4px 0px 0px gap=4px w=516px h=62px
+ 15296 Label | dir=column ai=flex-start pad=0px w=516px h=14px
+ 15315 Additional Perks & Coverage | w=516px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 15340 Container | w=516px h=40px
+ 15353 Background | dir=row ai=center pad=2px 4px gap=4px w=237.64px bg=#DAE2FD r=2px
+ 15372 Container | dir=column ai=flex-start pad=0px w=8.83px h=6.51px
+ 15390 Icon | w=8.83px h=6.51px bg=#00142F
+ 15403 Text | w=216.81px h=14px ff=Inter fw=500 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+ 15427 Background | dir=row ai=center pad=2px 4px gap=3.99px w=197.55px bg=#DAE2FD r=2px
+ 15446 Container | dir=column ai=flex-start pad=0px w=8.83px h=6.51px
+ 15464 Icon | w=8.83px h=6.51px bg=#00142F
+ 15477 Text | w=176.73px h=14px ff=Inter fw=500 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+ 15501 Background | dir=row ai=center pad=2px 4px gap=4px w=228.41px bg=#DAE2FD r=2px
+ 15520 Container | dir=column ai=flex-start pad=0px w=8.83px h=6.51px
+ 15538 Icon | w=8.83px h=6.51px bg=#00142F
+ 15551 Text | w=207.58px h=14px ff=Inter fw=500 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+ 15575 Service Agreement / Bond | dir=column ai=flex-start pad=7px 0px 0px gap=7px h=62px
+ 15592 Label → Bond / Service Agreement | w=167.73px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+ 15617 Options | dir=row jc=center ai=center pad=8px 24px 8px 12px w=540px h=34px bg=#F2F3FF r=2px
+ 15639 Container | dir=column ai=flex-start pad=1px 0px w=504px h=18px
+ 15657 None (Direct Employment Agreement) | w=504px h=16px ff=Inter fw=400 fs=13px lh=16px ai=center c=#131B2E
+ 15681 Eligibility Criteria | dir=column ai=flex-start pad=12px gap=8px h=148px bg=#F2F3FF r=4px
+ 15700 Container | dir=column ai=flex-start pad=0px w=516px h=16px
+ 15719 ACADEMIC ELIGIBILITY PARAMETERS | w=516px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px tt=uppercase c=#00142F
+ 15745 Container | dir=column ai=flex-start pad=0px gap=4px w=516px h=48px
+ 15765 Label | dir=column ai=flex-start pad=0px w=516px h=14px
+ 15784 Degrees Permitted to Apply | w=516px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 15809 Input | dir=row jc=center ai=flex-start pad=6px 8px w=516px h=30px bg=#FFFFFF r=2px
+ 15831 Container | dir=column ai=flex-start pad=0px w=500px h=18px
+ 15850 B.Tech CSE, B.Tech ECE, M.Tech CSE, MCA | w=500px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+ 15874 Container | dir=row jc=center ai=flex-start pad=0px gap=8px w=516px h=44px
+ 15895 Container | dir=column ai=flex-start pad=0px w=254px h=44px
+ 15913 Label | dir=column ai=flex-start pad=0px w=254px h=14px
+ 15932 Minimum Cutoff CGPA | w=254px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 15957 Input | dir=row jc=center ai=flex-start pad=6px 8px w=254px h=30px bg=#FFFFFF r=2px
+ 15979 Container | dir=column ai=flex-start pad=0px w=238px h=18px
+ 15998 7.5 / 10.0 | w=238px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+ 16022 Container | dir=column ai=flex-start pad=0px w=254px h=44px
+ 16040 Label | dir=column ai=flex-start pad=0px w=254px h=14px
+ 16059 Max Backlogs Allowed | w=254px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 16084 Input | dir=row jc=center ai=flex-start pad=6px 8px w=254px h=30px bg=#FFFFFF r=2px
+ 16106 Container | dir=column ai=flex-start pad=0px w=238px h=18px
+ 16125 1 Backlog (Cleared) | w=238px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+ 16149 Selection Process Checklist | dir=column ai=flex-start pad=0px gap=4px h=96px
+ 16166 Label | dir=column ai=flex-start pad=0px w=540px h=14px
+ 16185 RECRUITMENT ROUNDS ARCHITECTURE | w=540px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+ 16211 Background | w=540px h=78px bg=#F2F3FF r=4px
+ 16226 Label | dir=row ai=center pad=0px gap=4px h=18px
+ 16243 Input | w=13px h=13px bg=#00142F r=2.5px
+ 16257 Text | w=122.33px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+ 16280 Label | dir=row ai=center pad=0px gap=4px h=18px
+ 16297 Input | w=13px h=13px bg=#00142F r=2.5px
+ 16311 Text | w=154.39px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+ 16334 Label | dir=row ai=center pad=0px gap=4px h=18px
+ 16351 Input | w=13px h=13px bg=#FFFFFF bd=1px solid #767676 r=2.5px
+ 16368 Text | w=140.56px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+ 16391 Label | dir=row ai=center pad=0px gap=4px h=18px
+ 16408 Input | w=13px h=13px bg=#00142F r=2.5px
+ 16422 Text | w=155.17px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+ 16445 Label | dir=row ai=center pad=0px gap=4px h=18px
+ 16462 Input | w=13px h=13px bg=#00142F r=2.5px
+ 16476 Text | w=141.17px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+ 16499 JD Upload | dir=column ai=flex-start pad=7px 0px 0px gap=7px h=114.67px
+ 16516 Label → Upload Job Description (PDF Document) | w=259.61px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+ 16541 Background | dir=column jc=center ai=center pad=12px w=540px h=86.67px bg=#F2F3FF r=4px
+ 16563 Margin | dir=column ai=flex-start pad=0px 0px 4px w=21.33px h=30.67px
+ 16581 Container | dir=column ai=center pad=0px w=21.33px h=26.67px
+ 16599 Icon | w=21.33px h=26.67px bg=#00142F
+ 16612 Container | dir=column ai=center pad=0px w=252.2px h=16px
+ 16630 Text | w=252.2px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+ 16655 Margin | dir=column ai=flex-start pad=2px 0px 0px w=204.52px h=16px
+ 16673 Container | dir=column ai=center pad=0px w=204.52px h=14px
+ 16691 Text | w=204.52px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 16716 Drawer Footer Actions | dir=row jc=flex-end ai=center pad=12px gap=8px w=580px h=56px bg=#F2F3FF
+ 16739 Button | dir=column jc=center ai=center pad=8px 12px w=66.11px h=32px bg=#EAEDFF r=2px
+ 16760 Text | w=42.11px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+ 16785 Button | dir=column jc=center ai=center pad=8px 12px w=196.58px h=32px bg=#00142F sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=2px
+ 16807 Text | w=172.58px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#FFFFFF

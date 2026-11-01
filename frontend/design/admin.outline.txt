@@ -1,0 +1,605 @@
+     1 TPO Admin Governance Workspace | dir=column ai=flex-start pad=0px 0px 0px 256px w=1280px h=2004.5px bg=linear-gradient(0deg, #FAF8FF, #FAF8FF), #FFFFFF
+    18 Main | dir=column ai=flex-start pad=80px 24px 20px w=1024px h=2004.5px bg=#FAF8FF
+    40 Container | dir=column ai=flex-start pad=0px w=976px h=1904.5px
+    59 Governance Control Header & Urgent Ticker | dir=row jc=space-between ai=flex-end pad=0px 0px 20px gap=12px w=976px h=150px
+    80 Container | dir=column ai=flex-start pad=0px w=488.82px h=130px
+    98 Container | dir=row ai=center pad=0px gap=4px w=488.82px h=48px
+   118 Background | w=7.38px h=8px bg=#FE932C r=12px
+   132 Container | dir=column ai=flex-start pad=0px 65.09px 0px 0px w=477.44px h=48px
+   150 Text | w=412.35px h=48px ff=Inter fw=400 fs=16px lh=24px ai=center ls=0.8px tt=uppercase c=#44474E
+   175 Heading 1 | dir=column ai=flex-start pad=4px 0px 0px w=488.82px h=42px
+   194 Text | w=472.28px h=38px ff=Public Sans fw=700 fs=30px lh=38px ai=center ls=-0.75px c=#00142F
+   218 Container | dir=column ai=flex-start pad=0px w=488.82px h=40px
+   237 Text | w=451.72px h=40px ff=Inter fw=400 fs=14px lh=20px ai=center c=#44474E
+   260 Quick Action Launchers | w=475.19px h=60px
+   272 Button | dir=row ai=center pad=4px 12px gap=4px w=203.3px h=24px bg=#E2E7FF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=2px
+   292 Container | dir=column ai=center pad=0px w=13.5px h=13.5px
+   310 Icon | w=13.5px h=13.5px bg=#00142F
+   323 Text | w=161.8px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+   348 Button | dir=row ai=center pad=4px 12px gap=4px w=152.16px h=24px bg=#E2E7FF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=2px
+   368 Container | dir=column ai=center pad=0px w=14.25px h=15px
+   386 Icon | w=14.25px h=15px bg=#00142F
+   399 Text | w=109.91px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+   424 Button | dir=row ai=center pad=4px 12px gap=4px w=154.67px h=24px bg=#00142F r=2px
+   444 Button:shadow | bg=rgba(255, 255, 255, 0.002) sh=0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -2px rgba(0, 0, 0, 0.1) r=2px
+   463 Container | dir=column ai=center pad=0px w=15px h=12px
+   482 Icon | w=15px h=12px bg=#FFFFFF
+   495 Text | w=111.67px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#FFFFFF
+   521 Primary Metric Bento Grid (4 Core Pillars):margin | dir=column ai=flex-start pad=0px 0px 32px w=976px h=222px
+   540 Primary Metric Bento Grid (4 Core Pillars) | dir=row jc=center ai=flex-start pad=0px gap=12px w=976px h=190px
+   561 Stat 1: Active Drives | dir=column ai=flex-start pad=27px 20px 21px gap=4px w=235px h=190px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+   584 Text | w=162.05px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#44474E
+   610 Paragraph | dir=row ai=baseline pad=3px 0px 0px gap=4px w=195px h=51px
+   631 Text | w=50.05px h=48px ff=Public Sans fw=700 fs=40px lh=48px ai=center ls=-0.8px c=#00142F
+   655 Text | w=50.89px h=16px ff=Inter fw=500 fs=12px lh=16px ai=center ls=0.3px c=#44474E
+   679 Container | dir=row ai=center pad=4px 0px 0px gap=8px w=195px h=25px
+   700 Background | dir=row ai=center pad=2px 8px w=87.05px h=21px bg=#E2E7FF r=2px
+   720 Text | w=71.05px h=17px ff=Inter fw=600 fs=11px lh=16px ai=center c=#00142F
+   743 Background | dir=row ai=center pad=2px 8px w=58.67px h=21px bg=#FE932C r=2px
+   763 Text | w=42.67px h=17px ff=Inter fw=600 fs=11px lh=16px ai=center c=#663500
+   786 Micro Sparkline SVG → SVG | w=195px h=40px
+   800 Vector | bd=4.52083px solid #B0C8F1
+   811 Container | dir=column ai=flex-start pad=12px 12px 18px w=84px h=84px op=0.1
+   834 Icon | w=60px h=54px bg=#00142F
+   847 Stat 2: Verified Students | dir=column ai=flex-start pad=27px 20px 47px gap=4px w=235px h=190px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+   870 Text | w=153.03px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#44474E
+   896 Paragraph | dir=row ai=baseline pad=3px 0px 0px gap=4px w=195px h=51px
+   917 Text | w=102.55px h=48px ff=Public Sans fw=700 fs=40px lh=48px ai=center ls=-0.8px c=#00142F
+   941 Text | w=47.16px h=16px ff=Inter fw=500 fs=12px lh=16px ai=center ls=0.3px c=#44474E
+   965 Container | dir=row ai=center pad=4px 0px 8px w=195px h=33px
+   985 Background | dir=row ai=center pad=2px 8px gap=4px w=122.71px h=21px bg=#FFDCC3 r=2px
+  1006 Container | dir=column ai=flex-start pad=0px w=10.83px h=10.83px
+  1024 Icon | w=10.83px h=10.83px bg=#6E3900
+  1037 Text | w=91.88px h=17px ff=Inter fw=600 fs=11px lh=16px ai=center c=#6E3900
+  1060 Background | w=195px h=6px bg=#E2E7FF r=12px
+  1076 Background | bg=#00142F r=12px
+  1088 Container | dir=column ai=flex-start pad=12px 12px 18px w=84px h=90px op=0.1
+  1111 Icon | w=60px h=60px bg=#00142F
+  1124 Stat 3: Corporate Recruiters | dir=column ai=flex-start pad=27px 20px 20px gap=4px w=235px h=190px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  1147 Text | w=141.75px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#44474E
+  1173 Paragraph | dir=row ai=baseline pad=3px 0px 0px gap=4px w=195px h=51px
+  1194 Text | w=67.81px h=48px ff=Public Sans fw=700 fs=40px lh=48px ai=center ls=-0.8px c=#00142F
+  1218 Text | w=92.64px h=16px ff=Inter fw=500 fs=12px lh=16px ai=center ls=0.3px c=#44474E
+  1242 Container | dir=row ai=center pad=4px 0px 0px w=195px h=25px
+  1262 Background | dir=row ai=center pad=2px 8px gap=4px w=115.83px h=21px bg=#DAE2FD r=2px
+  1283 Container | dir=column ai=flex-start pad=0px w=11.92px h=10.83px
+  1301 Icon | w=11.92px h=10.83px bg=#00142F
+  1314 Text | w=83.91px h=17px ff=Inter fw=600 fs=11px lh=16px ai=center c=#00142F
+  1337 Container | dir=row ai=center pad=8px 0px 0px gap=8px w=195px h=41px
+  1358 Container | dir=column ai=flex-start pad=0px 18.47px 0px 0px w=47.91px h=33px
+  1376 Text | w=29.44px h=33px ff=Inter fw=400 fs=11px lh=16px ai=center c=#44474E
+  1399 Text | w=6.19px h=17px ff=Inter fw=400 fs=11px lh=16px ai=center c=#44474E
+  1422 Container | dir=column ai=flex-start pad=0px 16.9px 0px 0px w=42.34px h=33px
+  1440 Text | w=25.44px h=33px ff=Inter fw=400 fs=11px lh=16px ai=center c=#44474E
+  1463 Text | w=6.19px h=17px ff=Inter fw=400 fs=11px lh=16px ai=center c=#44474E
+  1486 Container | dir=column ai=flex-start pad=0px 13.37px 0px 0px w=60.38px h=33px
+  1504 Text | w=47.01px h=33px ff=Inter fw=400 fs=11px lh=16px ai=center c=#44474E
+  1527 Container | dir=column ai=flex-start pad=12px 12px 18px w=90.03px h=90px op=0.1
+  1550 Icon | w=66.03px h=60px bg=#00142F
+  1563 Stat 4: Rolled Out Offers | dir=column ai=flex-start pad=27px 20px 30.5px gap=4px w=235px h=189.5px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  1586 Text | w=152.3px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#44474E
+  1612 Paragraph | dir=row ai=baseline pad=3px 0px 0px gap=4px w=195px h=51px
+  1633 Text | w=66.38px h=48px ff=Public Sans fw=700 fs=40px lh=48px ai=center ls=-0.8px c=#904D00
+  1657 Text | w=40.73px h=16px ff=Inter fw=500 fs=12px lh=16px ai=center ls=0.3px c=#44474E
+  1681 Container | dir=row ai=center pad=4px 0px 8px gap=4px w=195px h=49px
+  1702 Background | dir=row ai=center pad=2px 15.1px 2px 8px w=98.94px h=37px bg=#E2E7FF r=2px
+  1722 Text | w=75.84px h=33px ff=Inter fw=600 fs=11px lh=16px ai=center c=#00142F
+  1745 Background | dir=row ai=center pad=2px 16.44px 2px 8px w=92.06px h=37px bg=#D5E3FF r=2px
+  1765 Text | w=67.62px h=33px ff=Inter fw=600 fs=11px lh=16px ai=center c=#001B3B
+  1788 Background | w=195px h=6px bg=#E2E7FF r=12px
+  1804 Background | bg=#FE932C r=12px
+  1816 Container | dir=column ai=flex-start pad=12px 12px 18px w=90px h=93px op=0.1
+  1839 Icon | w=66px h=63px bg=#904D00
+  1852 Real-Time Operational Banner:margin | dir=column ai=flex-start pad=0px 0px 32px w=976px h=114px
+  1871 Real-Time Operational Banner | dir=row jc=space-between ai=center pad=12px 20px gap=12px w=976px h=82px bg=#F2F3FF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  1895 Container | dir=row ai=center pad=0px gap=12px w=686.07px h=58px
+  1914 Background | dir=column ai=flex-start pad=8px 8px 14px w=34px h=41px bg=#DAE2FD r=2px
+  1934 Icon | w=18px h=19px bg=#00142F
+  1947 Container | dir=column ai=flex-start pad=0px w=640.07px h=58px
+  1965 Heading 4 | dir=column ai=flex-start pad=0px w=640.07px h=22px
+  1984 Text | w=414.42px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+  2007 Container | dir=column ai=flex-start pad=0px w=640.07px h=36px
+  2026 Text | w=640.07px h=36px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  2049 Background | dir=row ai=center pad=4px 8px gap=4px w=225.5px h=22px bg=#FFFFFF r=2px
+  2070 Container | dir=column ai=flex-start pad=0px w=9.33px h=11.67px
+  2088 Icon | w=9.33px h=11.67px bg=#904D00
+  2101 Text | w=196.17px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  2125 Main Section: Governance & Approvals Queue Panel:margin | dir=column ai=flex-start pad=0px 0px 32px w=976px h=491px
+  2144 Main Section: Governance & Approvals Queue Panel | dir=column ai=flex-start pad=0px w=976px h=459px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  2166 Queue Navigation Bar | dir=row jc=space-between ai=center pad=12px 20px 0px gap=27.95px w=976px h=50px bg=#F2F3FF
+  2188 Container | dir=row ai=center pad=0px gap=4px w=642.05px h=32px
+  2208 Button | dir=row ai=center pad=8px 12px gap=4px w=209.7px h=32px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=2px 2px 0px 0px
+  2230 Container | dir=column ai=center pad=0px w=14.67px h=12px
+  2248 Icon | w=14.67px h=12px bg=#00142F
+  2261 Text | w=133.17px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+  2286 Margin | dir=column ai=flex-start pad=0px 0px 0px 4px w=29.86px h=16px
+  2304 Background | dir=column ai=center pad=0px 6px w=25.86px h=16px bg=#FE932C r=12px
+  2324 Text | w=13.86px h=16px ff=Inter fw=700 fs=10px lh=16px ai=center ls=0.3px c=#663500
+  2349 Button | dir=row ai=center pad=8px 12px gap=4px w=202.91px h=32px r=2px 2px 0px 0px
+  2369 Container | dir=column ai=center pad=0px w=13.33px h=12px
+  2387 Icon | w=13.33px h=12px bg=#44474E
+  2400 Text | w=130.36px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#44474E
+  2425 Margin | dir=column ai=flex-start pad=0px 0px 0px 4px w=27.22px h=16px
+  2443 Background | dir=column ai=center pad=0px 6px w=23.22px h=16px bg=#DAE2FD r=12px
+  2463 Text | w=11.22px h=16px ff=Inter fw=700 fs=10px lh=16px ai=center ls=0.3px c=#00142F
+  2488 Button | dir=row ai=center pad=8px 12px gap=4px w=221.44px h=32px r=2px 2px 0px 0px
+  2508 Container | dir=column ai=center pad=0px w=12px h=12px
+  2526 Icon | w=12px h=12px bg=#44474E
+  2539 Text | w=155.31px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#44474E
+  2564 Margin | dir=column ai=flex-start pad=0px 0px 0px 4px w=22.13px h=16px
+  2582 Background | dir=column ai=center pad=0px 6px w=18.13px h=16px bg=#DAE2FD r=12px
+  2602 Text | w=6.13px h=16px ff=Inter fw=700 fs=10px lh=16px ai=center ls=0.3px c=#00142F
+  2627 Search & Filter Controls | dir=row ai=center pad=0px 0px 8px gap=4px w=252px h=38px
+  2646 Container | dir=column ai=flex-start pad=0px w=224px h=30px
+  2665 Input | dir=row jc=center ai=flex-start pad=7px 12px 7px 32px w=224px h=30px bg=#FFFFFF r=2px
+  2687 Container | dir=column ai=flex-start pad=0px w=180px h=16px
+  2705 Filter by Enrollment / Org... | w=180px h=16px ff=Inter fw=400 fs=13px lh=16px ai=center c=#74777F
+  2729 Icon | w=12px h=12px bg=#74777F
+  2746 Button | dir=column jc=center ai=center pad=6px 6px 12px w=24px h=30px bg=#E2E7FF r=2px
+  2767 Container | dir=row jc=center ai=flex-start pad=0px w=12px h=12px
+  2786 Icon | w=12px h=12px bg=#00142F
+  2799 Tab 1: Student Registrations Queue | dir=column ai=flex-start pad=20px gap=12px w=976px h=409px
+  2820 Container | dir=row jc=space-between ai=center pad=0px gap=236.84px w=936px h=40px
+  2841 Container | dir=column ai=flex-start pad=0px w=523.25px h=40px
+  2859 Heading 3 | dir=column ai=flex-start pad=0px w=523.25px h=22px
+  2878 Text | w=392.06px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+  2901 Container | dir=column ai=flex-start pad=0px w=523.25px h=18px
+  2920 Text | w=523.25px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  2943 Button | dir=column jc=center ai=center pad=4px 8px w=175.91px h=22px bg=#E2E7FF r=2px
+  2964 Text | w=159.91px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+  2989 Table | dir=column ai=flex-start pad=0px w=936px h=317px
+  3008 Header | dir=column ai=flex-start pad=0px w=936px h=44px bg=#F2F3FF
+  3028 Row | dir=row jc=center ai=flex-start pad=0px w=936px h=44px
+  3048 Cell | dir=column ai=flex-start pad=8px 12px w=106.88px h=44px
+  3066 Text | w=79.17px h=28px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+  3091 Cell | dir=column ai=flex-start pad=8px 12px w=117.39px h=44px
+  3109 Text | w=67.18px h=28px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+  3134 Cell | dir=column ai=flex-start pad=15px 12px w=130.81px h=44px
+  3152 Text | w=79.58px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+  3177 Cell | dir=column ai=flex-end pad=15px 12px w=56.14px h=44px
+  3195 Text | w=32.14px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+  3221 Cell | dir=column ai=center pad=15px 12px w=88.25px h=44px
+  3239 Text | w=63.56px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+  3265 Cell | dir=column ai=flex-start pad=15px 12px w=152.8px h=44px
+  3283 Text | w=91.81px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+  3308 Cell | dir=column ai=flex-start pad=8px 12px w=107.08px h=44px
+  3326 Text | w=48.07px h=28px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+  3351 Cell | dir=column ai=flex-end pad=15px 12px w=176.66px h=44px
+  3369 Text | w=137.14px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+  3395 Body | dir=column ai=flex-start pad=0px w=936px h=273px
+  3414 Row | dir=row jc=center ai=center pad=0px 12px 0px 0px w=936px h=64.5px
+  3435 Data | dir=column ai=flex-start pad=23px 12px 23.5px w=106.88px h=64.5px
+  3453 Text | w=66.17px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#00142F
+  3476 Data | dir=row ai=center pad=0px 0px 0px 12px gap=3.99px w=105.39px h=36px
+  3495 Background | dir=row jc=center ai=center pad=5.5px 0px 6.5px w=21.61px h=28px bg=#D5E3FF r=12px
+  3516 Text | w=16.91px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center c=#00142F
+  3540 Container | dir=column ai=flex-start pad=0px 20.15px 0px 0px w=67.78px h=36px
+  3558 Text | w=47.63px h=36px ff=Inter fw=600 fs=13px lh=18px ai=center c=#00142F
+  3581 Data | dir=column ai=flex-start pad=14px 12px 14.5px 24px w=142.81px h=64.5px
+  3599 Text | w=100.06px h=36px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  3622 Data | dir=column ai=flex-end pad=23px 12px 23.5px w=56.14px h=64.5px
+  3640 Text | w=25.64px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#00142F
+  3664 Data | dir=column ai=center pad=14px 12px 13.5px w=88.25px h=64.5px
+  3682 Paragraph+Background | w=49.42px h=37px bg=#E2E7FF r=2px
+  3696 Text | w=7.27px h=18px ff=Inter fw=600 fs=11px lh=18px ai=center c=#131B2E
+  3718 Text | w=41.42px h=18px ff=Inter fw=600 fs=11px lh=18px ai=center c=#131B2E
+  3740 Data | dir=column ai=flex-start pad=22.5px 12px 24px w=152.8px h=64.5px
+  3758 Text | w=121.63px h=18px ff=Inter fw=400 fs=12px lh=18px ai=center c=#44474E
+  3781 Data | dir=column ai=flex-start pad=12px w=107.08px h=64px
+  3799 Background | dir=row ai=center pad=2px 31.74px 2px 8px gap=3.99px w=78.73px h=40px bg=#DAE2FD r=2px
+  3820 Container | dir=column ai=flex-start pad=0px w=8.67px h=10.83px
+  3838 Icon | w=8.67px h=10.83px bg=#00142F
+  3851 Text | w=26.33px h=36px ff=Inter fw=600 fs=11px lh=18px ai=center c=#00142F
+  3874 Data | dir=row jc=flex-end ai=center pad=0px 0px 0px 11.99px gap=4px w=164.65px h=24px
+  3894 Button | dir=column jc=center ai=center pad=4px 10px w=67.42px h=22px bg=#00142F r=2px
+  3915 Text | w=47.42px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#FFFFFF
+  3940 Button | dir=column jc=center ai=center pad=4px 8px w=51.2px h=22px bg=#E2E7FF r=2px
+  3961 Text | w=35.2px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#BA1A1A
+  3986 Button | dir=column jc=center ai=center pad=4px 4px 8px w=21.5px h=24px r=2px
+  4006 Container | dir=row jc=center ai=flex-start pad=0px w=13.5px h=12px
+  4025 Icon | w=13.5px h=12px bg=#44474E
+  4038 Row | dir=row jc=center ai=center pad=0px 12px 0px 0px w=936px h=66px bdt=1px solid #EAEDFF
+  4062 Data | dir=column ai=flex-start pad=23.5px 12px w=106.88px h=65px
+  4080 Text | w=64.97px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#00142F
+  4103 Data | dir=row ai=center pad=0px 0px 0px 12px gap=4px w=105.39px h=36px
+  4122 Background | dir=row jc=center ai=center pad=5.5px 0px 6.5px w=25.28px h=28px bg=#DAE2FD r=12px
+  4143 Text | w=16.52px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center c=#00142F
+  4167 Container | dir=column ai=flex-start pad=0px 28.58px 0px 0px w=64.11px h=36px
+  4185 Text | w=35.53px h=36px ff=Inter fw=600 fs=13px lh=18px ai=center c=#00142F
+  4208 Data | dir=column ai=flex-start pad=14.5px 12px 14.5px 24px w=142.81px h=65px
+  4226 Text | w=73.28px h=36px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  4249 Data | dir=column ai=flex-end pad=23.5px 12px w=56.14px h=65px
+  4267 Text | w=26.56px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#00142F
+  4291 Data | dir=column ai=center pad=14.5px 12px 13.5px w=88.25px h=65px
+  4309 Paragraph+Background | w=49.42px h=37px bg=#E2E7FF r=2px
+  4323 Text | w=7.27px h=18px ff=Inter fw=600 fs=11px lh=18px ai=center c=#131B2E
+  4345 Text | w=41.42px h=18px ff=Inter fw=600 fs=11px lh=18px ai=center c=#131B2E
+  4367 Data | dir=column ai=flex-start pad=23px 12px 24px w=152.8px h=65px
+  4385 Text | w=123.28px h=18px ff=Inter fw=400 fs=12px lh=18px ai=center c=#44474E
+  4408 Data | dir=column ai=flex-start pad=12.5px 12px w=107.08px h=65px
+  4426 Background | dir=row ai=center pad=2px 31.74px 2px 8px gap=3.99px w=78.73px h=40px bg=#DAE2FD r=2px
+  4447 Container | dir=column ai=flex-start pad=0px w=8.67px h=10.83px
+  4465 Icon | w=8.67px h=10.83px bg=#00142F
+  4478 Text | w=26.33px h=36px ff=Inter fw=600 fs=11px lh=18px ai=center c=#00142F
+  4501 Data | dir=row jc=flex-end ai=center pad=0px 0px 0px 11.99px gap=4px w=164.65px h=24px
+  4521 Button | dir=column jc=center ai=center pad=4px 10px w=67.42px h=22px bg=#00142F r=2px
+  4542 Text | w=47.42px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#FFFFFF
+  4567 Button | dir=column jc=center ai=center pad=4px 8px w=51.2px h=22px bg=#E2E7FF r=2px
+  4588 Text | w=35.2px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#BA1A1A
+  4613 Button | dir=column jc=center ai=center pad=4px 4px 8px w=21.5px h=24px r=2px
+  4633 Container | dir=row jc=center ai=flex-start pad=0px w=13.5px h=12px
+  4652 Icon | w=13.5px h=12px bg=#44474E
+  4665 Row | dir=row jc=center ai=center pad=0px 12px 0px 0px w=936px h=66px bg=rgba(255, 220, 195, 0.2) bdt=1px solid #EAEDFF
+  4690 Data | dir=column ai=flex-start pad=23.5px 12px w=106.88px h=65px
+  4708 Text | w=64.89px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#00142F
+  4731 Data | dir=row ai=center pad=0px 0px 0px 12px gap=3.99px w=105.39px h=36px
+  4750 Background | dir=row jc=center ai=center pad=5.5px 0px 6.5px w=22.72px h=28px bg=#FFDCC3 r=12px
+  4771 Text | w=16.45px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center c=#6E3900
+  4795 Container | dir=column ai=flex-start pad=0px 11.81px 0px 0px w=66.67px h=36px
+  4813 Text | w=54.86px h=36px ff=Inter fw=600 fs=13px lh=18px ai=center c=#00142F
+  4836 Data | dir=column ai=flex-start pad=14.5px 12px 14.5px 24px w=142.81px h=65px
+  4854 Text | w=82.65px h=36px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  4877 Data | dir=column ai=flex-end pad=23.5px 12px w=56.14px h=65px
+  4895 Text | w=29.28px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#904D00
+  4919 Data | dir=column ai=center pad=24px 12px 23px w=88.25px h=65px
+  4937 Background | dir=row jc=center ai=flex-start pad=0px 8px w=57.19px h=18px bg=#FFDAD6 r=2px
+  4958 Text | w=41.19px h=18px ff=Inter fw=600 fs=11px lh=18px ai=center c=#93000A
+  4982 Data | dir=column ai=flex-start pad=23px 12px 24px w=152.8px h=65px
+  5000 Text | w=122.91px h=18px ff=Inter fw=400 fs=12px lh=18px ai=center c=#44474E
+  5023 Data | dir=column ai=flex-start pad=12.5px 12px w=107.08px h=65px
+  5041 Background | dir=row ai=center pad=2px 15.27px 2px 8px gap=3.99px w=81.98px h=40px bg=#FFDAD6 r=2px
+  5062 Container | dir=column ai=flex-start pad=0px w=11.92px h=10.29px
+  5080 Icon | w=11.92px h=10.29px bg=#93000A
+  5093 Text | w=42.8px h=36px ff=Inter fw=600 fs=11px lh=18px ai=center c=#93000A
+  5116 Data | dir=row jc=flex-end ai=center pad=0px 0px 0px 11.99px gap=4px w=164.65px h=27px
+  5136 Button | dir=column jc=center ai=center pad=4px 8px w=41.97px h=22px bg=#E2E7FF r=2px
+  5157 Text | w=25.97px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+  5182 Button | dir=column jc=center ai=center pad=4px 10px w=61.09px h=22px bg=#904D00 r=2px
+  5203 Text | w=41.09px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#FFFFFF
+  5228 Button | dir=column jc=center ai=center pad=4px 4px 8px w=23px h=27px r=2px
+  5248 Container | dir=row jc=center ai=flex-start pad=0px w=15px h=15px
+  5267 Icon | w=15px h=15px bg=#BA1A1A
+  5280 Row | dir=row jc=center ai=center pad=0px 12px 0px 0px w=936px h=79.5px bdt=1px solid #EAEDFF
+  5303 Data | dir=column ai=flex-start pad=30.5px 12px 30px w=106.88px h=78.5px
+  5321 Text | w=73.33px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#00142F
+  5344 Data | dir=row ai=center pad=0px 0px 0px 12px gap=3.99px w=105.39px h=36px
+  5363 Background | dir=row jc=center ai=center pad=5.5px 0px 6.5px w=21.05px h=28px bg=#D5E3FF r=12px
+  5384 Text | w=15.81px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center c=#00142F
+  5408 Container | dir=column ai=flex-start pad=0px 18.26px 0px 0px w=68.34px h=36px
+  5426 Text | w=50.08px h=36px ff=Inter fw=600 fs=13px lh=18px ai=center c=#00142F
+  5449 Data | dir=column ai=flex-start pad=12px 12px 12px 24px w=142.81px h=78px
+  5467 Text | w=88.48px h=54px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  5490 Data | dir=column ai=flex-end pad=30.5px 12px 30px w=56.14px h=78.5px
+  5508 Text | w=29.38px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#00142F
+  5532 Data | dir=column ai=center pad=21.5px 12px 20px w=88.25px h=78.5px
+  5550 Paragraph+Background | w=49.42px h=37px bg=#E2E7FF r=2px
+  5564 Text | w=7.27px h=18px ff=Inter fw=600 fs=11px lh=18px ai=center c=#131B2E
+  5586 Text | w=41.42px h=18px ff=Inter fw=600 fs=11px lh=18px ai=center c=#131B2E
+  5608 Data | dir=column ai=flex-start pad=30px 12px 30.5px w=152.8px h=78.5px
+  5626 Text | w=128.8px h=18px ff=Inter fw=400 fs=12px lh=18px ai=center c=#44474E
+  5649 Data | dir=column ai=flex-start pad=19.5px 12px 19px w=107.08px h=78.5px
+  5667 Background | dir=row ai=center pad=2px 31.74px 2px 8px gap=3.99px w=78.73px h=40px bg=#DAE2FD r=2px
+  5688 Container | dir=column ai=flex-start pad=0px w=8.67px h=10.83px
+  5706 Icon | w=8.67px h=10.83px bg=#00142F
+  5719 Text | w=26.33px h=36px ff=Inter fw=600 fs=11px lh=18px ai=center c=#00142F
+  5742 Data | dir=row jc=flex-end ai=center pad=0px 0px 0px 11.99px gap=4px w=164.65px h=24px
+  5762 Button | dir=column jc=center ai=center pad=4px 10px w=67.42px h=22px bg=#00142F r=2px
+  5783 Text | w=47.42px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#FFFFFF
+  5808 Button | dir=column jc=center ai=center pad=4px 8px w=51.2px h=22px bg=#E2E7FF r=2px
+  5829 Text | w=35.2px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#BA1A1A
+  5854 Button | dir=column jc=center ai=center pad=4px 4px 8px w=21.5px h=24px r=2px
+  5874 Container | dir=row jc=center ai=flex-start pad=0px w=13.5px h=12px
+  5893 Icon | w=13.5px h=12px bg=#44474E
+  5906 Dual Grid: Event & Training Creator Studio & Fast Result Publishing:margin | dir=column ai=flex-start pad=0px 0px 32px w=976px h=712px
+  5925 Dual Grid: Event & Training Creator Studio & Fast Result Publishing | w=976px h=680px
+  5938 Left Column: Event & Training Creator Studio (7 cols) | dir=column ai=flex-start pad=32px 32px 134px gap=12px h=678px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  5958 Container | dir=row jc=space-between ai=center pad=0px 0px 12px w=492px h=100px
+  5978 Container | dir=column ai=flex-start pad=0px w=353.98px h=88px
+  5996 Container | dir=row ai=center pad=0px gap=4px w=353.98px h=24px
+  6016 Container | dir=column ai=flex-start pad=0px w=12.67px h=13.33px
+  6034 Icon | w=12.67px h=13.33px bg=#904D00
+  6047 Text | w=224.34px h=24px ff=Inter fw=400 fs=16px lh=24px ai=center ls=0.8px tt=uppercase c=#44474E
+  6072 Heading 2 | dir=column ai=flex-start pad=4px 0px 0px w=353.98px h=28px
+  6091 Text | w=271.38px h=24px ff=Public Sans fw=700 fs=18px lh=24px ai=center c=#00142F
+  6114 Container | dir=column ai=flex-start pad=0px w=353.98px h=36px
+  6133 Text | w=353.98px h=36px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  6156 Background | dir=column ai=flex-start pad=4px 26.42px 4px 10px w=81.39px h=36px bg=#E2E7FF r=2px
+  6176 Text | w=44.97px h=28px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+  6200 Form | dir=column ai=flex-start pad=0px gap=12px w=492px h=400px
+  6220 Container | dir=row jc=center ai=flex-start pad=0px gap=12px w=492px h=54px
+  6241 Event Type | dir=column ai=flex-start pad=0px gap=4px w=240px h=54px
+  6260 Label | dir=column ai=flex-start pad=0px w=240px h=16px
+  6279 Program Type | w=240px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  6304 Options | dir=row jc=center ai=center pad=8px 28px 8px 16px w=240px h=34px bg=#F2F3FF r=2px
+  6326 Container | dir=column ai=flex-start pad=1px 0px w=196px h=18px
+  6344 Text | w=264.69px h=16px ff=Inter fw=500 fs=13px lh=16px ai=center c=#131B2E
+  6367 Target Eligibility | dir=column ai=flex-start pad=0px gap=4px w=240px h=54px
+  6386 Label | dir=column ai=flex-start pad=0px w=240px h=16px
+  6405 Target Eligibility Cohort | w=240px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  6430 Options | dir=row jc=center ai=center pad=8px 28px 8px 16px w=240px h=34px bg=#F2F3FF r=2px
+  6452 Container | dir=column ai=flex-start pad=1px 0px w=196px h=18px
+  6470 Text | w=202.78px h=16px ff=Inter fw=500 fs=13px lh=16px ai=center c=#131B2E
+  6493 Topic Title | dir=column ai=flex-start pad=0px gap=4px w=492px h=54px
+  6513 Label | dir=column ai=flex-start pad=0px w=492px h=16px
+  6532 Workshop / Session Topic | w=492px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  6557 Input | dir=row jc=center ai=flex-start pad=9px 12px w=492px h=34px bg=#F2F3FF r=2px
+  6579 Container | dir=column ai=flex-start pad=0px w=468px h=16px
+  6597 e.g. Mastering Technical Case Interviews for Consulting & FinTech | w=468px h=16px ff=Inter fw=500 fs=13px lh=16px ai=center c=#74777F
+  6621 Resource Person & Affiliation | dir=row jc=center ai=flex-start pad=0px gap=12px w=492px h=54px
+  6642 Container | dir=column ai=flex-start pad=0px gap=4px w=240px h=54px
+  6661 Label | dir=column ai=flex-start pad=0px w=240px h=16px
+  6680 Resource Person / Speaker | w=240px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  6705 Input | dir=row jc=center ai=flex-start pad=9px 12px w=240px h=34px bg=#F2F3FF r=2px
+  6727 Container | dir=column ai=flex-start pad=0px w=216px h=16px
+  6745 e.g. Dr. Rajesh Goswami | w=216px h=16px ff=Inter fw=500 fs=13px lh=16px ai=center c=#9CA3AF
+  6769 Container | dir=column ai=flex-start pad=0px gap=4px w=240px h=54px
+  6788 Label | dir=column ai=flex-start pad=0px w=240px h=16px
+  6807 Designation & Organisation | w=240px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  6832 Input | dir=row jc=center ai=flex-start pad=9px 12px w=240px h=34px bg=#F2F3FF r=2px
+  6854 Container | dir=column ai=flex-start pad=0px w=216px h=16px
+  6872 e.g. VP Engineering, Microsoft IDC | w=216px h=16px ff=Inter fw=500 fs=13px lh=16px ai=center c=#9CA3AF
+  6896 Venue & Date/Time Picker | dir=row jc=center ai=flex-start pad=0px gap=12px w=492px h=56px
+  6917 Container | dir=column ai=flex-start pad=0px 0px 2px gap=4px w=156px h=56px
+  6936 Label | dir=column ai=flex-start pad=0px w=156px h=16px
+  6955 Venue Location | w=156px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  6980 Options | dir=row jc=center ai=center pad=8px 28px 8px 16px w=156px h=34px bg=#F2F3FF r=2px
+  7002 Container | dir=column ai=flex-start pad=1px 0px w=112px h=18px
+  7020 Text | w=153.73px h=16px ff=Inter fw=500 fs=13px lh=16px ai=center c=#131B2E
+  7043 Container | dir=column ai=flex-start pad=0px gap=4px w=156px h=56px
+  7062 Label | dir=column ai=flex-start pad=0px w=156px h=16px
+  7081 Date & Slot | w=156px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  7106 Input | dir=row jc=center ai=flex-start pad=8px 12px w=156px h=36px bg=#F2F3FF r=2px
+  7128 Container | dir=row ai=center pad=0px w=132px h=20px
+  7146 Container | dir=column ai=flex-start pad=0px w=115px h=20px
+  7164 Paragraph | dir=row ai=flex-start pad=1px 0.99px 1px 1px gap=1px w=78.23px h=20px
+  7183 Spinbutton - Month → 04 | w=16.94px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  7206 Text | w=4.81px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  7229 Spinbutton - Day → 12 | w=13.41px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  7252 Text | w=4.81px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  7275 Spinbutton - Year → 2025 | w=32.27px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  7298 Button menu | dir=column ai=flex-start pad=2px w=17px h=17px
+  7316 image | w=13px h=12.19px
+  7328 Container | dir=column ai=flex-start pad=0px 0px 2px gap=4px w=156px h=56px
+  7347 Label | dir=column ai=flex-start pad=0px w=156px h=16px
+  7366 Time Window | w=156px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  7391 Input | dir=row jc=center ai=flex-start pad=8px 12px w=156px h=34px bg=#F2F3FF r=2px
+  7413 Container | dir=column ai=flex-start pad=0px w=132px h=18px
+  7432 Text | w=134.27px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  7455 Fee Status & Registration Window | dir=row jc=center ai=flex-start pad=4px 0px 0px gap=12px w=492px h=82px
+  7476 Container | dir=column ai=flex-start pad=0px gap=8px w=240px h=78px
+  7495 Label | dir=column ai=flex-start pad=0px w=240px h=16px
+  7514 Student Fee Policy | w=240px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  7539 Container | dir=row ai=center pad=0px gap=20px w=240px h=54px
+  7559 Label | dir=row ai=center pad=0px gap=8px w=127.27px h=54px
+  7578 Input | w=13px h=13px bg=#FFFFFF bd=1px solid #00142F r=50px
+  7595 Input:checked | bg=#00142F r=50px
+  7607 Container | dir=column ai=flex-start pad=0px 4.19px 0px 0px w=106.27px h=54px
+  7625 Text | w=102.08px h=54px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+  7648 Label | dir=row ai=center pad=0px gap=8px w=92.73px h=54px
+  7667 Input | w=13px h=13px bg=#FFFFFF bd=1px solid #767676 r=50px
+  7684 Container | dir=column ai=flex-start pad=0px 0.91px 0px 0px w=71.73px h=54px
+  7702 Text | w=70.82px h=54px ff=Inter fw=400 fs=13px lh=18px ai=center c=#131B2E
+  7725 Container | dir=column ai=flex-start pad=0px 0px 22px gap=4px w=240px h=78px
+  7744 Label | dir=column ai=flex-start pad=0px w=240px h=16px
+  7763 RSVP Cut-off Date | w=240px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  7788 Input | dir=row jc=center ai=flex-start pad=8px 12px w=240px h=36px bg=#F2F3FF r=2px
+  7810 Container | dir=row ai=center pad=0px w=216px h=20px
+  7828 Container | dir=column ai=flex-start pad=0px w=199px h=20px
+  7846 Paragraph | dir=row ai=flex-start pad=1px gap=1px w=78.63px h=20px
+  7865 Spinbutton - Month → 04 | w=16.94px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  7888 Text | w=4.81px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  7911 Spinbutton - Day → 10 | w=13.8px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  7934 Text | w=4.81px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  7957 Spinbutton - Year → 2025 | w=32.27px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  7980 Button menu | dir=column ai=flex-start pad=2px w=17px h=17px
+  7998 image | w=13px h=12.19px
+  8010 Container | dir=row jc=flex-end ai=center pad=8px 0px 0px gap=8px w=492px h=40px
+  8031 Button | dir=column jc=center ai=center pad=8px 12px w=89.84px h=32px bg=#E2E7FF r=2px
+  8052 Text | w=65.84px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  8077 Button | dir=row ai=center pad=8px 20px gap=4px w=219.11px h=32px bg=#00142F r=2px
+  8099 Button:shadow | bg=rgba(255, 255, 255, 0.002) sh=0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -2px rgba(0, 0, 0, 0.1) r=2px
+  8118 Container | dir=column ai=center pad=0px w=12px h=12px
+  8137 Icon | w=12px h=12px bg=#FFFFFF
+  8150 Text | w=163.11px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px c=#FFFFFF
+  8176 Right Column: Result Publishing & Recruiter Feedback Trigger (5 cols) | dir=column ai=flex-start pad=0px gap=20px h=666px
+  8193 Quick Action: Final Select List Upload & Multichannel Broadcast | dir=column ai=flex-start pad=32px gap=4px w=388px h=512px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  8216 Container | dir=row ai=center pad=0px gap=4px w=324px h=24px
+  8236 Container | dir=column ai=flex-start pad=0px w=12px h=12.33px
+  8254 Icon | w=12px h=12.33px bg=#00142F
+  8267 Text | w=187.34px h=24px ff=Inter fw=400 fs=16px lh=24px ai=center ls=0.8px tt=uppercase c=#44474E
+  8292 Heading 3 | dir=column ai=flex-start pad=0px w=324px h=24px
+  8311 Publish Drive Results | w=324px h=24px ff=Public Sans fw=700 fs=18px lh=24px ai=center c=#00142F
+  8335 Container | dir=column ai=flex-start pad=0px w=324px h=54px
+  8354 Upload confirmed company offers, trigger congratulations SMS/Emails, and update placement records. | w=324px h=54px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  8378 Container | dir=column ai=flex-start pad=8px 0px 0px gap=12px w=324px h=334px
+  8398 Container | dir=column ai=flex-start pad=0px gap=4px w=324px h=54px
+  8418 Label | dir=column ai=flex-start pad=0px w=324px h=16px
+  8437 Select Concluded Drive | w=324px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  8462 Options | dir=row jc=center ai=center pad=8px 28px 8px 16px w=324px h=34px bg=#F2F3FF r=2px
+  8484 Container | dir=column ai=flex-start pad=1px 0px w=280px h=18px
+  8502 Oracle India - Cloud Developer (Slot 1A) | w=280px h=16px ff=Inter fw=500 fs=13px lh=16px ai=center c=#131B2E
+  8526 Drag & Drop Zone | dir=column jc=center ai=center pad=20px w=324px h=114px bg=#F2F3FF r=8px
+  8548 Margin | dir=column ai=flex-start pad=0px 0px 4px w=33px h=28px
+  8566 Container | dir=column ai=center pad=0px w=33px h=24px
+  8584 Icon | w=33px h=24px bg=#00142F
+  8597 Container | dir=column ai=center pad=0px w=207.02px h=16px
+  8615 Text | w=207.02px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+  8640 Margin | dir=column ai=flex-start pad=2px 0px 0px w=284px h=30px
+  8658 Container | dir=column ai=center pad=0px 1.7px w=284px h=28px
+  8676 Text | w=280.6px h=28px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  8701 Broadcast Toggles | dir=column ai=flex-start pad=12px gap=4px w=324px h=86px bg=#F2F3FF r=2px
+  8723 Label | dir=row ai=center pad=0px gap=8px w=300px h=18px
+  8743 Input | w=13px h=13px bg=#00142F r=2.5px
+  8757 Container | dir=column ai=flex-start pad=0px w=248.27px h=18px
+  8775 Text | w=248.27px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  8798 Label | dir=row ai=center pad=0px gap=8px w=300px h=18px
+  8818 Input | w=13px h=13px bg=#00142F r=2.5px
+  8832 Container | dir=column ai=flex-start pad=0px w=247.67px h=18px
+  8850 Text | w=247.67px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  8873 Label | dir=row ai=center pad=0px gap=8px w=300px h=18px
+  8893 Input | w=13px h=13px bg=#00142F r=2.5px
+  8907 Container | dir=column ai=flex-start pad=0px w=264.05px h=18px
+  8925 Text | w=264.05px h=18px ff=Inter fw=500 fs=13px lh=18px ai=center c=#131B2E
+  8948 Button | dir=row jc=center ai=center pad=10px 0px gap=4px w=324px h=36px bg=#904D00 r=2px
+  8972 Button:shadow | bg=rgba(255, 255, 255, 0.002) sh=0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px -1px rgba(0, 0, 0, 0.1) r=2px
+  8991 Container | dir=column ai=center pad=0px w=14.25px h=12px
+  9010 Icon | w=14.25px h=12px bg=#FFFFFF
+  9023 Text | w=262.64px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px c=#FFFFFF
+  9049 Recruiter Feedback Monitor Widget | dir=column ai=flex-start pad=20px 20px 24px gap=8px w=388px h=134px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  9072 Container | dir=row jc=space-between ai=center pad=0px gap=112.78px w=348px h=46px
+  9093 Paragraph | dir=column ai=flex-start pad=7px 0px 0px gap=3px w=199.22px h=46px
+  9112 Text | w=193.16px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#44474E
+  9137 Heading 4 → 4.82 / 5.0 (Recruiter NPS) | w=199.22px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center c=#00142F
+  9160 Background | dir=column ai=flex-start pad=8px 8px 14px w=33.5px h=38.67px bg=#DAE2FD r=2px
+  9180 Icon | w=17.5px h=16.67px bg=#00142F
+  9193 Container | dir=column ai=flex-start pad=0px w=348px h=36px
+  9212 112 Feedback surveys logged this semester. Top praised attribute: “Analytical aptitude & professional decorum.” | w=348px h=36px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  9236 Bottom Administrative Audit & Departmental Placement Split:margin | dir=column ai=flex-start pad=0px 0px 32px w=976px h=215.5px
+  9255 Bottom Administrative Audit & Departmental Placement Split | dir=row jc=center ai=flex-start pad=0px gap=12px w=976px h=183.5px
+  9276 Card 1: School of Engineering Placement Stat | dir=column ai=flex-start pad=20px 20px 36.5px gap=4px w=317.33px h=183.5px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  9298 Container | dir=row jc=space-between ai=center pad=0px gap=14.61px w=277.33px h=21px
+  9319 Container | dir=column ai=flex-start pad=0px w=171.28px h=16px
+  9337 Text | w=171.28px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+  9361 Background | dir=column ai=flex-start pad=2px 8px w=91.44px h=21px bg=#E2E7FF r=2px
+  9381 Text | w=75.44px h=17px ff=Inter fw=700 fs=11px lh=16px ai=center c=#00142F
+  9404 Container | dir=column ai=flex-start pad=0px w=277.33px h=36px
+  9423 312 of 353 eligible students secured confirmed letters. | w=277.33px h=36px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  9447 Container | dir=column ai=flex-start pad=8px 0px 0px gap=6px w=277.33px h=62px
+  9467 Container | dir=row jc=space-between ai=flex-start pad=0px gap=136px w=277.33px h=14px
+  9488 Container | dir=column ai=flex-start pad=0px w=47.7px h=14px
+  9507 Text | w=47.7px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+  9531 Container | dir=column ai=flex-start pad=0px w=93.63px h=14px
+  9550 Text | w=93.63px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+  9574 Container | dir=row jc=space-between ai=flex-start pad=0px gap=170.91px w=277.33px h=14px
+  9595 Container | dir=column ai=flex-start pad=0px w=22.42px h=14px
+  9614 Text | w=22.42px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+  9638 Container | dir=column ai=flex-start pad=0px w=84px h=14px
+  9657 Text | w=84px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+  9681 Container | dir=row jc=space-between ai=flex-start pad=0px gap=89.26px w=277.33px h=14px
+  9702 Container | dir=column ai=flex-start pad=0px w=103.41px h=14px
+  9721 Text | w=103.41px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+  9745 Container | dir=column ai=flex-start pad=0px w=84.66px h=14px
+  9764 Text | w=84.66px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+  9788 Card 2: Management Sciences Stat | dir=column ai=flex-start pad=20px 20px 38px gap=4px w=317.33px h=183px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  9810 Container | dir=row jc=space-between ai=center pad=0px w=277.33px h=37px
+  9830 Container | dir=column ai=flex-start pad=0px 39.86px 0px 0px w=190.2px h=32px
+  9849 Text | w=150.34px h=32px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+  9873 Background | dir=column ai=flex-start pad=2px 42.66px 2px 8px w=87.13px h=37px bg=#E2E7FF r=2px
+  9893 Text | w=36.47px h=33px ff=Inter fw=700 fs=11px lh=16px ai=center c=#00142F
+  9916 Container | dir=column ai=flex-start pad=0px w=277.33px h=18px
+  9935 55 of 60 eligible MBA postgraduates placed. | w=277.33px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  9959 Container | dir=column ai=flex-start pad=8px 0px 0px gap=6px w=277.33px h=62px
+  9979 Container | dir=row jc=space-between ai=flex-start pad=0px gap=97.82px w=277.33px h=14px
+ 10000 Container | dir=column ai=flex-start pad=0px w=101.23px h=14px
+ 10019 Text | w=101.23px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+ 10043 Container | dir=column ai=flex-start pad=0px w=78.28px h=14px
+ 10062 Text | w=78.28px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+ 10086 Container | dir=row jc=space-between ai=flex-start pad=0px gap=91.89px w=277.33px h=14px
+ 10107 Container | dir=column ai=flex-start pad=0px w=103.53px h=14px
+ 10126 Text | w=103.53px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+ 10150 Container | dir=column ai=flex-start pad=0px w=81.91px h=14px
+ 10169 Text | w=81.91px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+ 10193 Container | dir=row jc=space-between ai=flex-start pad=0px gap=62.56px w=277.33px h=14px
+ 10214 Container | dir=column ai=flex-start pad=0px w=137.89px h=14px
+ 10233 Text | w=137.89px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+ 10257 Container | dir=column ai=flex-start pad=0px w=76.88px h=14px
+ 10276 Text | w=76.88px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+ 10300 Card 3: Sciences & Humanities Stat | dir=column ai=flex-start pad=20px gap=4px w=317.33px h=183px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+ 10322 Container | dir=row jc=space-between ai=center pad=0px w=277.33px h=37px
+ 10342 Container | dir=column ai=flex-start pad=0px 88.33px 0px 0px w=191.89px h=32px
+ 10360 Text | w=103.56px h=32px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+ 10384 Background | dir=column ai=flex-start pad=2px 40.98px 2px 8px w=85.45px h=37px bg=#E2E7FF r=2px
+ 10404 Text | w=36.47px h=33px ff=Inter fw=700 fs=11px lh=16px ai=center c=#00142F
+ 10427 Container | dir=column ai=flex-start pad=0px w=277.33px h=36px
+ 10446 45 offers rolled across Media, R&D Labs, and Analytics. | w=277.33px h=36px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+ 10470 Container | dir=column ai=flex-start pad=8px 0px 0px gap=6px w=277.33px h=62px
+ 10490 Container | dir=row jc=space-between ai=flex-start pad=0px gap=53.72px w=277.33px h=14px
+ 10511 Container | dir=column ai=flex-start pad=0px w=145.06px h=14px
+ 10530 Text | w=145.06px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+ 10554 Container | dir=column ai=flex-start pad=0px w=78.56px h=14px
+ 10573 Text | w=78.56px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+ 10597 Container | dir=row jc=space-between ai=flex-start pad=0px gap=66.31px w=277.33px h=14px
+ 10618 Container | dir=column ai=flex-start pad=0px w=130.64px h=14px
+ 10637 Text | w=130.64px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+ 10661 Container | dir=column ai=flex-start pad=0px w=80.39px h=14px
+ 10680 Text | w=80.39px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+ 10704 Container | dir=row jc=space-between ai=flex-start pad=0px gap=89.15px w=277.33px h=14px
+ 10725 Container | dir=column ai=flex-start pad=0px w=106.86px h=14px
+ 10744 Text | w=106.86px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+ 10768 Container | dir=column ai=flex-start pad=0px w=81.33px h=14px
+ 10787 Text | w=81.33px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#131B2E
+ 10811 Header | dir=row jc=space-between ai=center pad=0px 24px gap=69.92px h=80px bg=rgba(255, 255, 255, 0.95) sh=0px 1px 8px rgba(0, 0, 0, 0.04)
+ 10839 Container | dir=column ai=flex-start pad=0px w=225.22px h=36px
+ 10857 Container | dir=column ai=flex-start pad=0px w=225.22px h=22px
+ 10876 Text | w=225.22px h=22px ff=Inter fw=700 fs=16px lh=22px ai=center ls=-0.4px c=#00142F
+ 10900 Container | dir=column ai=flex-start pad=0px w=225.22px h=14px
+ 10919 Text | w=151.08px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 10943 Container | dir=row ai=center pad=0px gap=12px w=668.35px h=40px
+ 10962 Background | dir=row ai=center pad=2px w=403.8px h=22px bg=#F2F3FF r=2px
+ 10982 Link | dir=column ai=flex-start pad=2px 8px w=94.61px h=18px
+ 11000 Text | w=78.61px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 11024 Background | dir=column ai=flex-start pad=2px 8px w=86.38px h=18px bg=#00142F r=2px
+ 11044 Text | w=70.38px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#FFFFFF
+ 11068 Link | dir=column ai=flex-start pad=2px 8px w=120.11px h=18px
+ 11086 Text | w=104.11px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 11110 Link | dir=column ai=flex-start pad=2px 8px w=98.7px h=18px
+ 11128 Text | w=82.7px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 11152 Button - Notifications | dir=column jc=center ai=center pad=4px 4px 10px w=24px h=34px
+ 11172 Container | dir=row jc=center ai=flex-start pad=0px w=16px h=20px
+ 11192 Icon | w=16px h=20px bg=#44474E
+ 11205 Background | dir=row jc=center ai=center pad=0px w=16px h=16px bg=#904D00 r=12px
+ 11230 Text | w=5.83px h=10px ff=Inter fw=700 fs=10px lh=10px ai=center c=#FFFFFF
+ 11254 Background | dir=row ai=center pad=4px 4px 4px 8px gap=8px w=216.55px h=40px bg=#F2F3FF r=2px
+ 11275 Profile | w=32px h=32px bg=url(.jpg) r=12px
+ 11290 Container | dir=column ai=flex-start pad=0px 4px 0px 0px w=135.05px h=26px
+ 11308 Container | dir=column ai=flex-start pad=0px w=131.05px h=12px
+ 11327 Text | w=131.05px h=12px ff=Inter fw=600 fs=12px lh=12px ai=center ls=0.3px c=#131B2E
+ 11351 Container | dir=column ai=flex-start pad=0px w=131.05px h=14px
+ 11370 Text | w=57.06px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+ 11394 Link | dir=column ai=flex-start pad=4px 4px 10px w=21.5px h=27.5px
+ 11412 Icon | w=13.5px h=13.5px bg=#44474E
+ 11425 Aside | dir=column ai=flex-start pad=12px 0px 20px w=256px h=800px bg=#F2F3FF sh=0px 1px 8px rgba(0, 0, 0, 0.04)
+ 11449 Margin | dir=column ai=flex-start pad=0px 0px 20px w=256px h=54px
+ 11468 Container | dir=row ai=center pad=0px 20px gap=8px w=256px h=34px
+ 11488 TU T&P Cell Emblem | w=32px h=32px bg=url(.jpg)
+ 11502 Container | dir=column ai=flex-start pad=0px w=120.17px h=34px
+ 11520 Container | dir=column ai=flex-start pad=0px w=120.17px h=20px
+ 11539 Text | w=120.17px h=20px ff=Public Sans fw=700 fs=16px lh=20px ai=center ls=-0.4px tt=uppercase c=#00142F
+ 11564 Container | dir=column ai=flex-start pad=0px w=120.17px h=14px
+ 11583 Text | w=107.91px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+ 11608 Margin | dir=column ai=flex-start pad=0px 12px 12px w=256px h=52px
+ 11627 Background | dir=column ai=flex-start pad=4px 8px w=232px h=40px bg=#EAEDFF r=2px
+ 11648 Container | dir=column ai=flex-start pad=0px w=216px h=14px
+ 11667 ACTIVE CONSOLE | w=216px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#44474E
+ 11693 Container | dir=column ai=flex-start pad=0px w=216px h=18px
+ 11712 T&P Administrative Node | w=216px h=18px ff=Inter fw=600 fs=13px lh=18px ai=center c=#00142F
+ 11736 Nav | dir=column ai=flex-start pad=0px 8px gap=4px w=256px h=630px
+ 11757 Link | dir=row ai=center pad=8px 12px gap=8px w=240px h=40px bg=#0F294A r=2px
+ 11779 Container | dir=column ai=flex-start pad=0px w=15px h=15px
+ 11797 Icon | w=15px h=15px bg=#FFFFFF
+ 11810 Text | w=117.3px h=24px ff=Inter fw=600 fs=16px lh=24px ai=center c=#FFFFFF
+ 11833 Link | dir=row ai=center pad=8px 12px gap=8px w=240px h=40px r=2px
+ 11854 Container | dir=column ai=flex-start pad=0px w=18.33px h=15px
+ 11872 Icon | w=18.33px h=15px bg=#44474E
+ 11885 Text | w=111.81px h=24px ff=Inter fw=400 fs=16px lh=24px ai=center c=#44474E
+ 11908 Link | dir=row ai=center pad=8px 12px gap=8px w=240px h=40px r=2px
+ 11929 Container | dir=column ai=flex-start pad=0px w=15px h=15px
+ 11947 Icon | w=15px h=15px bg=#44474E
+ 11960 Text | w=120.88px h=24px ff=Inter fw=400 fs=16px lh=24px ai=center c=#44474E
+ 11983 Link | dir=row ai=center pad=8px 12px gap=8px w=240px h=40px r=2px
+ 12004 Container | dir=column ai=flex-start pad=0px w=16.67px h=15.83px
+ 12022 Icon | w=16.67px h=15.83px bg=#44474E
+ 12035 Text | w=112.53px h=24px ff=Inter fw=400 fs=16px lh=24px ai=center c=#44474E
+ 12058 Link | dir=row ai=center pad=8px 12px gap=8px w=240px h=40px r=2px
+ 12079 Container | dir=column ai=flex-start pad=0px w=15px h=16.67px
+ 12097 Icon | w=15px h=16.67px bg=#44474E
+ 12110 Text | w=113.16px h=24px ff=Inter fw=400 fs=16px lh=24px ai=center c=#44474E
+ 12133 Link | dir=row ai=center pad=8px 12px gap=8px w=240px h=40px r=2px
+ 12154 Container | dir=column ai=flex-start pad=0px w=15px h=15px
+ 12172 Icon | w=15px h=15px bg=#44474E
+ 12185 Text | w=147.23px h=24px ff=Inter fw=400 fs=16px lh=24px ai=center c=#44474E
+ 12208 Container | dir=column ai=flex-start pad=8px 12px 0px w=256px h=32px
+ 12227 Link | dir=row jc=center ai=center pad=4px 0px gap=4px w=232px h=24px bg=#E2E7FF r=2px
+ 12250 Container | dir=column ai=flex-start pad=0px w=13.33px h=13.33px
+ 12268 Icon | w=13.33px h=13.33px bg=#131B2E
+ 12281 Text | w=112.38px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
