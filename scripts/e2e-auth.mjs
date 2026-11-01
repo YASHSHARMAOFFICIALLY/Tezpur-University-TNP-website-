@@ -182,7 +182,7 @@ await step("next user in the same tab never sees the previous user's cached data
   await s.waitForURL(/\/login$/);
   await s.route("**/api/v1/students/me", async (r) => {
     await new Promise((w) => setTimeout(w, 2500));
-    await r.continue();
+    await r.continue().catch(() => {}); // unroute below may already have let this request through
   });
   // fill in place: page.goto would reload the app and drop the client cache this step is about
   await s.getByLabel("Email *").fill(STUDENT);
