@@ -37,7 +37,7 @@ export async function step(name, fn) {
     console.log(`PASS  ${name}`);
   } catch (e) {
     results.push(["FAIL", name, Date.now() - t]);
-    console.log(`FAIL  ${name}\n      ${String(e.message).split("\n")[0]}`);
+    console.log(`FAIL  ${name}\n      ${String(e.message).split("\n").slice(0, 4).join("\n      ")}`);
     await browser.close();
     summary();
     process.exit(1);
@@ -80,4 +80,3 @@ export async function login(page, email, password) {
   await page.getByLabel("Password *").fill(password);
   await page.getByRole("button", { name: "Sign in" }).click();
 }
-

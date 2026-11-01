@@ -70,7 +70,10 @@ await step("admin sends a feedback form; recruiter submits; admin sees answers",
 await step("CSV import creates a student (job polled to finish)", async () => {
   await adm.goto(`${WEB}/admin/students`);
   const csv = resolve(tmpdir(), `e2e-import-${run}.csv`);
-  writeFileSync(csv, `enrolment_no,name,email,programme_code,year_of_completion,mobile\n${CSV_ENROL},CSV Imported ${run},${CSV_ENROL.toLowerCase()}@${DOMAIN},CSB,2027,9876509876\n`);
+  writeFileSync(
+    csv,
+    `enrolment_no,name,email,programme_code,year_of_completion,mobile\n${CSV_ENROL},CSV Imported ${run},${CSV_ENROL.toLowerCase()}@${DOMAIN},CSB,2027,9876509876\n`,
+  );
   await adm.getByLabel("CSV file").setInputFiles(csv);
   await adm.getByRole("button", { name: "Start Import" }).click();
   await adm.getByText("Import queued.").waitFor();
@@ -113,9 +116,16 @@ await step("admin adds + edits a programme; public page shows it", async () => {
   await add.getByRole("button", { name: "Add", exact: true }).click();
   const row = adm.getByRole("listitem").filter({ hasText: `MA Mass Communication ${run}` });
   await row.getByRole("button", { name: "Edit" }).click();
-  await adm.locator("form").filter({ has: adm.getByRole("button", { name: "Save", exact: true }) }).getByLabel("Students").fill("42");
+  await adm
+    .locator("form")
+    .filter({ has: adm.getByRole("button", { name: "Save", exact: true }) })
+    .getByLabel("Students")
+    .fill("42");
   await adm.getByRole("button", { name: "Save", exact: true }).click();
-  await adm.getByText(/42 students/).first().waitFor();
+  await adm
+    .getByText(/42 students/)
+    .first()
+    .waitFor();
   await guest.goto(WEB);
   await guest.getByText(`MA Mass Communication ${run}`).waitFor();
 });
@@ -124,20 +134,30 @@ await step("admin saves university profile + uploads a brochure", async () => {
   await adm.getByRole("button", { name: "Save Profile" }).click();
   await adm.getByText("University profile saved.").waitFor();
   const pdf = resolve(tmpdir(), `e2e-brochure-${run}.pdf`);
-  writeFileSync(pdf, "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj 3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n");
+  writeFileSync(
+    pdf,
+    "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj 3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n",
+  );
   await adm.getByRole("listitem").filter({ hasText: "2024" }).locator('input[type="file"]').setInputFiles(pdf);
   await adm.getByText("Brochure uploaded for 2024.").waitFor();
 });
 await step("admin changes a setting and resets it; health + audit render", async () => {
   await adm.goto(`${WEB}/admin/system`);
-  await adm.getByText(/Everything is working|warning|problem/i).first().waitFor();
+  await adm
+    .getByText(/Everything is working|warning|problem/i)
+    .first()
+    .waitFor();
   const field = adm.getByLabel("Email code lifetime");
   await field.fill("12");
   const row = adm.getByRole("listitem").filter({ has: field });
   await row.getByRole("button", { name: "Save" }).click();
   await adm.getByText("Changed").first().waitFor();
-  await adm.getByRole("listitem").filter({ has: adm.getByLabel("Email code lifetime") }).getByRole("button", { name: "Reset" }).click();
-  await adm.getByLabel("Email code lifetime").and(adm.locator('[value="10"]')).waitFor();
+  await adm
+    .getByRole("listitem")
+    .filter({ has: adm.getByLabel("Email code lifetime") })
+    .getByRole("button", { name: "Reset" })
+    .click();
+  await adm.waitForFunction(() => document.querySelector('input[aria-label="Email code lifetime"]')?.value === "10");
   await adm.getByRole("cell", { name: "setting.updated" }).first().waitFor();
 });
 
@@ -176,7 +196,7 @@ await step("posting returned by admin is edited and resubmitted", async () => {
   await row.waitFor({ state: "detached" });
 
   await rec.reload();
-  await rec.getByLabel("Choose drive").selectOption({ label: `${JOB2} (Returned / Rejected)` });
+  await rec.getByLabel("Choose drive").selectOption({ label: `${JOB2} (Returned for edits)` });
   await rec.getByText("Add the CTC breakdown").waitFor();
   await rec.getByRole("button", { name: "Edit Posting" }).click();
   d = rec.getByRole("dialog", { name: "Edit posting" });

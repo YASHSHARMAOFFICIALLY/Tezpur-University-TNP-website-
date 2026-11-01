@@ -36,9 +36,10 @@ const POSTING_LABEL: Record<Posting["status"], string> = {
   draft: "Draft",
   pending_admin: "Awaiting T&P approval",
   approved: "Live to students",
-  rejected: "Returned / Rejected",
+  rejected: "Rejected",
   closed: "Closed",
 };
+const postingLabel = (p: Posting) => (p.status === "draft" && p.review_note ? "Returned for edits" : POSTING_LABEL[p.status]);
 const STAGE_LABEL: Record<Applicant["status"], string> = {
   released_to_recruiter: "Released by T&P",
   shortlisted: "Shortlisted",
@@ -399,13 +400,13 @@ function DriveTimeline({
                 </div>
                 <div className="flex flex-col items-start gap-1 sm:items-end">
                   <span className="flex items-center gap-1 text-caption font-semibold text-muted">
-                    Current Status: <Badge tone={POSTING_TONE[drive.status]}>{POSTING_LABEL[drive.status]}</Badge>
+                    Current Status: <Badge tone={POSTING_TONE[drive.status]}>{postingLabel(drive)}</Badge>
                   </span>
                   {postings.length > 1 && (
                     <Select aria-label="Choose drive" value={drive.id} onChange={(e) => onPick(e.target.value)} className="h-8 w-60 py-1 text-label">
                       {postings.map((p) => (
                         <option key={p.id} value={p.id}>
-                          {p.title} ({POSTING_LABEL[p.status]})
+                          {p.title} ({postingLabel(p)})
                         </option>
                       ))}
                     </Select>
@@ -435,7 +436,7 @@ function DriveTimeline({
                 ))}
               </ol>
               <div className="flex flex-wrap items-center gap-2 px-2 pb-1">
-                {(drive.status === "draft" || drive.status === "rejected") && (
+                {drive.status === "draft" && (
                   <>
                     <Button size="sm" variant="soft" icon="edit" onClick={() => setEditing(true)}>
                       Edit Posting

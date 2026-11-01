@@ -20,6 +20,7 @@ node scripts/seed-demo.mjs   # optional demo data via the real API; test passwor
 | `/student` | student | Student & Alumnus Placement Hub |
 | `/recruiter` | company | Recruiter Corporate Desk |
 | `/admin` | admin | TPO Admin Governance Workspace |
+| `/admin/students`, `/admin/comms`, `/admin/content`, `/admin/teachers`, `/admin/system` | admin | not in Figma (console style): roster, notices & threads, content & records, staff, system & audit |
 
 After login each user is sent to their portal by `user.role`. `must_change_password` shows the change-password form before anything else.
 
@@ -41,5 +42,6 @@ Blocks with no backend data (JEE/NIRF analytics, logistics, NPS…) keep the Fig
 ```sh
 npx tsc --noEmit && npx eslint src scripts
 node scripts/e2e.mjs                         # 21-step UI test across all portals (needs API, web, Mailpit, seed)
+node scripts/e2e-ops.mjs                     # 15-step UI test: admin ops pages + recruiter self-service
 node scripts/shot.mjs student /student       # full-page screenshot as a demo user; W=390 for mobile
 ```
