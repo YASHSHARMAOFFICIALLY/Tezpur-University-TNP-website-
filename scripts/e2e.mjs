@@ -83,7 +83,7 @@ await step("recruiter login lands on /recruiter", async () => {
   await rec.waitForURL(/\/recruiter$/);
   await rec.getByText("Cognizant Technology Solutions").first().waitFor();
 });
-await step("recruiter creates + submits posting via Posting Studio", async () => {
+await step("recruiter creates + submits posting via Posting Studio (retry after a failed submit)", async () => {
   await rec.getByRole("button", { name: "Create New Job Opening" }).click();
   const d = rec.getByRole("dialog", { name: "Job & Internship Posting Studio" });
   await d.getByLabel("ROLE PROFILE / JOB TITLE *").fill(JOB);
@@ -94,13 +94,18 @@ await step("recruiter creates + submits posting via Posting Studio", async () =>
   await d.getByLabel("Minimum Cutoff CGPA").fill("5");
   await d.getByLabel("Passing-out Batch *").selectOption("2026");
   await d.getByLabel("Apply Deadline *").fill(DEADLINE);
+  await rec.route(/\/company\/opportunities\/[^/]+\/submit$/, (r) => r.fulfill({ status: 503, body: "down" }), { times: 1 });
+  await d.getByRole("button", { name: "Publish Opening to Students" }).click();
+  await d.getByRole("alert").filter({ hasText: "isn't responding" }).waitFor();
   await d.getByRole("button", { name: "Publish Opening to Students" }).click();
   await d.waitFor({ state: "detached" });
 });
 
-await step("posting deadline is 23:59 local time on the chosen day", async () => {
+await step("retried posting is saved once, deadline 23:59 local time on the chosen day", async () => {
   const { access_token } = await apiCall("POST", "/auth/login", { body: { email: RECRUITER, password: PW } });
-  const [p] = (await apiList("/company/opportunities", access_token)).filter((o) => o.title === JOB);
+  const mine = (await apiList("/company/opportunities", access_token)).filter((o) => o.title === JOB);
+  assert.equal(mine.length, 1, `${mine.length} postings titled ${JOB}`);
+  const [p] = mine;
   const at = new Date(p.apply_deadline);
   assert.deepEqual([ymd(at), at.getHours(), at.getMinutes()], [DEADLINE, 23, 59], `deadline is ${at.toString()}, want ${DEADLINE} 23:59 local`);
 });

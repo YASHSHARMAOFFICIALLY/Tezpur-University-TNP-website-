@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import useSWR from "swr";
 import { AppShell, type NavItem } from "@/components/AppShell";
 import { Badge, Button, Card, Empty, Field, Icon, Input, Modal, Notice, Select, State, Textarea, cx, useRun, type Tone } from "@/components/ui";
@@ -1186,6 +1186,8 @@ function PostingStudio({ onClose, onDone, initial }: { onClose: () => void; onDo
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const year = new Date().getFullYear();
+  // The draft survives a failed submit, so a retry updates it instead of creating a duplicate posting.
+  const draft = useRef(initial?.id);
   // Edit keeps what the form can't show (several batches, the exact deadline time) unless the recruiter changes that field.
   const batches = initial?.eligibility.completion_years?.join(",");
   const initialDay = initial && ymd(new Date(initial.apply_deadline));
@@ -1222,20 +1224,9 @@ function PostingStudio({ onClose, onDone, initial }: { onClose: () => void; onDo
         },
         selection_process: Object.fromEntries(ROUNDS.map(([k]) => [k, fd.has(k)])) as never,
       };
-      const id = initial
-        ? (await call(
-            api.PATCH("/api/v1/company/opportunities/{id}", {
-              params: { path: { id: initial.id } },
-              body,
-            }),
-          ),
-          initial.id)
-        : (await call(api.POST("/api/v1/company/opportunities", { body }))).id;
-      await call(
-        api.POST("/api/v1/company/opportunities/{id}/submit", {
-          params: { path: { id } },
-        }),
-      );
+      if (draft.current) await call(api.PATCH("/api/v1/company/opportunities/{id}", { params: { path: { id: draft.current } }, body }));
+      else draft.current = (await call(api.POST("/api/v1/company/opportunities", { body }))).id;
+      await call(api.POST("/api/v1/company/opportunities/{id}/submit", { params: { path: { id: draft.current } } }));
       onDone();
     } catch (e) {
       setErr((e as Error).message);
