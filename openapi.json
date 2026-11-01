@@ -9775,7 +9775,7 @@
         "tags": [
           "content"
         ],
-        "summary": "All organisations",
+        "summary": "All organisations, optionally only those with a recruiter account in `status`",
         "security": [
           {
             "bearer": []
@@ -9801,6 +9801,21 @@
             },
             "required": false,
             "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending_email_verify",
+                "pending_admin",
+                "active",
+                "rejected",
+                "alumni"
+              ]
+            },
+            "required": false,
+            "name": "status",
             "in": "query"
           }
         ],

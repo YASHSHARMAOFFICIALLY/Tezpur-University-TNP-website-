@@ -60,6 +60,25 @@ describe("approval queue", () => {
   });
 });
 
+describe("company directory", () => {
+  it("filters organisations by their recruiter's account status, so pending and rejected ones aren't counted as active", async () => {
+    const ids: Record<string, string> = {};
+    for (const k of ["active", "pending", "rejected"]) {
+      const email = `hr@${k}-co.example`;
+      await request(app).post(api("/auth/register/recruiter")).send({ email, password: "recruiter-pass", name: "R. Hire", company: { name: `${k} co`, category: "startup" } }).expect(201);
+      await request(app).post(api("/auth/verify-otp")).send({ email, code: await lastOtp(email) }).expect(200);
+      ids[k] = (await db.user.findUniqueOrThrow({ where: { email } })).id;
+    }
+    await admin.post(`/admin/users/${ids.active}/decision`, { decision: "approve" }).expect(200);
+    await admin.post(`/admin/users/${ids.rejected}/decision`, { decision: "reject", reason: "Not a real company" }).expect(200);
+
+    const names = async (q: string) => ((await admin.get(`/admin/companies?limit=100${q}`).expect(200)).body.data as { name: string }[]).map((c) => c.name).filter((n) => n.endsWith(" co")).sort();
+    expect(await names("&status=active")).toEqual(["active co"]);
+    expect(await names("&status=pending_admin")).toEqual(["pending co"]);
+    expect(await names("")).toEqual(["active co", "pending co", "rejected co"]);
+  });
+});
+
 describe("settings", () => {
   it("lists every setting with value, default and plain-English help", async () => {
     const r = await admin.get("/admin/settings").expect(200);

@@ -1,5 +1,6 @@
 // Plain CRUD with no state machine: company profile, university master data, noticeboard,
 // admin<->recruiter messages, feedback forms, file downloads.
+import { z } from "zod";
 import { FileRow, Id, Ok, pageOf, PageQuery, route, type ModuleDef } from "../../http/route.js";
 import * as svc from "./content.service.js";
 import {
@@ -45,7 +46,8 @@ export const contentModule: ModuleDef = {
       handler: ({ user, params }) => svc.removeContact(user, params.id),
     }),
     route({
-      method: "get", path: "/admin/companies", summary: "All organisations", auth: ["admin"], query: PageQuery, response: pageOf(Company),
+      method: "get", path: "/admin/companies", summary: "All organisations, optionally only those with a recruiter account in `status`", auth: ["admin"],
+      query: PageQuery.extend({ status: z.enum(["pending_email_verify", "pending_admin", "active", "rejected", "alumni"]).optional() }), response: pageOf(Company),
       handler: ({ query }) => svc.listCompanies(query),
     }),
 

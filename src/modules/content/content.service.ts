@@ -40,7 +40,8 @@ export async function removeContact(user: AuthUser<"company">, id: string) {
   return { ok: true as const };
 }
 
-export const listCompanies = (query: Page) => paginate((a) => db.company.findMany({ ...a, include: { contacts: true } }), query);
+export const listCompanies = (query: Page & { status?: "pending_email_verify" | "pending_admin" | "active" | "rejected" | "alumni" }) =>
+  paginate((a) => db.company.findMany({ ...a, where: query.status ? { users: { some: { status: query.status } } } : {}, include: { contacts: true } }), query);
 
 export const getUniversity = () => db.universityProfile.findUnique({ where: { id: 1 } });
 
