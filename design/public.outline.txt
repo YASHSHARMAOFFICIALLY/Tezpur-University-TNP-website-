@@ -1,0 +1,491 @@
+     1 Public Portal & Dual Registration Flow | dir=column ai=flex-start pad=0px gap=32px w=1280px h=2471.25px bg=linear-gradient(0deg, #FAF8FF, #FAF8FF), #FFFFFF
+    19 Main | dir=column ai=flex-start pad=80px 0px 0px w=1280px h=2253.25px bg=#FAF8FF
+    41 Container | dir=column ai=flex-start pad=0px w=1280px h=2173.25px
+    60 Top Marquee Ticker | dir=row ai=center pad=4px 32px gap=12px w=1280px h=32px bg=#00142E sh=0px 1px 2px rgba(0, 0, 0, 0.05)
+    82 Background | dir=row ai=center pad=2px 8px gap=4px w=127.48px h=18px bg=#FE932C r=2px
+   103 Container | dir=column ai=flex-start pad=0px w=12.5px h=10px
+   121 Icon | w=12.5px h=10px bg=#663500
+   134 Text | w=94.98px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#663500
+   159 Container | dir=column ai=flex-start pad=4px 0px 2px w=1076.52px h=24px
+   178 Container | dir=row ai=flex-start pad=0px 1263.72px 0px 0px gap=32px w=2681.98px h=18px
+   197 Container | dir=row ai=center pad=0px gap=6.01px w=696.52px h=18px
+   217 Strong | dir=column ai=flex-start pad=0px w=147.31px h=18px
+   235 Text | w=147.31px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#FFDCC3
+   258 Text | w=543.2px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#E2E7FF
+   281 Container | dir=column ai=flex-start pad=0px w=7.31px h=18px
+   300 Text | w=7.31px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#C4C6CF
+   323 Container | dir=row ai=center pad=0px gap=6.01px w=650.43px h=18px
+   343 Strong | dir=column ai=flex-start pad=0px w=144.73px h=18px
+   361 Text | w=144.73px h=18px ff=Inter fw=700 fs=13px lh=18px ai=center c=#FFDCC3
+   384 Text | w=499.69px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#E2E7FF
+   407 Hero Section | dir=column ai=flex-start pad=0px w=1280px h=488px bg=#00142F
+   428 Container | dir=column jc=center ai=flex-start pad=0px op=0.15
+   453 Image | w=1280px h=488px bg=url(.jpg)
+   467 Overlay+Blur | w=384px h=384px bg=rgba(15, 41, 74, 0.8) r=12px
+   486 Overlay+Blur | w=320px h=320px bg=rgba(254, 147, 44, 0.1) r=12px
+   505 Container | dir=column ai=flex-start pad=32px 32px 64px w=1280px h=488px
+   526 Margin | dir=column ai=flex-start pad=0px 0px 12px w=478.42px h=36px
+   544 Overlay+Shadow+OverlayBlur | dir=row ai=center pad=4px 12px gap=4px w=478.42px h=24px bg=rgba(255, 255, 255, 0.1) sh=0px 1px 2px rgba(0, 0, 0, 0.05)
+   559 Note: backdrop-filter has minimal browser support | r=2px
+   568 Background | w=8px h=8px bg=#FE932C r=12px
+   582 Text | w=442.42px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.6px tt=uppercase c=#E2E7FF
+   607 Margin | dir=column ai=flex-start pad=0px 0px 32px w=1216px h=214px
+   626 Container | w=1216px h=182px
+   639 Container | dir=column ai=flex-start pad=0px gap=8px h=182px
+   656 Heading 1 | dir=column ai=flex-start pad=0px w=802.67px h=96px
+   676 Empowering Aspirations, Connecting Excellence. | w=802.67px h=96px ff=Public Sans fw=700 fs=40px lh=48px ai=center ls=-1px c=#FFFFFF
+   701 Container | dir=column ai=flex-start pad=0px w=672px h=78px
+   720 Text | w=669.13px h=78px ff=Inter fw=400 fs=16px lh=26px ai=center c=#E2E7FF
+   743 Container | dir=column jc=flex-end ai=flex-start pad=0px gap=8px h=100px
+   761 Link | dir=row jc=center ai=center pad=12px 20px gap=8px w=389.33px h=46px bg=#FE932C r=2px
+   785 Link:shadow | bg=rgba(255, 255, 255, 0.002) sh=0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -2px rgba(0, 0, 0, 0.1) r=2px
+   804 Container | dir=column ai=flex-start pad=0px w=141.11px h=22px
+   823 Text | w=141.11px h=22px ff=Inter fw=600 fs=16px lh=22px ai=center c=#FFFFFF
+   846 Container | dir=column ai=flex-start pad=0px w=12px h=12px
+   865 Icon | w=12px h=12px bg=#FFFFFF
+   878 Link | dir=row jc=center ai=center pad=12px 20px gap=8px w=389.33px h=46px bg=rgba(255, 255, 255, 0.1)
+   893 Note: backdrop-filter has minimal browser support | r=2px
+   903 Container | dir=column ai=flex-start pad=0px w=12px h=12px
+   921 Icon | w=12px h=12px bg=#FFFFFF
+   934 Container | dir=column ai=flex-start pad=0px w=229.19px h=22px
+   952 Text | w=229.19px h=22px ff=Inter fw=600 fs=16px lh=22px ai=center c=#FFFFFF
+   975 Quick Metrics Ribbon | dir=row jc=center ai=flex-start pad=20px gap=20px w=1216px h=142px bg=rgba(255, 255, 255, 0.1)
+   991 Note: backdrop-filter has minimal browser support | r=8px
+  1001 Quick Metrics Ribbon:shadow | bg=rgba(255, 255, 255, 0.002) sh=0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1) r=8px
+  1020 Container | dir=column ai=flex-start pad=8px w=279px h=102px
+  1039 Container | dir=column ai=flex-start pad=0px w=263px h=14px
+  1058 PLACEMENT RATE | w=263px h=14px ff=Inter fw=500 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#E2E7FF
+  1084 Margin | dir=column ai=flex-start pad=4px 0px 0px w=263px h=52px
+  1103 Paragraph | dir=row ai=baseline pad=0px gap=4px w=263px h=48px
+  1123 Text | w=80.38px h=48px ff=Public Sans fw=700 fs=40px lh=48px ai=center ls=-0.8px c=#FFFFFF
+  1147 Text | w=16.63px h=24px ff=Public Sans fw=600 fs=18px lh=24px ai=center c=#FFDCC3
+  1170 Margin | dir=column ai=flex-start pad=2px 0px 0px w=263px h=20px
+  1189 Container | dir=column ai=flex-start pad=0px w=263px h=18px
+  1208 Academic Cohort 2023-24 | w=263px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#E2E7FF
+  1232 Container | dir=column ai=flex-start pad=8px w=279px h=102px
+  1251 Container | dir=column ai=flex-start pad=0px w=263px h=14px
+  1270 CORPORATE PARTNERS | w=263px h=14px ff=Inter fw=500 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#E2E7FF
+  1296 Margin | dir=column ai=flex-start pad=4px 0px 0px w=263px h=52px
+  1315 Paragraph | dir=row ai=baseline pad=0px gap=4px w=263px h=48px
+  1335 Text | w=67.22px h=48px ff=Public Sans fw=700 fs=40px lh=48px ai=center ls=-0.8px c=#FFFFFF
+  1359 Text | w=10.33px h=24px ff=Public Sans fw=600 fs=18px lh=24px ai=center c=#FFDCC3
+  1382 Margin | dir=column ai=flex-start pad=2px 0px 0px w=263px h=20px
+  1401 Container | dir=column ai=flex-start pad=0px w=263px h=18px
+  1420 Recruiters on Campus | w=263px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#E2E7FF
+  1444 Container | dir=column ai=flex-start pad=8px w=279px h=102px
+  1463 Container | dir=column ai=flex-start pad=0px w=263px h=14px
+  1482 HIGHEST COMPENSATION | w=263px h=14px ff=Inter fw=500 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#E2E7FF
+  1508 Margin | dir=column ai=flex-start pad=4px 0px 0px w=263px h=52px
+  1527 Paragraph | dir=row ai=baseline pad=0px gap=4px w=263px h=48px
+  1547 Text | w=11.11px h=24px ff=Public Sans fw=600 fs=18px lh=24px ai=center c=#FFDCC3
+  1570 Text | w=77.11px h=48px ff=Public Sans fw=700 fs=40px lh=48px ai=center ls=-0.8px c=#FFFFFF
+  1594 Text | w=24.16px h=18px ff=Inter fw=600 fs=13px lh=18px ai=center tt=uppercase c=#E2E7FF
+  1618 Margin | dir=column ai=flex-start pad=2px 0px 0px w=263px h=20px
+  1637 Container | dir=column ai=flex-start pad=0px w=263px h=18px
+  1656 International/Domestic Peak | w=263px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#E2E7FF
+  1680 Container | dir=column ai=flex-start pad=8px w=279px h=102px
+  1699 Container | dir=column ai=flex-start pad=0px w=263px h=14px
+  1718 SUMMER INTERNSHIPS | w=263px h=14px ff=Inter fw=500 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#E2E7FF
+  1744 Margin | dir=column ai=flex-start pad=4px 0px 0px w=263px h=52px
+  1763 Paragraph | dir=row ai=baseline pad=0px gap=4px w=263px h=48px
+  1783 Text | w=76.16px h=48px ff=Public Sans fw=700 fs=40px lh=48px ai=center ls=-0.8px c=#FFFFFF
+  1807 Text | w=10.33px h=24px ff=Public Sans fw=600 fs=18px lh=24px ai=center c=#FFDCC3
+  1830 Margin | dir=column ai=flex-start pad=2px 0px 0px w=263px h=20px
+  1849 Container | dir=column ai=flex-start pad=0px w=263px h=18px
+  1868 Pre-Placement Offers Linked | w=263px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#E2E7FF
+  1892 Interactive Dual Registration Section | dir=column ai=center pad=32px gap=20px w=1280px h=806px
+  1913 Container | dir=row jc=space-between ai=flex-end pad=0px gap=220.19px w=1216px h=58px
+  1934 Container | dir=column ai=flex-start pad=0px gap=4px w=483.81px h=58px
+  1953 Container | dir=row ai=center pad=0px gap=8px w=483.81px h=16px
+  1973 Background | w=6px h=6px bg=#904D00 r=12px
+  1987 Text | w=158.69px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.6px tt=uppercase c=#904D00
+  2012 Heading 2 | dir=column ai=flex-start pad=0px w=483.81px h=38px
+  2031 Text | w=483.81px h=38px ff=Public Sans fw=700 fs=30px lh=38px ai=center ls=-0.75px c=#00142F
+  2055 Container | dir=column ai=flex-start pad=0px 2.44px 0px 0px w=512px h=40px
+  2074 Text | w=509.56px h=40px ff=Inter fw=400 fs=14px lh=20px ai=center c=#44474E
+  2097 Dual Tab Selector | dir=row ai=center pad=4px w=448px h=46px bg=#EAEDFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=4px
+  2119 Button | dir=row jc=center ai=center pad=8px 12px gap=4px w=220px h=38px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=2px
+  2142 Container | dir=column ai=center pad=0px w=16.67px h=15px
+  2160 Icon | w=16.67px h=15px bg=#00142F
+  2173 Container | dir=column ai=center pad=0px w=162.91px h=22px
+  2191 Text | w=162.91px h=22px ff=Inter fw=600 fs=16px lh=22px ai=center c=#00142F
+  2215 Button | dir=row jc=center ai=center pad=8px 12px gap=4px w=220px h=38px r=2px
+  2236 Container | dir=column ai=center pad=0px w=18.33px h=15px
+  2254 Icon | w=18.33px h=15px bg=#44474E
+  2267 Container | dir=column ai=center pad=0px w=153.92px h=22px
+  2285 Text | w=153.92px h=22px ff=Inter fw=600 fs=16px lh=22px ai=center c=#44474E
+  2309 Recruiter Panel | w=1216px h=598px
+  2322 Left: Stepper & Overview | dir=column jc=space-between ai=flex-start pad=20px h=596px bg=#F2F3FF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  2342 Container | dir=column ai=flex-start pad=0px gap=12px w=349.33px h=430px
+  2362 Container | dir=row ai=center pad=0px gap=8px w=349.33px h=48px
+  2382 Background | dir=row jc=center ai=center pad=0px w=40px h=40px bg=#00142F r=4px
+  2403 Container | dir=column ai=flex-start pad=0px w=20px h=16px
+  2421 Icon | w=20px h=16px bg=#FFFFFF
+  2434 Paragraph | dir=column ai=flex-start pad=0px 0px 3px gap=7px w=182.98px h=48px
+  2453 Heading 3 → Recruiter Onboarding | w=182.98px h=24px ff=Public Sans fw=600 fs=18px lh=24px ai=center c=#00142F
+  2476 Text | w=156.02px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  2500 Container | dir=column ai=flex-start pad=0px w=349.33px h=54px
+  2519 Authorized representatives from corporate entities, Public Sector Undertakings (PSUs), and research organizations may register to initiate recruitment cycles. | w=349.33px h=54px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  2543 Stepper | w=349.33px h=304px
+  2556 Container | dir=row ai=flex-start pad=0px gap=12px h=38px
+  2573 Background | dir=row jc=center ai=center pad=0px w=28px h=28px bg=#00142F r=12px
+  2594 Text | w=5.08px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#FFFFFF
+  2619 Container | dir=column ai=flex-start pad=0px w=175.22px h=38px
+  2637 Container | dir=column ai=flex-start pad=0px w=175.22px h=20px
+  2656 Text | w=155.95px h=20px ff=Inter fw=600 fs=16px lh=20px ai=center c=#00142F
+  2679 Container | dir=column ai=flex-start pad=0px w=175.22px h=18px
+  2698 Text | w=175.22px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  2721 Vertical Divider | w=2px h=24px bg=#DAE2FD
+  2732 Container | dir=row ai=flex-start pad=0px gap=12px h=38px
+  2749 Background | dir=row jc=center ai=center pad=0px w=28px h=28px bg=#DAE2FD r=12px
+  2770 Text | w=7.27px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  2795 Container | dir=column ai=flex-start pad=0px w=163.48px h=38px
+  2813 Container | dir=column ai=flex-start pad=0px w=163.48px h=20px
+  2832 Text | w=128.31px h=20px ff=Inter fw=600 fs=16px lh=20px ai=center c=#00142F
+  2855 Container | dir=column ai=flex-start pad=0px w=163.48px h=18px
+  2874 Text | w=163.48px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  2897 Vertical Divider | w=2px h=24px bg=#DAE2FD
+  2908 Container | dir=row ai=flex-start pad=0px gap=12px h=38px
+  2925 Background | dir=row jc=center ai=center pad=0px w=28px h=28px bg=#DAE2FD r=12px
+  2946 Text | w=7.44px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  2971 Container | dir=column ai=flex-start pad=0px w=137.94px h=38px
+  2989 Container | dir=column ai=flex-start pad=0px w=137.94px h=20px
+  3008 Text | w=137.94px h=20px ff=Inter fw=600 fs=16px lh=20px ai=center c=#00142F
+  3031 Container | dir=column ai=flex-start pad=0px w=137.94px h=18px
+  3050 Text | w=131.64px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  3073 Vertical Divider | w=2px h=24px bg=#DAE2FD
+  3084 Container | dir=row ai=flex-start pad=0px gap=12px h=38px
+  3101 Background | dir=row jc=center ai=center pad=0px w=28px h=28px bg=#DAE2FD r=12px
+  3122 Text | w=7.78px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  3147 Container | dir=column ai=flex-start pad=0px w=177.72px h=38px
+  3165 Container | dir=column ai=flex-start pad=0px w=177.72px h=20px
+  3184 Text | w=177.72px h=20px ff=Inter fw=600 fs=16px lh=20px ai=center c=#00142F
+  3207 Container | dir=column ai=flex-start pad=0px w=177.72px h=18px
+  3226 Text | w=124.77px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  3249 Margin | dir=column ai=flex-start pad=20px 0px 0px w=349.33px h=126px
+  3268 Background+Shadow | dir=column ai=flex-start pad=8px gap=4px w=349.33px h=106px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=4px
+  3291 Container | dir=row ai=center pad=0px gap=8px w=333.33px h=14px
+  3311 Container | dir=column ai=flex-start pad=0px w=10.67px h=13.33px
+  3329 Icon | w=10.67px h=13.33px bg=#904D00
+  3342 Text | w=120.78px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#904D00
+  3367 Container | dir=column ai=flex-start pad=0px w=333.33px h=72px
+  3386 Approvals require active corporate email domains. Registrations using generic free mailers (e.g., Gmail, Yahoo) undergo manual screening taking 48-72 hours. | w=333.33px h=72px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  3410 Right: Recruiter Multi-Step Form Container | dir=column ai=flex-start pad=32px 32px 312px h=598px bg=#FFFFFF r=8px
+  3429 Right: Recruiter Multi-Step Form Container:shadow | bg=rgba(255, 255, 255, 0.002) sh=0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -2px rgba(0, 0, 0, 0.1) r=8px
+  3448 Form Step 1 | dir=column ai=flex-start pad=0px gap=12px w=738.67px h=254px
+  3469 Container | dir=row jc=space-between ai=center pad=0px 0px 4px gap=401.16px w=738.67px h=28px
+  3490 Heading 3 | dir=column ai=flex-start pad=0px w=271.48px h=24px
+  3508 Text | w=271.48px h=24px ff=Public Sans fw=600 fs=18px lh=24px ai=center c=#00142F
+  3531 Container | dir=column ai=flex-start pad=0px w=66.03px h=14px
+  3549 Text | w=66.03px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  3573 Container | w=738.67px h=148px
+  3586 Container | dir=column ai=flex-start pad=5.5px 0px 0px gap=6.5px h=64px
+  3603 Label → Organisation Legal Name * | w=162.48px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  3627 Input | dir=row jc=center ai=flex-start pad=9px 12px 10px w=359.33px h=36px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=2px
+  3650 Container | dir=column ai=flex-start pad=0px w=335.33px h=17px
+  3668 e.g. Larsen & Toubro Limited | w=335.33px h=17px ff=Inter fw=400 fs=14px lh=17px ai=center c=#74777F
+  3692 Container | dir=column ai=flex-start pad=5.5px 0px 0px gap=6.5px h=64px
+  3709 Label → Official Website * | w=106.53px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  3733 Input | dir=row jc=center ai=flex-start pad=9px 12px 10px w=359.33px h=36px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=2px
+  3756 Container | dir=column ai=flex-start pad=0px w=335.33px h=17px
+  3774 https://www.larsentoubro.com | w=335.33px h=17px ff=Inter fw=400 fs=14px lh=17px ai=center c=#74777F
+  3798 Container | dir=column ai=flex-start pad=5.5px 0px 1px gap=6.5px h=64px
+  3815 Label → Corporate Category * | w=130.89px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  3839 Options | dir=row jc=center ai=center pad=8px 28px 8px 16px w=359.33px h=35px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=2px
+  3862 Container | dir=column ai=flex-start pad=1px 0px w=315.33px h=19px
+  3880 Select Organisation Type | w=315.33px h=17px ff=Inter fw=400 fs=14px lh=17px ai=center c=#131B2E
+  3904 Container | dir=column ai=flex-start pad=5.5px 0px 0px gap=6.5px h=64px
+  3921 Label → CIN / Registration No. (Optional) | w=195.5px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#131B2E
+  3945 Input | dir=row jc=center ai=flex-start pad=9px 12px 10px w=359.33px h=36px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=2px
+  3968 Container | dir=column ai=flex-start pad=0px w=335.33px h=17px
+  3986 L99999MH1946PLC004768 | w=335.33px h=17px ff=Inter fw=400 fs=14px lh=17px ai=center c=#74777F
+  4010 Container | dir=row jc=flex-end ai=flex-start pad=12px 0px 0px w=738.67px h=54px
+  4030 Button | dir=row ai=center pad=10px 20px gap=4px w=229.73px h=42px bg=#00142F sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=2px
+  4052 Container | dir=column ai=center pad=0px w=173.73px h=22px
+  4070 Text | w=173.73px h=22px ff=Inter fw=600 fs=16px lh=22px ai=center c=#FFFFFF
+  4094 Container | dir=column ai=center pad=0px w=12px h=12px
+  4112 Icon | w=12px h=12px bg=#FFFFFF
+  4125 Section - Academic Disciplines Overview | dir=column ai=flex-start pad=32px 0px w=1280px h=464px bg=#F2F3FF
+  4145 Container | dir=column ai=flex-start pad=0px 32px gap=20px w=1280px h=400px
+  4166 Container | dir=row jc=space-between ai=flex-end pad=0px gap=358.23px w=1216px h=66px
+  4187 Paragraph | dir=column ai=flex-start pad=5.5px 0px 0px gap=6.5px w=409.77px h=66px
+  4206 Text | w=146.05px h=16px ff=Inter fw=700 fs=12px lh=16px ai=center ls=0.6px tt=uppercase c=#904D00
+  4231 Heading 2 → Schools & Disciplines on Offer | w=409.77px h=38px ff=Public Sans fw=700 fs=30px lh=38px ai=center ls=-0.75px c=#00142F
+  4255 Container | dir=column ai=flex-start pad=0px 9px 0px 0px w=448px h=60px
+  4274 Text | w=439px h=60px ff=Inter fw=400 fs=14px lh=20px ai=center c=#44474E
+  4297 Container | dir=row jc=center ai=flex-start pad=0px gap=20px w=1216px h=314px
+  4318 School 1 | dir=column jc=space-between ai=flex-start pad=20px w=289px h=314px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  4340 Container | dir=column ai=flex-start pad=0px gap=11px w=249px h=230px
+  4360 Background | dir=row jc=center ai=center pad=0px w=48px h=48px bg=#EAEDFF r=4px
+  4381 Container | dir=column ai=flex-start pad=0px w=21px h=21px
+  4399 Icon | w=21px h=21px bg=#00142F
+  4412 Heading 3 | dir=column ai=flex-start pad=1px 0px 0px w=249px h=25px
+  4431 School of Engineering | w=249px h=24px ff=Public Sans fw=600 fs=18px lh=24px ai=center c=#00142F
+  4455 Text | w=155.58px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#904D00
+  4480 List | dir=column ai=flex-start pad=4px 0px 0px gap=4px w=249px h=110px
+  4500 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  4520 Background | w=6px h=6px bg=#0F294A r=12px
+  4534 Text | w=160.89px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  4557 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  4577 Background | w=6px h=6px bg=#0F294A r=12px
+  4591 Text | w=179.81px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  4614 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  4634 Background | w=6px h=6px bg=#0F294A r=12px
+  4648 Text | w=178.78px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  4671 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  4691 Background | w=6px h=6px bg=#0F294A r=12px
+  4705 Text | w=164.36px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  4728 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  4748 Background | w=6px h=6px bg=#0F294A r=12px
+  4762 Food Engineering & Tech | w=153px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  4785 Margin | dir=column ai=flex-start pad=20px 0px 0px w=249px h=44px
+  4804 Container | dir=row jc=space-between ai=center pad=8px 0px 0px gap=94.97px w=249px h=24px
+  4825 Container | dir=column ai=flex-start pad=0px w=138.03px h=16px
+  4843 Text | w=138.03px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+  4867 Container | dir=column ai=flex-start pad=0px w=13.33px h=8px
+  4885 Icon | w=13.33px h=8px bg=#00142F
+  4898 School 2 | dir=column jc=space-between ai=flex-start pad=20px w=289px h=314px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  4920 Container | dir=column ai=flex-start pad=0px gap=11px w=249px h=230px
+  4940 Background | dir=row jc=center ai=center pad=0px w=48px h=48px bg=#EAEDFF r=4px
+  4961 Container | dir=column ai=flex-start pad=0px w=23.33px h=24.5px
+  4979 Icon | w=23.33px h=24.5px bg=#00142F
+  4992 Heading 3 | dir=column ai=flex-start pad=1px 0px 0px w=249px h=25px
+  5011 Management Sciences | w=249px h=24px ff=Public Sans fw=600 fs=18px lh=24px ai=center c=#00142F
+  5035 Text | w=112.3px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#904D00
+  5060 List | dir=column ai=flex-start pad=4px 0px 0px gap=4px w=249px h=110px
+  5080 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  5100 Background | w=6px h=6px bg=#0F294A r=12px
+  5114 Text | w=202.78px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  5137 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  5157 Background | w=6px h=6px bg=#0F294A r=12px
+  5171 Text | w=143.48px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  5194 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  5214 Background | w=6px h=6px bg=#0F294A r=12px
+  5228 Text | w=186.55px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  5251 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  5271 Background | w=6px h=6px bg=#0F294A r=12px
+  5285 Text | w=153.47px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  5308 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  5328 Background | w=6px h=6px bg=#0F294A r=12px
+  5342 Text | w=151.23px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  5365 Margin | dir=column ai=flex-start pad=20px 0px 0px w=249px h=44px
+  5384 Container | dir=row jc=space-between ai=center pad=8px 0px 0px gap=84.89px w=249px h=24px
+  5405 Container | dir=column ai=flex-start pad=0px w=148.11px h=16px
+  5423 Text | w=148.11px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+  5447 Container | dir=column ai=flex-start pad=0px w=10.67px h=10.67px
+  5465 Icon | w=10.67px h=10.67px bg=#00142F
+  5478 School 3 | dir=column jc=space-between ai=flex-start pad=20px w=289px h=314px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  5500 Container | dir=column ai=flex-start pad=0px gap=11px w=249px h=230px
+  5520 Background | dir=row jc=center ai=center pad=0px w=48px h=48px bg=#EAEDFF r=4px
+  5541 Container | dir=column ai=flex-start pad=0px w=21.07px h=21px
+  5559 Icon | w=21.07px h=21px bg=#00142F
+  5572 Heading 3 | dir=column ai=flex-start pad=1px 0px 0px w=249px h=25px
+  5591 School of Sciences | w=249px h=24px ff=Public Sans fw=600 fs=18px lh=24px ai=center c=#00142F
+  5615 Text | w=130.67px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#904D00
+  5640 List | dir=column ai=flex-start pad=4px 0px 0px gap=4px w=249px h=110px
+  5660 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  5680 Background | w=6px h=6px bg=#0F294A r=12px
+  5694 Text | w=188.5px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  5717 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  5737 Background | w=6px h=6px bg=#0F294A r=12px
+  5751 Text | w=225.42px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  5774 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  5794 Background | w=6px h=6px bg=#0F294A r=12px
+  5808 Text | w=172.02px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  5831 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  5851 Background | w=6px h=6px bg=#0F294A r=12px
+  5865 Text | w=165.3px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  5888 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  5908 Background | w=6px h=6px bg=#0F294A r=12px
+  5922 Text | w=140.17px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  5945 Margin | dir=column ai=flex-start pad=20px 0px 0px w=249px h=44px
+  5964 Container | dir=row jc=space-between ai=center pad=8px 0px 0px gap=95.87px w=249px h=24px
+  5985 Container | dir=column ai=flex-start pad=0px w=137.13px h=16px
+  6003 Text | w=137.13px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+  6027 Container | dir=column ai=flex-start pad=0px w=9.33px h=12.67px
+  6045 Icon | w=9.33px h=12.67px bg=#00142F
+  6058 School 4 | dir=column jc=space-between ai=flex-start pad=20px w=289px h=314px bg=#FFFFFF sh=0px 1px 2px rgba(0, 0, 0, 0.05) r=8px
+  6080 Container | dir=column ai=flex-start pad=0px gap=11px w=249px h=230px
+  6100 Background | dir=row jc=center ai=center pad=0px w=48px h=48px bg=#EAEDFF r=4px
+  6121 Container | dir=column ai=flex-start pad=0px w=25.67px h=22.11px
+  6139 Icon | w=25.67px h=22.11px bg=#00142F
+  6152 Heading 3 | dir=column ai=flex-start pad=1px 0px 0px w=249px h=25px
+  6171 Humanities & Social Sc. | w=249px h=24px ff=Public Sans fw=600 fs=18px lh=24px ai=center c=#00142F
+  6195 Text | w=211.14px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#904D00
+  6220 List | dir=column ai=flex-start pad=4px 0px 0px gap=4px w=249px h=110px
+  6240 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  6260 Background | w=6px h=6px bg=#0F294A r=12px
+  6274 Text | w=215.95px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  6297 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  6317 Background | w=6px h=6px bg=#0F294A r=12px
+  6331 Text | w=175.92px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  6354 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  6374 Background | w=6px h=6px bg=#0F294A r=12px
+  6388 Text | w=149.41px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  6411 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  6431 Background | w=6px h=6px bg=#0F294A r=12px
+  6445 Text | w=115.63px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  6468 Item | dir=row ai=center pad=0px gap=6px w=249px h=18px
+  6488 Background | w=6px h=6px bg=#0F294A r=12px
+  6502 Text | w=97.3px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  6525 Margin | dir=column ai=flex-start pad=20px 0px 0px w=249px h=44px
+  6544 Container | dir=row jc=space-between ai=center pad=8px 0px 0px gap=128.81px w=249px h=24px
+  6565 Container | dir=column ai=flex-start pad=0px w=104.19px h=16px
+  6583 Text | w=104.19px h=16px ff=Inter fw=600 fs=12px lh=16px ai=center ls=0.3px c=#00142F
+  6607 Container | dir=column ai=flex-start pad=0px w=13.33px h=13.33px
+  6625 Icon | w=13.33px h=13.33px bg=#00142F
+  6638 Section - Brochure Download & Placement Leadership Card | dir=column ai=flex-start pad=32px w=1280px h=383.25px
+  6658 Container | w=1216px h=319.25px
+  6671 Brochure Download CTA Card | dir=column jc=space-between ai=flex-start pad=32px h=315.8px bg=#00142F sh=0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1) r=8px
+  6692 Container | dir=column ai=flex-start pad=0px 0px 20px gap=6.8px w=635.33px h=205.8px
+  6713 Overlay+OverlayBlur | dir=row ai=center pad=4px 8px gap=8px w=305.08px h=22px bg=rgba(255, 255, 255, 0.15)
+  6727 Note: backdrop-filter has minimal browser support | r=2px
+  6736 Container | dir=column ai=flex-start pad=0px w=13.75px h=12.19px
+  6754 Icon | w=13.75px h=12.19px bg=#E2E7FF
+  6767 Text | w=267.33px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#E2E7FF
+  6792 Heading 3 | dir=column ai=flex-start pad=5.2px 0px 0px w=635.33px h=81.2px
+  6811 Official Placement Brochure 2024–2025 Edition | w=635.33px h=76px ff=Public Sans fw=700 fs=30px lh=38px ai=center ls=-0.75px c=#FFFFFF
+  6836 Container | dir=column ai=flex-start pad=0px w=512px h=69px
+  6855 Text | w=505.3px h=69px ff=Inter fw=400 fs=14px lh=23px ai=center c=#E2E7FF
+  6878 Overlay+Blur | w=256px h=256px bg=rgba(15, 41, 74, 0.6) r=12px
+  6897 Container | dir=row ai=center pad=0px gap=12px w=635.33px h=46px
+  6918 Button | dir=row jc=center ai=center pad=12px 20px gap=8px w=332.48px h=46px bg=#FE932C r=2px
+  6941 Button:shadow | bg=rgba(255, 255, 255, 0.002) sh=0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -2px rgba(0, 0, 0, 0.1) r=2px
+  6960 Container | dir=column ai=center pad=0px w=16px h=16px
+  6979 Icon | w=16px h=16px bg=#FFFFFF
+  6992 Container | dir=column ai=center pad=0px w=268.48px h=22px
+  7011 Text | w=268.48px h=22px ff=Inter fw=600 fs=16px lh=22px ai=center c=#FFFFFF
+  7035 Container | dir=row ai=center pad=0px gap=4px w=234.84px h=14px
+  7054 Container | dir=column ai=flex-start pad=0px w=14.67px h=14px
+  7072 Icon | w=14.67px h=14px bg=#E2E7FF
+  7085 Container | dir=column ai=flex-start pad=0px w=216.17px h=14px
+  7103 Text | w=216.17px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#E2E7FF
+  7127 Placement Officers & Desk Contacts | dir=column ai=flex-start pad=20px gap=25.25px h=316.25px bg=#FFFFFF r=8px
+  7147 Placement Officers & Desk Contacts:shadow | bg=rgba(255, 255, 255, 0.002) sh=0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -2px rgba(0, 0, 0, 0.1) r=8px
+  7166 Container | dir=column ai=flex-start pad=0px w=452.67px h=200px
+  7186 Container | dir=row jc=space-between ai=center pad=0px 0px 8px gap=146.51px w=452.67px h=32px
+  7207 Heading 3 | dir=column ai=flex-start pad=0px w=282.14px h=24px
+  7225 Text | w=282.14px h=24px ff=Public Sans fw=600 fs=18px lh=24px ai=center c=#00142F
+  7248 Container | dir=column ai=flex-start pad=0px w=17px h=20px
+  7266 Icon | w=17px h=20px bg=#904D00
+  7279 Container | dir=column ai=flex-start pad=0px w=452.67px h=36px
+  7298 Direct institutional channels for company registrations, pre-placement talks, and hospitality arrangements. | w=452.67px h=36px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  7322 Container | dir=column ai=flex-start pad=12px 0px 0px gap=12px w=452.67px h=132px
+  7342 Container | dir=row ai=flex-start pad=0px gap=12px w=452.67px h=54px
+  7362 Background | dir=row jc=center ai=center pad=0px w=40px h=40px bg=#EAEDFF r=12px
+  7383 Container | dir=column ai=flex-start pad=0px w=13.33px h=13.33px
+  7401 Icon | w=13.33px h=13.33px bg=#00142F
+  7414 Container | dir=column ai=flex-start pad=0px w=227px h=54px
+  7432 Container | dir=column ai=flex-start pad=0px w=227px h=20px
+  7451 Ms. Deena Davy | w=124px h=20px ff=Inter fw=600 fs=16px lh=20px ai=center c=#00142F
+  7474 Container | dir=column ai=flex-start pad=0px w=227px h=14px
+  7493 Text | w=198.42px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#904D00
+  7518 Container | dir=column ai=flex-start pad=2px 0px 0px w=227px h=20px
+  7537 Email: emailemailemail@tezu.ernet.in | w=227px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  7560 Container | dir=row ai=flex-start pad=0px gap=12px w=452.67px h=54px
+  7580 Background | dir=row jc=center ai=center pad=0px w=40px h=40px bg=#EAEDFF r=12px
+  7601 Container | dir=column ai=flex-start pad=0px w=16.67px h=15px
+  7619 Icon | w=16.67px h=15px bg=#00142F
+  7632 Container | dir=column ai=flex-start pad=0px w=280.16px h=54px
+  7650 Container | dir=column ai=flex-start pad=0px w=280.16px h=20px
+  7669 Ms. Deena Davy | w=124px h=20px ff=Inter fw=600 fs=16px lh=20px ai=center c=#00142F
+  7692 Container | dir=column ai=flex-start pad=0px w=280.16px h=14px
+  7711 Text | w=256.73px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px tt=uppercase c=#904D00
+  7736 Container | dir=column ai=flex-start pad=2px 0px 0px w=280.16px h=20px
+  7755 Text | w=280.16px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#44474E
+  7778 Margin | dir=column ai=flex-start pad=20px 0px 0px w=452.67px h=51px
+  7798 Background | dir=row jc=space-between ai=center pad=8px gap=53.14px w=452.67px h=31px bg=#F2F3FF r=4px
+  7821 Container | dir=row ai=center pad=0px gap=8px w=256px h=15px
+  7840 Container | dir=column ai=flex-start pad=0px w=12px h=15px
+  7858 Icon | w=12px h=15px bg=#00142F
+  7871 Container | dir=column ai=flex-start pad=0px w=236px h=14px
+  7889 Dean’s Building, Ground Floor, TU Campus | w=236px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  7913 Link | dir=column ai=flex-start pad=0px w=90.5px h=14px
+  7931 Text | w=90.5px h=14px ff=Inter fw=700 fs=11px lh=14px ai=center ls=0.33px c=#00142F
+  7955 Footer | dir=column ai=flex-start pad=0px w=1280px h=186px bg=#00142F
+  7976 Container | dir=row jc=center ai=flex-start pad=32px gap=24px w=1280px h=156px
+  7997 Container | dir=column ai=flex-start pad=0px 0px 6px gap=8px w=286px h=92px
+  8016 Container | dir=row ai=center pad=0px w=286px h=24px
+  8035 Container | dir=column ai=flex-start pad=0px w=286px h=24px
+  8053 TEZPUR UNIVERSITY | w=286px h=24px ff=Public Sans fw=600 fs=18px lh=24px ai=center tt=uppercase c=#FFFFFF
+  8078 Container | dir=column ai=flex-start pad=0px w=286px h=54px
+  8097 Training and Placement Cell, Napaam, Sonitpur, Assam - 784028. Fostering industry- academia synergy and career progression. | w=286px h=54px ff=Inter fw=400 fs=13px lh=18px ai=center c=#E2E7FF
+  8121 Container | dir=column ai=flex-start pad=0px gap=8px w=286px h=92px
+  8140 Heading 4 | dir=column ai=flex-start pad=0px w=286px h=22px
+  8159 Quick Portals | w=286px h=22px ff=Inter fw=600 fs=16px lh=22px ai=center c=#FFFFFF
+  8183 List | dir=column ai=flex-start pad=0px gap=4px w=286px h=62px
+  8203 Item | dir=column ai=flex-start pad=0px w=286px h=18px
+  8222 Active Placement Drives | w=286px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#E2E7FF
+  8246 Item | dir=column ai=flex-start pad=0px w=286px h=18px
+  8265 Summer Internships 2024-25 | w=286px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#E2E7FF
+  8289 Item | dir=column ai=flex-start pad=0px w=286px h=18px
+  8308 Corporate Registration (JNF/INF) | w=286px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#E2E7FF
+  8332 Container | dir=column ai=flex-start pad=0px gap=8px w=286px h=92px
+  8351 Heading 4 | dir=column ai=flex-start pad=0px w=286px h=22px
+  8370 Institutional Resources | w=286px h=22px ff=Inter fw=600 fs=16px lh=22px ai=center c=#FFFFFF
+  8394 List | dir=column ai=flex-start pad=0px gap=4px w=286px h=62px
+  8414 Item | dir=column ai=flex-start pad=0px w=286px h=18px
+  8433 Placement Brochure PDF | w=286px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#E2E7FF
+  8457 Item | dir=column ai=flex-start pad=0px w=286px h=18px
+  8476 Academic Demographics & NIRF | w=286px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#E2E7FF
+  8500 Item | dir=column ai=flex-start pad=0px w=286px h=18px
+  8519 Skill Training Modules | w=286px h=18px ff=Inter fw=400 fs=13px lh=18px ai=center c=#E2E7FF
+  8543 Container | dir=column ai=flex-start pad=0px 0px 8px gap=8px w=286px h=92px
+  8562 Heading 4 | dir=column ai=flex-start pad=0px w=286px h=22px
+  8581 Office Contacts | w=286px h=22px ff=Inter fw=600 fs=16px lh=22px ai=center c=#FFFFFF
+  8605 Container | dir=column ai=flex-start pad=0px w=286px h=54px
+  8624 Email: adtp@tezu.ernet.in Phone: +91 3712 273005 Placement Operations Desk | w=286px h=54px ff=Inter fw=400 fs=13px lh=18px ai=center c=#E2E7FF
+  8648 Background | dir=column ai=center pad=8px 32px w=1280px h=30px bg=#00142E
+  8668 Text | w=415.14px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#E2E7FF
+  8693 Header | dir=column ai=flex-start pad=0px w=1280px h=110px bg=rgba(255, 255, 255, 0.95) sh=0px 1px 8px rgba(0, 0, 0, 0.04)
+  8719 Background | dir=row jc=space-between ai=center pad=4px 32px gap=376.87px w=1280px h=30px bg=#00142F
+  8741 Container | dir=column ai=flex-start pad=0px w=435.33px h=14px
+  8759 Text | w=435.33px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#E2E7FF
+  8784 Background | dir=row ai=center pad=2px w=403.8px h=22px bg=#0F294A r=2px
+  8804 Container | dir=column ai=flex-start pad=2px 8px w=94.61px h=18px r=2px
+  8823 Text | w=78.61px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#FFFFFF
+  8847 Link | dir=column ai=flex-start pad=2px 8px w=86.38px h=18px
+  8865 Text | w=70.38px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#7A91B7
+  8889 Link | dir=column ai=flex-start pad=2px 8px w=120.11px h=18px
+  8907 Text | w=104.11px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#7A91B7
+  8931 Link | dir=column ai=flex-start pad=2px 8px w=98.7px h=18px
+  8949 Text | w=82.7px h=14px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#7A91B7
+  8973 Container | dir=row jc=space-between ai=center pad=0px 32px w=1280px h=80px
+  8993 Container | dir=row ai=center pad=0px gap=12px w=148.16px h=80px
+  9012 TU T&P Cell Emblem | w=32px h=32px bg=url(.jpg)
+  9026 Container | dir=column ai=flex-start pad=0px w=104.16px h=80px
+  9044 Container | dir=column ai=flex-start pad=0px w=104.16px h=36px
+  9063 Text | w=104.16px h=36px ff=Public Sans fw=600 fs=18px lh=18px ai=center ls=-0.45px tt=uppercase c=#00142F
+  9088 Margin | dir=column ai=flex-start pad=2px 0px 0px w=104.16px h=44px
+  9107 Container | dir=column ai=flex-start pad=0px w=104.16px h=42px
+  9126 TRAINING & PLACEMENT CELL | w=104.16px h=42px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.55px tt=uppercase c=#44474E
+  9152 Nav | dir=row ai=center pad=0px gap=8px w=777.79px h=56px
+  9171 Link | dir=column ai=flex-start pad=4px 48.69px 4px 8px w=111.78px h=56px bg=#0F294A r=2px
+  9191 Text | w=55.09px h=48px ff=Inter fw=400 fs=16px lh=24px ai=center c=#FFFFFF
+  9214 Link | dir=column ai=flex-start pad=4px 49.43px 4px 8px w=136.48px h=52px r=2px
+  9233 Text | w=79.05px h=44px ff=Inter fw=600 fs=16px lh=22px ai=center c=#44474E
+  9256 Link | dir=column ai=flex-start pad=4px 8px w=79.02px h=30px r=2px
+  9275 Text | w=63.02px h=22px ff=Inter fw=600 fs=16px lh=22px ai=center c=#44474E
+  9298 Link | dir=column ai=flex-start pad=4px 8px w=103.03px h=30px r=2px
+  9317 Text | w=87.03px h=22px ff=Inter fw=600 fs=16px lh=22px ai=center c=#44474E
+  9340 Link | dir=column ai=flex-start pad=4px 37.03px 4px 8px w=126.81px h=52px r=2px
+  9359 Text | w=81.78px h=44px ff=Inter fw=600 fs=16px lh=22px ai=center c=#44474E
+  9382 Link | dir=column ai=flex-start pad=4px 8px w=95.47px h=30px r=2px
+  9401 Text | w=79.47px h=22px ff=Inter fw=600 fs=16px lh=22px ai=center c=#44474E
+  9424 Link | dir=column ai=flex-start pad=4px 8px w=77.2px h=30px r=2px
+  9443 Text | w=61.2px h=22px ff=Inter fw=600 fs=16px lh=22px ai=center c=#44474E
+  9466 Container | dir=row ai=center pad=0px gap=11.99px w=189.07px h=48px
+  9485 Button - Notifications | dir=column jc=center ai=center pad=4px 4px 10px w=24px h=34px
+  9505 Container | dir=row jc=center ai=flex-start pad=0px w=16px h=20px
+  9525 Icon | w=16px h=20px bg=#44474E
+  9538 Background | dir=row jc=center ai=center pad=0px w=16px h=16px bg=#904D00 r=12px
+  9563 Text | w=6.47px h=10px ff=Inter fw=700 fs=10px lh=10px ai=center c=#FFFFFF
+  9587 Background | dir=row ai=center pad=4px 4px 4px 8px gap=8px w=153.08px h=48px bg=#F2F3FF r=2px
+  9608 Profile | w=32px h=32px bg=#841717 r=12px
+  9623 Container | dir=column ai=flex-start pad=0px 4px 0px 0px w=71.58px h=40px
+  9641 Container | dir=column ai=flex-start pad=0px w=67.58px h=12px
+  9660 Text | w=67.58px h=12px ff=Inter fw=600 fs=12px lh=12px ai=center ls=0.3px c=#131B2E
+  9684 Container | dir=column ai=flex-start pad=0px w=67.58px h=28px
+  9703 Text | w=57.33px h=28px ff=Inter fw=600 fs=11px lh=14px ai=center ls=0.33px c=#44474E
+  9727 Link | dir=column ai=flex-start pad=4px 4px 10px w=21.5px h=27.5px
+  9745 Icon | w=13.5px h=13.5px bg=#44474E
