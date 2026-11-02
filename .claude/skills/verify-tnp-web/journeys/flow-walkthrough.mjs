@@ -129,6 +129,8 @@ await step("admin approves the recruiter's posting", async () => {
 });
 await step("admin publishes a training event", async () => {
   const day = (k) => new Date(Date.now() + k * 864e5).toISOString().slice(0, 10);
+  const studio = adm.locator("details").filter({ hasText: "Event & Training Creator Studio" });
+  if (!(await studio.evaluate((el) => el.open))) await adm.getByText("Event & Training Creator Studio").click();
   await adm.getByLabel("Workshop / Session Topic").fill(`Resume Clinic ${run}`);
   await adm.getByLabel("Date", { exact: true }).fill(day(6));
   await adm.getByLabel("RSVP Cut-off Date").fill(day(4));

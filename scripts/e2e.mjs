@@ -124,6 +124,10 @@ await step("retried posting is saved once, deadline 23:59 local time on the chos
   assert.deepEqual([ymd(at), at.getHours(), at.getMinutes()], [DEADLINE, 23, 59], `deadline is ${at.toString()}, want ${DEADLINE} 23:59 local`);
 });
 
+const openStudio = async (page) => {
+  const d = page.locator("details").filter({ hasText: "Event & Training Creator Studio" });
+  if (!(await d.evaluate((el) => el.open))) await page.getByText("Event & Training Creator Studio").click();
+};
 // ---------- admin approves ----------
 const adm = await newPage();
 await step("admin dashboard counts only active students and active recruiters", async () => {
@@ -161,6 +165,7 @@ await step("admin approves the posting (postings tab)", async () => {
 });
 await step("admin publishes a new event (Event Creator)", async () => {
   const day = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
+  await openStudio(adm);
   await adm.getByLabel("Workshop / Session Topic").fill(`E2E Resume Clinic ${run}`);
   await adm.getByLabel("Date", { exact: true }).fill(day(6));
   await adm.getByLabel("RSVP Cut-off Date").fill(day(4));
@@ -171,6 +176,7 @@ await step("event whose publish failed is published on retry without creating a 
   const day = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
   const topic = `E2E Retry Clinic ${run}`;
   await adm.route(/\/api\/v1\/admin\/events\/[^/]+\/publish$/, (r) => r.fulfill({ status: 503, body: "" }), { times: 1 });
+  await openStudio(adm);
   await adm.getByLabel("Workshop / Session Topic").fill(topic);
   await adm.getByLabel("Date", { exact: true }).fill(day(7));
   await adm.getByLabel("RSVP Cut-off Date").fill(day(5));
