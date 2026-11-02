@@ -54,6 +54,7 @@ export default function RecruiterPage() {
   );
   const [pick, setPick] = useState<string | null>(null);
   const [studio, setStudio] = useState(false);
+  const [prog, setProg] = useState("");
   const list = postings.data?.data ?? [];
   const drive = list.find((p) => p.id === pick) ?? list.find((p) => p.status === "approved") ?? list[0];
   const applicants = useSWR(drive ? ["applicants", drive.id] : null, () =>
@@ -64,7 +65,7 @@ export default function RecruiterPage() {
     <AppShell role="company" nav={NAV} active="#desk">
       <div className="mx-auto flex max-w-[912px] flex-col gap-6">
         <CompanyHeader postings={list} applicants={applicants.data?.data} onCreate={() => setStudio(true)} />
-        <TalentPool />
+        <TalentPool onExplore={setProg} />
         <DriveTimeline
           postings={list}
           drive={drive}
@@ -74,7 +75,7 @@ export default function RecruiterPage() {
           error={postings.error}
           loading={!postings.data}
         />
-        {drive && <Candidates key={drive.id} drive={drive} q={applicants} />}
+        {drive && <Candidates key={drive.id} drive={drive} q={applicants} prog={prog} setProg={setProg} />}
         <div className="grid gap-6 lg:grid-cols-[1fr_350px]">
           <Dispatch />
           <Logistics />
@@ -230,7 +231,7 @@ function Stat({
   );
 }
 
-function TalentPool() {
+function TalentPool({ onExplore }: { onExplore: (programmeId: string) => void }) {
   const progs = useSWR("programmes", () => call(api.GET("/api/v1/programmes")));
   const uni = useSWR("university", () => call(api.GET("/api/v1/university")));
   const u = uni.data;
@@ -278,7 +279,7 @@ function TalentPool() {
                 <p className="text-body text-muted">
                   <b className="font-display text-title text-ink">{p.student_count ?? "—"}</b> Students in batch
                 </p>
-                <a href="#candidates" className="flex items-center justify-between text-label font-semibold text-tertiary">
+                <a href="#candidates" onClick={() => onExplore(p.id)} className="flex items-center justify-between text-label font-semibold text-tertiary">
                   Explore Cohort Roster <Icon name="arrow_forward" />
                 </a>
               </div>
@@ -487,10 +488,19 @@ function DriveTimeline({
   );
 }
 
-function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applicant[] }; error?: unknown; mutate: () => unknown } }) {
+function Candidates({
+  drive,
+  q,
+  prog,
+  setProg,
+}: {
+  drive: Posting;
+  q: { data?: { data: Applicant[] }; error?: unknown; mutate: () => unknown };
+  prog: string;
+  setProg: (id: string) => void;
+}) {
   const progs = useSWR("programmes", () => call(api.GET("/api/v1/programmes")));
   const [sel, setSel] = useState<Set<string>>(new Set());
-  const [prog, setProg] = useState("");
   const [minCgpa, setMinCgpa] = useState(0);
   const [kw, setKw] = useState("");
   const [page, setPage] = useState(0);

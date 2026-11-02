@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRef, useState } from "react";
 import useSWR from "swr";
 import { AppShell } from "@/components/AppShell";
@@ -61,9 +62,9 @@ function Header() {
         <p className="text-[14px] leading-5 text-muted">Real-time governance, student credential verification, and corporate relations audit.</p>
       </div>
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap md:max-w-[370px] md:justify-end">
-        <a href="#reports" className="flex items-center justify-center gap-1 rounded-xs bg-surface-high px-3 py-1 text-label font-semibold text-ink">
+        <Link href="/admin/content" className="flex items-center justify-center gap-1 rounded-xs bg-surface-high px-3 py-1 text-label font-semibold text-ink">
           <Icon name="tune" /> Edit Master Metrics &amp; NIRF
-        </a>
+        </Link>
         <a href="#events" className="flex items-center justify-center gap-1 rounded-xs bg-surface-high px-3 py-1 text-label font-semibold text-ink">
           <Icon name="event_available" /> Host New Session
         </a>

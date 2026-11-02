@@ -65,7 +65,7 @@ function Hero({ m, brochureId }: { m: Metrics; brochureId: string | null }) {
     ["Summer Internships", m.summer_internships ?? 450, "+", "Pre-Placement Offers Linked"],
   ] as const;
   return (
-    <section className="relative overflow-hidden bg-primary">
+    <section id="profile" className="relative scroll-mt-28 overflow-hidden bg-primary">
       <Image src="/img/campus.jpg" alt="" fill priority className="object-cover opacity-15" sizes="100vw" />
       <div className="absolute -top-24 -left-24 size-96 rounded-xl bg-primary-container/80 blur-3xl" />
       <div className="absolute right-0 bottom-0 size-80 rounded-xl bg-accent/10 blur-3xl" />

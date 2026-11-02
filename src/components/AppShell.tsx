@@ -92,7 +92,7 @@ export function AppShell({ role, nav, active, children }: { role: Role; nav: Nav
               </Link>
             ))}
           </nav>
-          {!user.must_change_password && <NoticeBell />}
+          {!user.must_change_password && <NoticeBell role={role} />}
           <div className="flex h-10 items-center gap-2 rounded-xs bg-surface-low py-1 pr-1 pl-2">
             <span className="grid size-8 place-items-center rounded-xl bg-primary-container text-label font-bold text-white">{initials(user.name)}</span>
             <div className="hidden pr-1 sm:block">
@@ -126,18 +126,20 @@ export function AppShell({ role, nav, active, children }: { role: Role; nav: Nav
   );
 }
 
-function NoticeBell() {
+const NOTICES_HREF: Record<Role, string> = { admin: "/admin/comms", company: "#dispatch", student: "#notices" };
+
+function NoticeBell({ role }: { role: Role }) {
   const { data } = useSWR("noticeboard", () => call(api.GET("/api/v1/noticeboard", { params: { query: { limit: 100 } } })));
   const n = data?.data.length ?? 0;
   return (
-    <a href="#notices" aria-label={`${n} notices`} className="relative px-1 pt-1 pb-2.5 text-muted">
+    <Link href={NOTICES_HREF[role]} aria-label={`${n} notices`} className="relative px-1 pt-1 pb-2.5 text-muted">
       <Icon name="notifications" className="text-[18px]" />
       {n > 0 && (
         <span className="absolute top-0 -right-1 grid size-4 place-items-center rounded-xl bg-tertiary text-[10px] leading-none font-bold text-white">
           {n > 9 ? "9+" : n}
         </span>
       )}
-    </a>
+    </Link>
   );
 }
 
