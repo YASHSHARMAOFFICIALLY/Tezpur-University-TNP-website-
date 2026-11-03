@@ -75,6 +75,9 @@
     line-height: 1;
     display: inline-block;
     white-space: nowrap;
+    /* ligature names are lowercase: an uppercase/tracked parent (Eyebrow) would break them */
+    text-transform: none;
+    letter-spacing: normal;
     direction: ltr;
     vertical-align: middle;
     font-feature-settings: "liga";
