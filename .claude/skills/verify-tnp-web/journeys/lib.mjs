@@ -19,7 +19,7 @@ export const studentId = (email) => sql(`select s.id from students s join users 
 
 export const tokenFor = async (email, password = PW) => (await apiCall("POST", "/auth/login", { body: { email, password } })).access_token;
 
-/** An approved posting from the demo recruiter that the seed student (CSE, 2026, CGPA 8.92) is eligible for. */
+/** An approved posting from the demo recruiter that the seed student (CSE, batch 2028, CGPA 8.92) is eligible for. */
 export async function approvedPosting(title, { minCgpa = 7, deadlineDays = 7 } = {}) {
   const [R, A] = [await tokenFor(RECRUITER), await tokenFor(ADMIN)];
   const cse = (await apiCall("GET", "/programmes")).find((p) => p.name === "B.Tech Computer Science & Engg");
@@ -34,7 +34,7 @@ export async function approvedPosting(title, { minCgpa = 7, deadlineDays = 7 } =
       location: "Pune",
       designation: "Engineer",
       apply_deadline: new Date(Date.now() + deadlineDays * 864e5).toISOString(),
-      eligibility: { min_cgpa: minCgpa, programmes: [cse.id], completion_years: [2026] },
+      eligibility: { min_cgpa: minCgpa, programmes: [cse.id], completion_years: [2028] },
       selection_process: { technical_interview: true },
     },
   });

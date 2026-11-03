@@ -184,7 +184,7 @@ await step("posting returned by admin is edited and resubmitted; untouched field
   const cse = (await apiCall("GET", "/programmes")).find((p) => p.name === "B.Tech Computer Science & Engg");
   const deadline = new Date(Date.now() + 9 * 864e5);
   deadline.setHours(15, 0, 0, 0);
-  const eligibility = { min_cgpa: 6, programmes: [cse.id], completion_years: [2026, 2027], max_age: 28 };
+  const eligibility = { min_cgpa: 6, programmes: [cse.id], completion_years: [2026, 2027, 2028], max_age: 28 };
   const { id } = await apiCall("POST", "/company/opportunities", {
     token,
     body: {

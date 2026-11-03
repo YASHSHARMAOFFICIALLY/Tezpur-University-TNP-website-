@@ -178,7 +178,7 @@ await req("PATCH", "/students/me", {
     dob: "2003-05-14",
     cgpa: 8.92,
     year_of_admission: 2021,
-    year_of_completion: 2026,
+    year_of_completion: 2028, // not 2026: the daily alumni job makes year <= last-graduated-year read-only, which would stop the demo student applying
     programme_id: cse.id,
     department: "Computer Science & Engg.",
     gender: "Male",
@@ -209,7 +209,7 @@ if (!post) {
       ctc_benefits: "₹10.5 LPA base + ₹1.5 LPA variable",
       bond_details: "None (Direct Employment Agreement)",
       apply_deadline: new Date(Date.now() + 14 * 864e5).toISOString(),
-      eligibility: { min_cgpa: 7.5, programmes: [cse.id], completion_years: [2026] },
+      eligibility: { min_cgpa: 7.5, programmes: [cse.id], completion_years: [2028] },
       selection_process: { shortlist_from_resumes: true, online_test: true, technical_interview: true, hr_interview: true },
     },
   });

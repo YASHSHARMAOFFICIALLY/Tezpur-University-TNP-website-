@@ -12,7 +12,7 @@ const { id: lateId } = await apiCall("POST", "/company/opportunities", {
   body: {
     type: "job", title: LATE, description: "Deadline lapses while waiting for review.", location: "Pune",
     apply_deadline: new Date(Date.now() + 864e5).toISOString(),
-    eligibility: { min_cgpa: 7, programmes: [cse.id], completion_years: [2026] }, selection_process: { technical_interview: true },
+    eligibility: { min_cgpa: 7, programmes: [cse.id], completion_years: [2028] }, selection_process: { technical_interview: true },
   },
 });
 await apiCall("POST", `/company/opportunities/${lateId}/submit`, { token: R });
