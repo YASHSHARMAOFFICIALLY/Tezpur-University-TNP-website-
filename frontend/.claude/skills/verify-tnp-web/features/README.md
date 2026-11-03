@@ -5,7 +5,7 @@ This directory is the maintained source for verifying what users of the T&P port
 ## Baseline preconditions
 
 - `webctl up` has passed. Every `doctor` line is `ok` against `https://localhost`.
-- The seed data exists: admin, `csb21045@tezu.ac.in` (student, CGPA 8.92, CSE 2026), `hr.demo@cognizant-demo.test` (recruiter, Cognizant), the posting "Software Development Engineer - Cloud", one workshop event and one notice.
+- The seed data exists: admin, `csb21045@tezu.ac.in` (student, CGPA 8.92, CSE, batch 2028), `hr.demo@cognizant-demo.test` (recruiter, Cognizant), the posting "Software Development Engineer - Cloud", one workshop event and one notice.
 - Nothing else is driving the stack.
 
 ## Driving conventions

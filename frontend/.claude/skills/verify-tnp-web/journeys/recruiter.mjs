@@ -51,7 +51,7 @@ async function fillStudio(title, deadline) {
   await d.getByLabel("TENTATIVE WORK LOCATION *").fill("Pune");
   await d.getByLabel("JOB DESCRIPTION *").fill("Edge posting.");
   await d.getByLabel("B.Tech Computer Science & Engg").check();
-  await d.getByLabel("Passing-out Batch *").selectOption("2026");
+  await d.getByLabel("Passing-out Batch *").selectOption("2028");
   await d.getByLabel("Apply Deadline *").fill(deadline);
   return d;
 }

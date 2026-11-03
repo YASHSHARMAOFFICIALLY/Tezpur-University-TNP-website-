@@ -4,7 +4,8 @@ import { useState } from "react";
 import useSWR from "swr";
 import { AppShell } from "@/components/AppShell";
 import { Badge, Button, Card, Empty, Field, Icon, Input, Modal, Notice, PageHead, SectionTitle, Select, State, cx, useRun } from "@/components/ui";
-import { api, call, fileBody, openFile } from "@/lib/api";
+import { ApiError, api, call, fileBody, openFile } from "@/lib/api";
+import { downloadCsv } from "@/lib/csv";
 import type { paths } from "@/lib/api-types";
 import { fmtDate, initialsOf } from "@/lib/format";
 import { ADMIN_NAV } from "../nav";
@@ -39,53 +40,140 @@ export default function StudentsPage() {
   );
 }
 
+const IMPORT_COLUMNS: [name: string, need: string, rule: string][] = [
+  ["enrolment_no", "Required", "3 letters + 5–6 digits, e.g. CSB21045"],
+  ["name", "Required", "Full name, at least 2 characters"],
+  ["email", "Required", "University address, e.g. csb21045@tezu.ac.in"],
+  ["programme_code", "Optional", "Programme code, e.g. CSB (blank if unknown)"],
+  ["year_of_completion", "Optional", "Graduation year, e.g. 2026"],
+  ["mobile", "Optional", "Phone number, e.g. 9876543210"],
+];
+const IMPORT_TEMPLATE = [IMPORT_COLUMNS.map(([n]) => n), ["CSB21045", "Priyanshu Sharma", "csb21045@tezu.ac.in", "CSB", 2026, "9876543210"]];
+
+type CsvProblem = { line: number; issues: string[] };
+
 function ImportCard() {
   const { busy, msg, run } = useRun();
   const [jobId, setJobId] = useState<string | null>(null);
+  const [problems, setProblems] = useState<{ list: CsvProblem[]; total: number } | null>(null);
+  const progs = useSWR("programmes", () => call(api.GET("/api/v1/programmes")));
   const job = useSWR(jobId ? ["job", jobId] : null, () => call(api.GET("/api/v1/admin/jobs/{id}", { params: { path: { id: jobId! } } })), {
     refreshInterval: (j) => (j?.finished_at ? 0 : 1500),
   });
+  const report = job.data?.result as { created?: number; skipped?: { enrolment_no: string; reason: string }[] } | null | undefined;
 
   return (
-    <Card className="flex flex-col gap-3 p-5">
+    <Card className="flex flex-col gap-4 p-5">
       <SectionTitle
         icon="upload_file"
         title="Bulk Import from CSV"
-        sub="Columns: enrolment_no, name, email [, programme_code, year_of_completion, mobile]. Imported students set their first password via “Forgot password”."
-      />
+        sub="Add many students at once. They start as active with no password: each sets their own through “Forgot password”, which also proves they own their university inbox. No emails are sent."
+      >
+        <Button variant="ghost" icon="download" onClick={() => downloadCsv("student-import-template.csv", IMPORT_TEMPLATE)}>
+          Template
+        </Button>
+      </SectionTitle>
+
+      <div className="overflow-hidden rounded-xs bg-surface-low text-caption">
+        <div className="hidden grid-cols-[9.5rem_4.5rem_1fr] gap-x-3 px-3 py-1.5 font-bold text-muted uppercase sm:grid">
+          <span>Column</span>
+          <span>Needed</span>
+          <span>Format</span>
+        </div>
+        {IMPORT_COLUMNS.map(([name, need, rule]) => (
+          <div key={name} className="grid gap-x-3 border-t border-outline-variant/40 px-3 py-1.5 first:border-t-0 sm:grid-cols-[9.5rem_4.5rem_1fr]">
+            <code className="font-semibold text-ink">{name}</code>
+            <span className={need === "Required" ? "font-semibold text-tertiary" : "text-muted"}>{need}</span>
+            <span className="min-w-0 break-words text-muted">{rule}</span>
+          </div>
+        ))}
+      </div>
+      <ul className="list-disc space-y-0.5 pl-4 text-caption text-muted">
+        <li>First row must be the column names above. Up to 10,000 rows per file.</li>
+        <li>The whole file is checked first: if any row is wrong, nothing is imported and the problem lines are listed below.</li>
+        <li>Students whose enrolment number or email already exists are skipped, so re-uploading a file is safe.</li>
+        {!!progs.data?.length && <li>Programme codes in use: {progs.data.map((p) => p.code).join(", ")}.</li>}
+      </ul>
+
       <form
         className="flex flex-wrap items-end gap-2"
         onSubmit={(e) => {
           e.preventDefault();
           const file = new FormData(e.currentTarget).get("file") as File;
+          setProblems(null);
+          setJobId(null);
           run(
             "import",
             async () => {
-              const r = await call(api.POST("/api/v1/admin/students/import", fileBody(file)));
-              setJobId(r.job_id);
+              try {
+                const r = await call(api.POST("/api/v1/admin/students/import", fileBody(file)));
+                setJobId(r.job_id);
+              } catch (err) {
+                const d = err instanceof ApiError ? err.details : {};
+                if (Array.isArray(d.csv_errors)) setProblems({ list: d.csv_errors as CsvProblem[], total: Number(d.error_count) || d.csv_errors.length });
+                throw err;
+              }
             },
-            "Import queued.",
+            "Import started.",
           );
         }}
       >
-        <Field label="CSV file" className="flex-1">
-          <Input name="file" type="file" accept=".csv,text/csv" required className="py-1.5" />
+        <Field label="CSV file" className="min-w-0 flex-1">
+          <Input
+            name="file"
+            type="file"
+            accept=".csv,text/csv"
+            required
+            className="py-1.5 file:mr-3 file:rounded-xs file:border-0 file:bg-surface file:px-3 file:py-1 file:text-label file:font-semibold file:text-primary hover:file:bg-surface-high"
+          />
         </Field>
         <Button type="submit" busy={busy === "import"} icon="publish">
           Start Import
         </Button>
       </form>
       <Notice msg={msg} />
+
+      {problems && (
+        <div className="rounded-xs bg-error-container p-3 text-body text-on-error-container">
+          <p className="font-semibold">
+            {problems.total} row{problems.total === 1 ? "" : "s"} need fixing. Correct the file and upload it again.
+          </p>
+          <ul className="mt-1 space-y-0.5 text-caption">
+            {problems.list.slice(0, 8).map((p) => (
+              <li key={p.line}>
+                <b>Line {p.line}:</b> {p.issues.join("; ")}
+              </li>
+            ))}
+            {problems.total > 8 && <li>…and {problems.total - 8} more.</li>}
+          </ul>
+        </div>
+      )}
+
       {job.data && (
         <div className="rounded-xs bg-surface-low p-3 text-body">
-          <p className="flex items-center justify-between font-semibold text-ink">
-            Job {job.data.id.slice(0, 8)} <Badge tone={job.data.status === "failed" ? "error" : "info"}>{job.data.status}</Badge>
-          </p>
-          {job.data.last_error && <p className="text-error">{job.data.last_error}</p>}
-          {job.data.result != null && (
-            <pre className="mt-2 max-h-48 overflow-auto rounded-xs bg-white p-2 text-caption whitespace-pre-wrap">
-              {JSON.stringify(job.data.result, null, 2)}
-            </pre>
+          {!job.data.finished_at ? (
+            <p className="flex items-center gap-2 font-semibold text-ink">
+              <Icon name="progress_activity" className="animate-spin" /> Importing…
+            </p>
+          ) : job.data.status === "failed" ? (
+            <p className="text-error">Import failed: {job.data.last_error ?? "unknown error"}. Nothing was lost; you can upload the file again.</p>
+          ) : (
+            <>
+              <p className="flex flex-wrap items-center gap-2 font-semibold text-ink">
+                Import finished
+                <Badge tone="info">{report?.created ?? 0} added</Badge>
+                <Badge>{report?.skipped?.length ?? 0} skipped</Badge>
+              </p>
+              {!!report?.skipped?.length && (
+                <ul className="mt-2 max-h-40 overflow-auto rounded-xs bg-white p-2 text-caption text-muted">
+                  {report.skipped.map((k) => (
+                    <li key={k.enrolment_no}>
+                      <b className="text-ink">{k.enrolment_no}</b>: {k.reason}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
           )}
         </div>
       )}
