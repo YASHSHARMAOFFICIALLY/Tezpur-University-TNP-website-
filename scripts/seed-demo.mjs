@@ -24,13 +24,13 @@ const readEnv = (file) =>
 const backendEnv = readEnv(resolve(here, "../backend/.env"));
 const localFile = resolve(here, ".env.local");
 let local = readEnv(localFile);
-if (!local.DEMO_PASSWORD) {
+if (!local.DEMO_PASSWORD && !process.env.DEMO_PASSWORD) {
   appendFileSync(localFile, `DEMO_PASSWORD=Demo-${randomBytes(9).toString("base64url")}\n`);
   local = readEnv(localFile);
 }
-const PW = local.DEMO_PASSWORD;
+const PW = process.env.DEMO_PASSWORD ?? local.DEMO_PASSWORD; // env wins: lets it run on a server with no .env.local
 const DOMAIN = backendEnv.STUDENT_EMAIL_DOMAIN || "tezu.ac.in";
-const ADMIN = backendEnv.SEED_ADMIN_EMAIL;
+const ADMIN = process.env.SEED_ADMIN_EMAIL ?? backendEnv.SEED_ADMIN_EMAIL;
 const STUDENT = `csb21045@${DOMAIN}`;
 const RECRUITER = "hr.demo@cognizant-demo.test";
 
