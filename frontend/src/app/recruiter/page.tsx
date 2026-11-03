@@ -54,6 +54,7 @@ export default function RecruiterPage() {
   );
   const [pick, setPick] = useState<string | null>(null);
   const [studio, setStudio] = useState(false);
+  const [prog, setProg] = useState("");
   const list = postings.data?.data ?? [];
   const drive = list.find((p) => p.id === pick) ?? list.find((p) => p.status === "approved") ?? list[0];
   const applicants = useSWR(drive ? ["applicants", drive.id] : null, () =>
@@ -64,7 +65,7 @@ export default function RecruiterPage() {
     <AppShell role="company" nav={NAV} active="#desk">
       <div className="mx-auto flex max-w-[912px] flex-col gap-6">
         <CompanyHeader postings={list} applicants={applicants.data?.data} onCreate={() => setStudio(true)} />
-        <TalentPool />
+        <TalentPool onExplore={setProg} />
         <DriveTimeline
           postings={list}
           drive={drive}
@@ -74,7 +75,7 @@ export default function RecruiterPage() {
           error={postings.error}
           loading={!postings.data}
         />
-        {drive && <Candidates key={drive.id} drive={drive} q={applicants} />}
+        {drive && <Candidates key={drive.id} drive={drive} q={applicants} prog={prog} setProg={setProg} />}
         <div className="grid gap-6 lg:grid-cols-[1fr_350px]">
           <Dispatch />
           <Logistics />
@@ -98,33 +99,41 @@ function CompanyHeader({ postings, applicants, onCreate }: { postings: Posting[]
   const target = live.reduce((n, p) => n + (p.expected_hires ?? 0), 0);
 
   return (
-    <Card className="flex scroll-mt-24 flex-col gap-5 p-5">
+    <Card className="flex scroll-mt-24 flex-col gap-4 p-4 sm:p-5">
       <span id="desk" />
       <State data={co.data} error={co.error} retry={() => co.mutate()} rows={2}>
         {(c) => (
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
-            <div className="flex gap-4">
-              <span className="grid size-14 shrink-0 place-items-center rounded-sm bg-surface text-primary">
-                <Icon name="apartment" className="text-[28px]" />
+          <div className="flex flex-col gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="grid size-12 shrink-0 place-items-center rounded-sm bg-surface text-primary">
+                <Icon name="apartment" className="text-[26px]" />
               </span>
-              <div className="flex flex-col gap-1">
-                <h1 className="flex flex-wrap items-center gap-2 font-display text-[22px] leading-7 font-semibold text-primary">
-                  {c.name}
-                  <Badge icon="domain" className="uppercase">
-                    {c.category}
-                    {c.sector && ` / ${c.sector}`}
-                  </Badge>
-                </h1>
-                <Badge tone="warn" icon="verified" className="w-fit">
-                  Verified Corporate Partner
+              <h1 className="min-w-0 truncate font-display text-[22px] leading-7 font-semibold text-primary" title={c.name}>
+                {c.name}
+              </h1>
+              <span className="hidden shrink-0 sm:block">
+                <Badge icon="domain" className="uppercase">
+                  {c.category}
+                  {c.sector && ` / ${c.sector}`}
                 </Badge>
-                <p className="text-body text-muted">
-                  {c.postal_address && `${c.postal_address} • `}T&amp;P Liaison: Tezpur Central Placement Cell
-                  {c.contacts[0] && ` • Contact: ${c.contacts[0].name}`}
-                </p>
-              </div>
+              </span>
             </div>
-            <div className="flex shrink-0 flex-wrap gap-2">
+            <span className="sm:hidden">
+              <Badge icon="domain" className="uppercase">
+                {c.category}
+                {c.sector && ` / ${c.sector}`}
+              </Badge>
+            </span>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <Badge tone="warn" icon="verified">
+                Verified Corporate Partner
+              </Badge>
+              <p className="min-w-0 text-body text-muted">
+                {c.postal_address && `${c.postal_address} • `}T&amp;P Liaison: Tezpur Central Placement Cell
+                {c.contacts[0] && ` • Contact: ${c.contacts[0].name}`}
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 [&>button]:max-sm:w-full">
               <Button variant="ghost" icon="edit" onClick={() => setProfileOpen(true)} className="px-4 py-2.5">
                 Edit Organisation Profile
               </Button>
@@ -145,7 +154,7 @@ function CompanyHeader({ postings, applicants, onCreate }: { postings: Posting[]
           </div>
         )}
       </State>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
         <Stat
           label="Active Openings"
           icon="campaign"
@@ -199,8 +208,8 @@ function Stat({
   accent?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-1 rounded-xs bg-surface-low p-3">
-      <p className="flex items-center justify-between text-caption font-semibold tracking-[0.55px] text-muted uppercase">
+    <div className="flex min-w-0 flex-col gap-0.5 rounded-xs bg-surface-low p-2.5">
+      <p className="flex items-center justify-between gap-1 text-caption font-semibold tracking-[0.55px] text-muted uppercase">
         {label} <Icon name={icon} className={accent ? "text-tertiary" : "text-primary"} />
       </p>
       <p className="flex items-baseline gap-2">
@@ -222,40 +231,37 @@ function Stat({
   );
 }
 
-function TalentPool() {
+function TalentPool({ onExplore }: { onExplore: (programmeId: string) => void }) {
   const progs = useSWR("programmes", () => call(api.GET("/api/v1/programmes")));
+  const uni = useSWR("university", () => call(api.GET("/api/v1/university")));
+  const u = uni.data;
+  const chevron = <Icon name="expand_more" className="transition-transform group-open:rotate-180" />;
   return (
-    <div className="grid scroll-mt-24 gap-5 lg:grid-cols-[292px_1fr]" id="talent">
-      <div className="flex flex-col gap-4 rounded-lg bg-primary p-5 text-surface-high shadow-pop">
-        <p className="flex w-fit items-center gap-1 rounded-xs bg-white/10 px-2 py-0.5 text-caption font-semibold uppercase">
-          <Icon name="account_balance" /> Accreditation Matrix
-        </p>
-        <div>
-          <h2 className="font-display text-[20px] leading-7 font-bold text-white">Tezpur Central University</h2>
-          <p className="text-body">Estd. 1994 • Central University under Act of Parliament</p>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          {[
-            ["NAAC Grade", "A+ Accreditation"],
-            ["NIRF Ranking", "Top 100 Rank"],
-          ].map(([k, v]) => (
-            <div key={k} className="rounded-xs bg-white/10 p-2">
-              <p className="text-caption font-semibold uppercase">{k}</p>
-              <p className="font-display text-title font-bold text-white">{v}</p>
+    <div className="grid scroll-mt-24 gap-4" id="talent">
+      {u && (
+        <details className="group rounded-lg bg-primary text-surface-high shadow-pop">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
+            <span className="min-w-0">
+              <span className="flex items-center gap-1 text-caption font-semibold uppercase">
+                <Icon name="account_balance" /> Accreditation
+              </span>
+              <span className="block truncate font-display text-title font-bold text-white">{u.name}</span>
+              {u.ranking && <span className="block text-caption font-semibold">{u.ranking}</span>}
+            </span>
+            {chevron}
+          </summary>
+          <div className="flex flex-col gap-3 px-4 pb-4">
+            {u.est_year != null && <p className="text-body">Estd. {u.est_year}</p>}
+            {u.achievements && <p className="text-body">{u.achievements}</p>}
+            <div className="flex flex-wrap justify-between gap-2 text-caption font-semibold">
+              {u.address && <span>{u.address}</span>}
+              <Link href="/#brochure" className="flex items-center gap-1 text-white">
+                View Institutional Brochure <Icon name="arrow_forward" />
+              </Link>
             </div>
-          ))}
-        </div>
-        <p className="text-body">
-          Direct campus access to top-tier technical scholars, rigorous core research laboratories, and pre-evaluated software talent ready for nationwide
-          deployment.
-        </p>
-        <div className="mt-auto flex justify-between text-caption font-semibold">
-          <span>Assam, India • PIN 784028</span>
-          <Link href="/#brochure" className="flex items-center gap-1 text-white">
-            View Institutional Brochure <Icon name="arrow_forward" />
-          </Link>
-        </div>
-      </div>
+          </div>
+        </details>
+      )}
       <Card className="flex flex-col gap-4 p-5">
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -265,22 +271,35 @@ function TalentPool() {
           <Badge>Passing Out Cohort</Badge>
         </div>
         <State data={progs.data} error={progs.error} retry={() => progs.mutate()} empty={(d) => !d.length}>
-          {(ps) => (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {ps.slice(0, 4).map((p) => (
-                <div key={p.id} className="flex flex-col gap-2 rounded-xs bg-surface-low p-3">
-                  <p className="text-caption font-bold text-muted uppercase">{p.department}</p>
-                  <p className="font-display text-title font-bold text-primary">{p.name}</p>
-                  <p className="text-body text-muted">
-                    <b className="font-display text-title text-ink">{p.student_count ?? "—"}</b> Students in batch
-                  </p>
-                  <a href="#candidates" className="flex items-center justify-between text-label font-semibold text-tertiary">
-                    Explore Cohort Roster <Icon name="arrow_forward" />
-                  </a>
-                </div>
-              ))}
-            </div>
-          )}
+          {(ps) => {
+            const card = (p: (typeof ps)[number]) => (
+              <div key={p.id} className="flex flex-col gap-2 rounded-xs bg-surface-low p-3">
+                <p className="text-caption font-bold text-muted uppercase">{p.department}</p>
+                <p className="font-display text-title font-bold text-primary">{p.name}</p>
+                <p className="text-body text-muted">
+                  <b className="font-display text-title text-ink">{p.student_count ?? "—"}</b> Students in batch
+                </p>
+                <a href="#candidates" onClick={() => onExplore(p.id)} className="flex items-center justify-between text-label font-semibold text-tertiary">
+                  Explore Cohort Roster <Icon name="arrow_forward" />
+                </a>
+              </div>
+            );
+            return (
+              <div className="flex flex-col gap-3">
+                <div className="grid gap-3 sm:grid-cols-2">{ps.slice(0, 2).map(card)}</div>
+                {ps.length > 2 && (
+                  <details className="group flex flex-col gap-3">
+                    <summary className="flex w-fit cursor-pointer list-none items-center gap-1 rounded-xs px-1 text-label font-semibold text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
+                      <span className="group-open:hidden">Show all {ps.length} programmes</span>
+                      <span className="hidden group-open:inline">Show fewer</span>
+                      {chevron}
+                    </summary>
+                    <div className="grid gap-3 sm:grid-cols-2">{ps.slice(2).map(card)}</div>
+                  </details>
+                )}
+              </div>
+            );
+          }}
         </State>
       </Card>
     </div>
@@ -469,10 +488,19 @@ function DriveTimeline({
   );
 }
 
-function Candidates({ drive, q }: { drive: Posting; q: { data?: { data: Applicant[] }; error?: unknown; mutate: () => unknown } }) {
+function Candidates({
+  drive,
+  q,
+  prog,
+  setProg,
+}: {
+  drive: Posting;
+  q: { data?: { data: Applicant[] }; error?: unknown; mutate: () => unknown };
+  prog: string;
+  setProg: (id: string) => void;
+}) {
   const progs = useSWR("programmes", () => call(api.GET("/api/v1/programmes")));
   const [sel, setSel] = useState<Set<string>>(new Set());
-  const [prog, setProg] = useState("");
   const [minCgpa, setMinCgpa] = useState(0);
   const [kw, setKw] = useState("");
   const [page, setPage] = useState(0);

@@ -77,8 +77,8 @@ export function PublicShell({ active = "/", children }: { active?: string; child
                   {initials(session.user.name)}
                 </span>
                 <span className="hidden sm:block">
-                  <span className="block text-label leading-3 font-semibold text-ink">{session.user.name}</span>
-                  <span className="text-caption font-semibold text-muted">Open my portal</span>
+                  <span className="block text-label leading-4 font-semibold whitespace-nowrap text-ink">{session.user.name}</span>
+                  <span className="block text-caption leading-4 font-semibold whitespace-nowrap text-muted">Open my portal</span>
                 </span>
                 <Icon name="arrow_forward" className="text-muted" />
               </Link>
@@ -86,8 +86,8 @@ export function PublicShell({ active = "/", children }: { active?: string; child
               <Link href="/login" className="flex h-12 items-center gap-2 rounded-xs bg-surface-low py-1 pr-2 pl-2">
                 <span className="size-8 rounded-xl bg-[#841717]" />
                 <span className="hidden sm:block">
-                  <span className="block text-label leading-3 font-semibold text-ink">Guest User</span>
-                  <span className="text-caption font-semibold text-muted">Candidate Access</span>
+                  <span className="block text-label leading-4 font-semibold whitespace-nowrap text-ink">Guest User</span>
+                  <span className="block text-caption leading-4 font-semibold whitespace-nowrap text-muted">Candidate Access</span>
                 </span>
                 <Icon name="login" className="text-muted" />
               </Link>

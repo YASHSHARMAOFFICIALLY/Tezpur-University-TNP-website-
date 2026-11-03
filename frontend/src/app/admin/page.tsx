@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRef, useState } from "react";
 import useSWR from "swr";
 import { AppShell } from "@/components/AppShell";
@@ -17,6 +18,7 @@ const useOpps = () => useSWR("admin/opportunities", () => call(api.GET("/api/v1/
 const useCompanies = () => useSWR("admin/companies", () => call(api.GET("/api/v1/admin/companies", { params: { query: { limit: 100 } } })));
 
 export default function AdminPage() {
+  const uni = useSWR("university", () => call(api.GET("/api/v1/university")));
   return (
     <AppShell role="admin" nav={ADMIN_NAV} active="/admin">
       <div className="mx-auto flex max-w-[976px] flex-col gap-5">
@@ -30,29 +32,17 @@ export default function AdminPage() {
             <p className="text-card font-bold text-primary">Central Governance Mandate &amp; NIRF Audit Readiness</p>
             <p className="text-body text-muted">All candidate resume validations must conclude 24 hours prior to Slot 1 Corporate Assessments.</p>
           </div>
-          <Badge tone="soft" icon="shield" className="hidden bg-white sm:inline-flex">
-            NIRF Ranking 2024: Tier-1 Assured
-          </Badge>
+          {uni.data?.ranking && (
+            <Badge tone="soft" icon="shield" className="hidden bg-white sm:inline-flex">
+              {uni.data.ranking}
+            </Badge>
+          )}
         </div>
         <Queue />
-        <div className="grid gap-5 lg:grid-cols-[1fr_385px]">
+        <div className="grid items-start gap-5 lg:grid-cols-[1fr_385px]">
           <EventCreator />
           <div className="flex flex-col gap-5">
             <PublishResults />
-            <Card className="flex flex-col gap-2 p-5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-caption font-semibold text-muted uppercase">Corporate Experience Score</p>
-                  <p className="text-card font-bold text-primary">4.82 / 5.0 (Recruiter NPS)</p>
-                </div>
-                <span className="grid size-9 place-items-center rounded-xs bg-surface-high text-primary">
-                  <Icon name="thumb_up" />
-                </span>
-              </div>
-              <p className="text-body text-muted">
-                112 Feedback surveys logged this semester. Top praised attribute: “Analytical aptitude &amp; professional decorum.”
-              </p>
-            </Card>
           </div>
         </div>
         <Reports />
@@ -71,14 +61,14 @@ function Header() {
         <h1 className="pt-1 font-display text-headline font-bold text-primary">TPO Administrative Control Center</h1>
         <p className="text-[14px] leading-5 text-muted">Real-time governance, student credential verification, and corporate relations audit.</p>
       </div>
-      <div className="flex flex-wrap gap-2 md:max-w-[370px] md:justify-end">
-        <a href="#reports" className="flex items-center gap-1 rounded-xs bg-surface-high px-3 py-1 text-label font-semibold text-ink">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap md:max-w-[370px] md:justify-end">
+        <Link href="/admin/content" className="flex items-center justify-center gap-1 rounded-xs bg-surface-high px-3 py-1 text-label font-semibold text-ink">
           <Icon name="tune" /> Edit Master Metrics &amp; NIRF
-        </a>
-        <a href="#events" className="flex items-center gap-1 rounded-xs bg-surface-high px-3 py-1 text-label font-semibold text-ink">
+        </Link>
+        <a href="#events" className="flex items-center justify-center gap-1 rounded-xs bg-surface-high px-3 py-1 text-label font-semibold text-ink">
           <Icon name="event_available" /> Host New Session
         </a>
-        <a href="#results" className="flex items-center gap-1 rounded-xs bg-primary px-3 py-1 text-label font-semibold text-white shadow-pop">
+        <a href="#results" className="flex items-center justify-center gap-1 rounded-xs bg-primary px-3 py-1 text-label font-semibold text-white shadow-pop">
           <Icon name="campaign" /> Publish Select List
         </a>
       </div>
@@ -523,103 +513,124 @@ function EventCreator() {
   return (
     <Card className="flex scroll-mt-24 flex-col gap-4 p-8">
       <span id="events" />
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <p className="flex items-center gap-1 text-body-lg tracking-[0.8px] text-muted uppercase">
-            <Icon name="lightbulb" className="text-tertiary" /> Capacity Enhancement
-          </p>
-          <h2 className="font-display text-title font-bold text-primary">Event &amp; Training Creator Studio</h2>
-          <p className="text-body text-muted">Design and broadcast soft-skill cohorts, mock drives, and corporate masterclasses.</p>
-        </div>
-        <Badge tone="soft">Session Form</Badge>
-      </div>
-      <form onSubmit={submit} className="flex flex-col gap-4">
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Program Type">
-            <Select name="type" className={field}>
-              {EVENT_TYPES.map(([v, l]) => (
-                <option key={v} value={v}>
-                  {l}
-                </option>
-              ))}
-            </Select>
+      <details className="group flex flex-col gap-4">
+        <summary className="flex cursor-pointer list-none items-start justify-between gap-2 rounded-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
+          <div>
+            <p className="flex items-center gap-1 text-body-lg tracking-[0.8px] text-muted uppercase">
+              <Icon name="lightbulb" className="text-tertiary" /> Capacity Enhancement
+            </p>
+            <h2 className="font-display text-title font-bold text-primary">Event &amp; Training Creator Studio</h2>
+            <p className="text-body text-muted">Design and broadcast soft-skill cohorts, mock drives, and corporate masterclasses.</p>
+          </div>
+          <Icon name="expand_more" className="shrink-0 transition-transform group-open:rotate-180" />
+        </summary>
+        <form onSubmit={submit} className="flex flex-col gap-4 pt-4">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Program Type">
+              <Select name="type" className={field}>
+                {EVENT_TYPES.map(([v, l]) => (
+                  <option key={v} value={v}>
+                    {l}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+            <Field label="Target Eligibility Cohort">
+              <Select name="cohort" className={field}>
+                <option>Open to All Enrolled TU Students</option>
+                <option>Final Year Students</option>
+                <option>Pre-final Year Students</option>
+              </Select>
+            </Field>
+          </div>
+          <Field label="Workshop / Session Topic">
+            <Input name="topic" required className={field} placeholder="e.g. Mastering Technical Case Interviews for Consulting & FinTech" />
           </Field>
-          <Field label="Target Eligibility Cohort">
-            <Select name="cohort" className={field}>
-              <option>Open to All Enrolled TU Students</option>
-              <option>Final Year Students</option>
-              <option>Pre-final Year Students</option>
-            </Select>
-          </Field>
-        </div>
-        <Field label="Workshop / Session Topic">
-          <Input name="topic" required className={field} placeholder="e.g. Mastering Technical Case Interviews for Consulting & FinTech" />
-        </Field>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Resource Person / Speaker">
-            <Input name="speaker" className={field} placeholder="e.g. Dr. Rajesh Goswami" />
-          </Field>
-          <Field label="Designation & Organisation">
-            <Input name="org" className={field} placeholder="e.g. VP Engineering, Microsoft IDC" />
-          </Field>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-3">
-          <Field label="Venue Location">
-            <Input name="venue" className={field} defaultValue="KBR Auditorium (Tezpur)" />
-          </Field>
-          <Field label="Date">
-            <Input name="date" type="date" required className={field} />
-          </Field>
-          <Field label="Start Time">
-            <Input name="start" type="time" className={field} defaultValue="15:00" />
-          </Field>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <fieldset className="flex flex-col gap-1.5">
-            <legend className="pb-1.5 text-label font-semibold text-ink">Student Fee Policy</legend>
-            <label className="flex items-start gap-2 text-body text-muted">
-              <input type="radio" name="fee" checked={!chargeable} onChange={() => setChargeable(false)} className="mt-0.5 accent-primary" /> Non-Chargeable
-              (Free T&amp;P Cell Spons.)
-            </label>
-            <label className="flex items-start gap-2 text-body text-muted">
-              <input type="radio" name="fee" checked={chargeable} onChange={() => setChargeable(true)} className="mt-0.5 accent-primary" /> Chargeable (₹150
-              Cert. Fee)
-            </label>
-          </fieldset>
-          <Field label="RSVP Cut-off Date">
-            <Input name="rsvp" type="date" required className={field} />
-          </Field>
-        </div>
-        {msg && (
-          <p
-            className={cx("rounded-xs px-3 py-2 text-body", msg.tone === "ok" ? "bg-primary-fixed text-primary" : "bg-error-container text-on-error-container")}
-          >
-            {msg.text}
-          </p>
-        )}
-        <div className="flex justify-end gap-2">
-          <Button
-            type="reset"
-            variant="soft"
-            onClick={() => {
-              draftId.current = null;
-              setChargeable(false);
-              setMsg(null);
-            }}
-          >
-            Clear Draft
-          </Button>
-          <Button type="submit" icon="podcasts" busy={busy}>
-            Broadcast &amp; Enlist Session
-          </Button>
-        </div>
-      </form>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Resource Person / Speaker">
+              <Input name="speaker" className={field} placeholder="e.g. Dr. Rajesh Goswami" />
+            </Field>
+            <Field label="Designation & Organisation">
+              <Input name="org" className={field} placeholder="e.g. VP Engineering, Microsoft IDC" />
+            </Field>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <Field label="Venue Location">
+              <Input name="venue" className={field} defaultValue="KBR Auditorium (Tezpur)" />
+            </Field>
+            <Field label="Date">
+              <Input name="date" type="date" required className={field} />
+            </Field>
+            <Field label="Start Time">
+              <Input name="start" type="time" className={field} defaultValue="15:00" />
+            </Field>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <fieldset className="flex flex-col gap-1.5">
+              <legend className="pb-1.5 text-label font-semibold text-ink">Student Fee Policy</legend>
+              <label className="flex items-start gap-2 text-body text-muted">
+                <input type="radio" name="fee" checked={!chargeable} onChange={() => setChargeable(false)} className="mt-0.5 accent-primary" /> Non-Chargeable
+                (Free T&amp;P Cell Spons.)
+              </label>
+              <label className="flex items-start gap-2 text-body text-muted">
+                <input type="radio" name="fee" checked={chargeable} onChange={() => setChargeable(true)} className="mt-0.5 accent-primary" /> Chargeable (₹150
+                Cert. Fee)
+              </label>
+            </fieldset>
+            <Field label="RSVP Cut-off Date">
+              <Input name="rsvp" type="date" required className={field} />
+            </Field>
+          </div>
+          {msg && (
+            <p
+              className={cx(
+                "rounded-xs px-3 py-2 text-body",
+                msg.tone === "ok" ? "bg-primary-fixed text-primary" : "bg-error-container text-on-error-container",
+              )}
+            >
+              {msg.text}
+            </p>
+          )}
+          <div className="flex justify-end gap-2">
+            <Button
+              type="reset"
+              variant="soft"
+              onClick={() => {
+                draftId.current = null;
+                setChargeable(false);
+                setMsg(null);
+              }}
+            >
+              Clear Draft
+            </Button>
+            <Button type="submit" icon="podcasts" busy={busy}>
+              Broadcast &amp; Enlist Session
+            </Button>
+          </div>
+        </form>
+      </details>
       <div className="flex flex-col gap-2 border-t border-surface pt-3">
         <p className="text-caption font-semibold text-muted uppercase">Scheduled sessions</p>
         <State data={events.data} error={events.error} retry={() => events.mutate()} rows={2}>
           {({ data }) =>
             data.length ? (
-              data.slice(0, 5).map((ev) => <EventRow key={ev.id} ev={ev} reload={() => events.mutate()} />)
+              <>
+                {data.slice(0, 3).map((ev) => (
+                  <EventRow key={ev.id} ev={ev} reload={() => events.mutate()} />
+                ))}
+                {data.length > 3 && (
+                  <details className="group flex flex-col gap-2">
+                    <summary className="flex w-fit cursor-pointer list-none items-center gap-1 rounded-xs px-1 text-label font-semibold text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
+                      <span className="group-open:hidden">Show all {data.length} sessions</span>
+                      <span className="hidden group-open:inline">Show fewer</span>
+                      <Icon name="expand_more" className="transition-transform group-open:rotate-180" />
+                    </summary>
+                    {data.slice(3).map((ev) => (
+                      <EventRow key={ev.id} ev={ev} reload={() => events.mutate()} />
+                    ))}
+                  </details>
+                )}
+              </>
             ) : (
               <p className="text-body text-muted">No sessions yet.</p>
             )

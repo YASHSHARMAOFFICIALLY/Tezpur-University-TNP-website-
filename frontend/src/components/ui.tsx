@@ -103,7 +103,25 @@ export function Field({ label, error, hint, className, children }: { label: stri
 const control =
   "w-full rounded-xs bg-white px-3 py-2 text-[14px] leading-[17px] text-ink shadow-card placeholder:text-muted/70 focus:outline-2 focus:outline-primary disabled:opacity-60";
 
-export const Input = ({ className, ...p }: InputHTMLAttributes<HTMLInputElement>) => <input {...p} className={cx(control, "h-9", className)} />;
+export function Input({ className, type, ...p }: InputHTMLAttributes<HTMLInputElement>) {
+  const [shown, setShown] = useState(false);
+  if (type !== "password") return <input {...p} type={type} className={cx(control, "h-9", className)} />;
+  // every password field gets a show/hide eye
+  return (
+    <span className="relative block">
+      <input {...p} type={shown ? "text" : "password"} className={cx(control, "h-9 pr-10", className)} />
+      <button
+        type="button"
+        onClick={() => setShown(!shown)}
+        aria-label={shown ? "Hide password" : "Show password"}
+        aria-pressed={shown}
+        className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-muted hover:text-ink focus-visible:outline-2 focus-visible:outline-primary"
+      >
+        <Icon name={shown ? "visibility_off" : "visibility"} />
+      </button>
+    </span>
+  );
+}
 export const Textarea = ({ className, ...p }: TextareaHTMLAttributes<HTMLTextAreaElement>) => <textarea {...p} className={cx(control, className)} />;
 export const Select = ({ className, ...p }: SelectHTMLAttributes<HTMLSelectElement>) => <select {...p} className={cx(control, "h-9", className)} />;
 
