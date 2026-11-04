@@ -19,7 +19,7 @@ export const Session = z
     }),
   })
   .meta({ id: "Session" });
-export const Pending = z.object({ status: z.enum(["pending_email_verify", "pending_admin"]) });
+export const Pending = z.object({ status: z.enum(["pending_email_verify", "pending_admin", "active"]) });
 
 export const CompanyBody = z.object({
   name: z.string().min(2).max(200),
@@ -40,7 +40,8 @@ export const RegisterRecruiterBody = z.object({
 });
 export const VerifyOtpBody = z.object({ email: Email, code: Otp });
 export const EmailBody = z.object({ email: Email });
-export const LoginBody = z.object({ email: Email, password: z.string().max(200) });
+/** `email` also accepts a student's enrolment number (institute ID). */
+export const LoginBody = z.object({ email: z.union([Email, z.string().trim().regex(/^[A-Za-z]{3}\d{5,6}$/, "email or enrolment number")]), password: z.string().max(200) });
 export const RefreshBody = z.object({ refresh_token: z.string() });
 export const ChangePasswordBody = z.object({ current_password: z.string(), new_password: Password });
 export const ResetPasswordBody = z.object({ email: Email, code: Otp, new_password: Password });

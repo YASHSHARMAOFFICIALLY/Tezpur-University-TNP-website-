@@ -36,19 +36,17 @@ describe("placement workflow", () => {
   let oppId: string;
   let appId: string;
 
-  it("student registers with the university email only, verifies by OTP, waits for approval", async () => {
+  it("student registers with the university email only; the emailed OTP approves the account", async () => {
     const body = { email: "csb21001@tezu.ac.in", password: "student-pass", name: "Asha Das", enrolment_no: "CSB21001", mobile: "9876543210" };
     expect(code(await request(app).post(api("/auth/register/student")).send({ ...body, email: "asha@gmail.com" }))).toBe("EMAIL_DOMAIN_NOT_ALLOWED");
     expect((await request(app).post(api("/auth/register/student")).send(body)).status).toBe(201);
     expect(code(await request(app).post(api("/auth/login")).send({ email: body.email, password: body.password }))).toBe("EMAIL_NOT_VERIFIED");
     expect(code(await request(app).post(api("/auth/verify-otp")).send({ email: body.email, code: "000000" }))).toBe("OTP_INVALID");
     const v = await request(app).post(api("/auth/verify-otp")).send({ email: body.email, code: await lastOtp(body.email) });
-    expect(v.body).toEqual({ status: "pending_admin" });
-    expect(code(await request(app).post(api("/auth/login")).send({ email: body.email, password: body.password }))).toBe("PENDING_ADMIN_APPROVAL");
-
-    const pending = await admin.get("/admin/pending");
-    const id = pending.body.students[0].id;
-    expect((await admin.post(`/admin/users/${id}/decision`, { decision: "approve" })).body).toEqual({ changed: true });
+    expect(v.body).toEqual({ status: "active" });
+    expect((await admin.get("/admin/pending")).body.students).toEqual([]);
+    // Institute ID works as the login name too.
+    await login("csb21001", body.password);
     student = as(await login(body.email, body.password));
   });
 

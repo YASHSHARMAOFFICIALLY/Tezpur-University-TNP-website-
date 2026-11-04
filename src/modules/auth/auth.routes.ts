@@ -27,7 +27,7 @@ export const authModule: ModuleDef = {
       handler: ({ body }) => svc.registerRecruiter(body),
     }),
     route({
-      method: "post", path: "/auth/verify-otp", summary: "Verify email with the 6-digit code; account moves to the admin approval queue",
+      method: "post", path: "/auth/verify-otp", summary: "Verify email with the 6-digit code. Students become active at once; recruiters move to the admin approval queue",
       auth: "public", ...limited, body: VerifyOtpBody, response: Pending,
       errors: ["OTP_INVALID", "OTP_LOCKED"],
       handler: ({ body }) => svc.verifyEmail(body.email, body.code),

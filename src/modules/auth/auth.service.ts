@@ -16,7 +16,8 @@ export const userMachine = defineMachine({
   entity: "user",
   entry: ["pending_email_verify", "active"],
   transitions: {
-    pending_email_verify: ["pending_admin"],
+    // Students: the OTP to their university inbox is the approval, so they go straight to active.
+    pending_email_verify: ["pending_admin", "active"],
     pending_admin: ["active", "rejected"],
     rejected: ["pending_admin"],
     active: ["alumni"],
@@ -117,12 +118,19 @@ async function userByEmail(email: string) {
   return db.user.findUnique({ where: { email: normalize(email) } });
 }
 
+/** Students may sign in with their enrolment number (institute ID) instead of their email. */
+async function userByLogin(id: string) {
+  if (id.includes("@")) return userByEmail(id);
+  return db.user.findFirst({ where: { student: { enrolment_no: id.trim().toUpperCase() } } });
+}
+
 export async function verifyEmail(email: string, code: string) {
   const u = await userByEmail(email);
   if (!u || u.status !== "pending_email_verify") fail("OTP_INVALID");
   await consumeOtp(u.id, "verify_email", code);
-  await inTx((tx) => userMachine.move(tx, u.id, "pending_admin", SYSTEM, { extra: { email_verified_at: new Date() } }));
-  return { status: "pending_admin" as const };
+  const to = u.role === "student" ? ("active" as const) : ("pending_admin" as const);
+  await inTx((tx) => userMachine.move(tx, u.id, to, SYSTEM, { extra: { email_verified_at: new Date() }, meta: { via: "email_otp" } }));
+  return { status: to };
 }
 
 export async function resendVerification(email: string) {
@@ -133,7 +141,7 @@ export async function resendVerification(email: string) {
 }
 
 export async function login(email: string, password: string) {
-  const u = await userByEmail(email);
+  const u = await userByLogin(email);
   const ok = await verifyPassword(password, u?.password_hash ?? DUMMY_HASH);
   if (!u || !ok) fail("INVALID_CREDENTIALS");
   if (u.status === "pending_email_verify") fail("EMAIL_NOT_VERIFIED");

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Id, pageOf, PageQuery, paginate, route, type ModuleDef } from "../../http/route.js";
-import { ForStudent, Moved, Opportunity, OpportunityBody } from "./opportunities.schemas.js";
+import { ForStudent, Logistics, Moved, Opportunity, OpportunityBody, OpportunityPatch } from "./opportunities.schemas.js";
 import * as svc from "./opportunities.service.js";
 
 export const opportunitiesModule: ModuleDef = {
@@ -14,13 +14,18 @@ export const opportunitiesModule: ModuleDef = {
     }),
     route({
       method: "patch", path: "/company/opportunities/:id", summary: "Edit a draft (also after admin returned it)",
-      auth: ["company"], params: Id, body: OpportunityBody.partial(), response: Opportunity, errors: ["NOT_FOUND", "INVALID_TRANSITION"],
+      auth: ["company"], params: Id, body: OpportunityPatch, response: Opportunity, errors: ["NOT_FOUND", "INVALID_TRANSITION"],
       handler: ({ user, params, body }) => svc.updateDraft(user.companyId, params.id, body),
     }),
     route({
       method: "post", path: "/company/opportunities/:id/jd", summary: "Upload the job description PDF",
       auth: ["company"], params: Id, upload: { maxBytes: 10 << 20 }, status: 201, response: z.object({ file_id: z.string() }),
       handler: ({ user, params, file }) => svc.attachJd(user.companyId, params.id, user.id, file),
+    }),
+    route({
+      method: "put", path: "/company/opportunities/:id/logistics", summary: "Set campus logistics (venue, reporting, notes) at any stage. Mailed to this posting's applicants only.",
+      auth: ["company"], params: Id, body: Logistics, response: Opportunity, errors: ["NOT_FOUND"],
+      handler: ({ user, params, body }) => svc.setLogistics(user.companyId, params.id, body),
     }),
     route({
       method: "post", path: "/company/opportunities/:id/submit", summary: "Submit a draft for admin approval",

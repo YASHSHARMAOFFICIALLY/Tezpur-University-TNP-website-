@@ -23,7 +23,12 @@ export const SelectionProcess = z.object({
   hr_interview: z.boolean().default(false),
 });
 
-export const OpportunityBody = z.object({
+const month = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "use YYYY-MM");
+export const DriveMode = z.enum(["online", "offline", "hybrid"]);
+/** Campus logistics: only students who applied see these. */
+export const Logistics = z.object({ venue: z.string().trim().max(300).optional(), logistics: z.string().trim().max(5000).optional() });
+
+export const OpportunityFields = z.object({
   type: z.enum(["job", "internship", "competition"]),
   title: z.string().min(3).max(200),
   job_profile: z.string().max(2000).optional(),
@@ -36,10 +41,28 @@ export const OpportunityBody = z.object({
   apply_deadline: z.coerce.date(),
   eligibility: EligibilityRule,
   selection_process: SelectionProcess,
+  drive_mode: DriveMode.optional(),
+  /** Probable hiring month, or the start of the hiring period. */
+  hiring_from: month.optional(),
+  hiring_to: month.optional(),
+  ...Logistics.shape,
 });
+const hiringOrder = (o: { hiring_from?: string; hiring_to?: string }) => !o.hiring_to || !o.hiring_from || o.hiring_to >= o.hiring_from;
+const hiringMsg = { message: "hiring period ends before it starts", path: ["hiring_to"] };
+export const OpportunityBody = OpportunityFields.refine(hiringOrder, hiringMsg);
+/** null clears an optional drive detail; omitted keeps it. */
+export const OpportunityPatch = OpportunityFields.partial()
+  .extend({
+    drive_mode: DriveMode.nullable().optional(),
+    hiring_from: month.nullable().optional(),
+    hiring_to: month.nullable().optional(),
+    venue: Logistics.shape.venue.unwrap().nullable().optional(),
+    logistics: Logistics.shape.logistics.unwrap().nullable().optional(),
+  })
+  .refine((o) => hiringOrder({ hiring_from: o.hiring_from ?? undefined, hiring_to: o.hiring_to ?? undefined }), hiringMsg);
 
 export const Status = z.enum(["draft", "pending_admin", "approved", "rejected", "closed"]);
-export const Opportunity = OpportunityBody.extend({
+export const Opportunity = OpportunityFields.extend({
   id: z.string(),
   company_id: z.string(),
   status: Status,
@@ -55,9 +78,15 @@ export const Opportunity = OpportunityBody.extend({
   designation: z.string().nullable(),
   ctc_benefits: z.string().nullable(),
   bond_details: z.string().nullable(),
+  drive_mode: DriveMode.nullable(),
+  hiring_from: z.string().nullable(),
+  hiring_to: z.string().nullable(),
+  venue: z.string().nullable(),
+  logistics: z.string().nullable(),
 }).meta({ id: "Opportunity" });
 
-export const ForStudent = Opportunity.omit({ review_note: true }).extend({
+/** Logistics are left out: a student sees them only on their own application. */
+export const ForStudent = Opportunity.omit({ review_note: true, venue: true, logistics: true }).extend({
   company: z.object({ id: z.string(), name: z.string(), website: z.string().nullable() }),
   my_eligibility: z.object({ eligible: z.boolean(), reasons: z.array(z.record(z.string(), z.unknown())) }),
 });
