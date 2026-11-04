@@ -14,9 +14,9 @@ export const env = (f) =>
       .map((l) => [l.slice(0, l.indexOf("=")), l.slice(l.indexOf("=") + 1)]),
   );
 const backend = env(resolve(here, "../backend/.env"));
-export const PW = env(resolve(here, ".env.local")).DEMO_PASSWORD;
+export const PW = process.env.DEMO_PASSWORD ?? env(resolve(here, ".env.local")).DEMO_PASSWORD;
 export const DOMAIN = backend.STUDENT_EMAIL_DOMAIN || "tezu.ac.in";
-export const ADMIN = backend.SEED_ADMIN_EMAIL;
+export const ADMIN = process.env.SEED_ADMIN_EMAIL ?? backend.SEED_ADMIN_EMAIL;
 export const SEED_STUDENT = `csb21045@${DOMAIN}`;
 export const RECRUITER = "hr.demo@cognizant-demo.test";
 

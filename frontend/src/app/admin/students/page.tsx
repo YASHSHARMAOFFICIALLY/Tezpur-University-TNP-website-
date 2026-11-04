@@ -9,6 +9,8 @@ import { downloadCsv } from "@/lib/csv";
 import type { paths } from "@/lib/api-types";
 import { fmtDate, initialsOf } from "@/lib/format";
 import { ADMIN_NAV } from "../nav";
+import { NoticeComposer } from "../NoticeComposer";
+import { EMPTY_FILTER, FilterChips, StudentFilterFields, filterQuery, isTargeted, useProgrammes } from "../StudentFilterFields";
 
 type Row = paths["/api/v1/admin/students"]["get"]["responses"]["200"]["content"]["application/json"]["data"][number];
 type Status = NonNullable<NonNullable<paths["/api/v1/admin/students"]["get"]["parameters"]["query"]>["status"]>;
@@ -40,15 +42,46 @@ export default function StudentsPage() {
   );
 }
 
-const IMPORT_COLUMNS: [name: string, need: string, rule: string][] = [
-  ["enrolment_no", "Required", "3 letters + 5–6 digits, e.g. CSB21045"],
-  ["name", "Required", "Full name, at least 2 characters"],
-  ["email", "Required", "University address, e.g. csb21045@tezu.ac.in"],
-  ["programme_code", "Optional", "Programme code, e.g. CSB (blank if unknown)"],
-  ["year_of_completion", "Optional", "Graduation year, e.g. 2026"],
-  ["mobile", "Optional", "Phone number, e.g. 9876543210"],
+const YES_NO = "yes / no";
+// Mirrors IMPORT_FIELDS in backend students.schemas.ts (every Editable field except name/programme_id), with an example each.
+const IMPORT_COLUMNS: [name: string, need: "Required" | "Optional", rule: string, example: string | number][] = [
+  ["enrolment_no", "Required", "3 letters + 5–6 digits", "CSB21045"],
+  ["name", "Required", "Full name, at least 2 characters", "Priyanshu Sharma"],
+  ["email", "Required", "University address", "csb21045@tezu.ac.in"],
+  ["programme_code", "Optional", "Programme code (blank if unknown)", "CSB"],
+  ["mobile", "Optional", "Phone number", "9876543210"],
+  ["dob", "Optional", "Date of birth, YYYY-MM-DD", "2003-05-14"],
+  ["gender", "Optional", "Text", "Female"],
+  ["category", "Optional", "Text, e.g. General / OBC / SC / ST", "General"],
+  ["minority", "Optional", YES_NO, "no"],
+  ["specially_abled", "Optional", YES_NO, "no"],
+  ["regional_diversity", "Optional", "Text", "North East"],
+  ["jee_rank", "Optional", "Whole number", 15234],
+  ["jee_score", "Optional", "Number", 182],
+  ["jee_percentile", "Optional", "0–100", 97.5],
+  ["gate_qualified", "Optional", YES_NO, "no"],
+  ["gate_score", "Optional", "Number", ""],
+  ["department", "Optional", "Department name", "Computer Science & Engineering"],
+  ["year_of_admission", "Optional", "Year", 2022],
+  ["year_of_completion", "Optional", "Graduation year (batch)", 2026],
+  ["cgpa", "Optional", "0–10", 8.4],
+  ["current_address", "Optional", "Text", "Hostel 3, Tezpur University"],
+  ["permanent_address", "Optional", "Text", "Guwahati, Assam"],
+  ["marks_10", "Optional", "Percent, 0–100", 92],
+  ["yop_10", "Optional", "Year passed", 2019],
+  ["marks_12", "Optional", "Percent, 0–100", 88],
+  ["yop_12", "Optional", "Year passed", 2021],
+  ["marks_ug", "Optional", "Percent, 0–100", ""],
+  ["yop_ug", "Optional", "Year passed", ""],
+  ["marks_pg", "Optional", "Percent, 0–100", ""],
+  ["yop_pg", "Optional", "Year passed", ""],
+  ["other_courses", "Optional", "Text", ""],
+  ["professional_interests", "Optional", "Text", "Machine learning"],
+  ["certifications", "Optional", "Text", ""],
+  ["portfolio_url", "Optional", "Full URL", "https://example.dev"],
+  ["linkedin_url", "Optional", "Full URL", "https://www.linkedin.com/in/example"],
 ];
-const IMPORT_TEMPLATE = [IMPORT_COLUMNS.map(([n]) => n), ["CSB21045", "Priyanshu Sharma", "csb21045@tezu.ac.in", "CSB", 2026, "9876543210"]];
+const IMPORT_TEMPLATE = [IMPORT_COLUMNS.map(([n]) => n), IMPORT_COLUMNS.map(([, , , ex]) => ex)];
 
 type CsvProblem = { line: number; issues: string[] };
 
@@ -60,14 +93,14 @@ function ImportCard() {
   const job = useSWR(jobId ? ["job", jobId] : null, () => call(api.GET("/api/v1/admin/jobs/{id}", { params: { path: { id: jobId! } } })), {
     refreshInterval: (j) => (j?.finished_at ? 0 : 1500),
   });
-  const report = job.data?.result as { created?: number; skipped?: { enrolment_no: string; reason: string }[] } | null | undefined;
+  const report = job.data?.result as { created?: number; updated?: number; skipped?: { enrolment_no: string; reason: string }[] } | null | undefined;
 
   return (
     <Card className="flex flex-col gap-4 p-5">
       <SectionTitle
         icon="upload_file"
         title="Bulk Import from CSV"
-        sub="Add many students at once. They start as active with no password: each sets their own through “Forgot password”, which also proves they own their university inbox. No emails are sent."
+        sub="Add or update many students at once. New students start as active with no password: each sets their own through “Forgot password”, which also proves they own their university inbox. No emails are sent."
       >
         <Button variant="ghost" icon="download" onClick={() => downloadCsv("student-import-template.csv", IMPORT_TEMPLATE)}>
           Template
@@ -80,18 +113,26 @@ function ImportCard() {
           <span>Needed</span>
           <span>Format</span>
         </div>
-        {IMPORT_COLUMNS.map(([name, need, rule]) => (
-          <div key={name} className="grid gap-x-3 border-t border-outline-variant/40 px-3 py-1.5 first:border-t-0 sm:grid-cols-[9.5rem_4.5rem_1fr]">
-            <code className="font-semibold text-ink">{name}</code>
-            <span className={need === "Required" ? "font-semibold text-tertiary" : "text-muted"}>{need}</span>
-            <span className="min-w-0 break-words text-muted">{rule}</span>
-          </div>
+        {IMPORT_COLUMNS.slice(0, 4).map((c) => (
+          <ColumnRow key={c[0]} c={c} />
         ))}
+        <details className="group border-t border-outline-variant/40">
+          <summary className="flex cursor-pointer list-none items-center gap-1 px-3 py-1.5 font-semibold text-primary [&::-webkit-details-marker]:hidden">
+            <Icon name="expand_more" className="transition-transform group-open:rotate-180" />
+            <span className="group-open:hidden">Show all {IMPORT_COLUMNS.length - 4} optional profile columns</span>
+            <span className="hidden group-open:inline">Hide profile columns</span>
+          </summary>
+          {IMPORT_COLUMNS.slice(4).map((c) => (
+            <ColumnRow key={c[0]} c={c} />
+          ))}
+        </details>
       </div>
       <ul className="list-disc space-y-0.5 pl-4 text-caption text-muted">
         <li>First row must be the column names above. Up to 10,000 rows per file.</li>
         <li>The whole file is checked first: if any row is wrong, nothing is imported and the problem lines are listed below.</li>
-        <li>Students whose enrolment number or email already exists are skipped, so re-uploading a file is safe.</li>
+        <li>Only enrolment_no, name and email are required; include any other column you have. Blank cells leave the field unchanged.</li>
+        <li>Re-uploading updates existing students (same enrolment number and email) with the file&apos;s values, so you can fill in profiles later.</li>
+        <li>yes/no columns also accept true/false or 1/0. Dates are YYYY-MM-DD.</li>
         {!!progs.data?.length && <li>Programme codes in use: {progs.data.map((p) => p.code).join(", ")}.</li>}
       </ul>
 
@@ -162,6 +203,7 @@ function ImportCard() {
               <p className="flex flex-wrap items-center gap-2 font-semibold text-ink">
                 Import finished
                 <Badge tone="info">{report?.created ?? 0} added</Badge>
+                <Badge tone="info">{report?.updated ?? 0} updated</Badge>
                 <Badge>{report?.skipped?.length ?? 0} skipped</Badge>
               </p>
               {!!report?.skipped?.length && (
@@ -178,6 +220,16 @@ function ImportCard() {
         </div>
       )}
     </Card>
+  );
+}
+
+function ColumnRow({ c: [name, need, rule] }: { c: (typeof IMPORT_COLUMNS)[number] }) {
+  return (
+    <div className="grid gap-x-3 border-t border-outline-variant/40 px-3 py-1.5 first:border-t-0 sm:grid-cols-[9.5rem_4.5rem_1fr]">
+      <code className="font-semibold break-all text-ink">{name}</code>
+      <span className={need === "Required" ? "font-semibold text-tertiary" : "text-muted"}>{need}</span>
+      <span className="min-w-0 break-words text-muted">{rule}</span>
+    </div>
   );
 }
 
@@ -219,18 +271,25 @@ function GraduateCard() {
 function Roster() {
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<Status | "">("");
+  const [filter, setFilter] = useState(EMPTY_FILTER);
   const [cursors, setCursors] = useState<(string | undefined)[]>([undefined]);
   const cursor = cursors.at(-1);
-  const list = useSWR(["admin/students", q, status, cursor], () =>
-    call(api.GET("/api/v1/admin/students", { params: { query: { q: q || undefined, status: status || undefined, cursor, limit: 25 } } })),
+  const fq = filterQuery(filter);
+  const list = useSWR(["admin/students", q, status, JSON.stringify(fq), cursor], () =>
+    call(api.GET("/api/v1/admin/students", { params: { query: { q: q || undefined, status: status || undefined, ...fq, cursor, limit: 25 } } })),
   );
-  const progs = useSWR("programmes", () => call(api.GET("/api/v1/programmes")));
+  const progs = useProgrammes();
   const [open, setOpen] = useState<Row | null>(null);
+  const [notify, setNotify] = useState(false);
   const reset = () => setCursors([undefined]);
 
   return (
     <Card className="flex flex-col gap-3 p-5">
-      <SectionTitle icon="groups" title="Roster" sub="Click a student to correct their record, change probation, or run account repairs." />
+      <SectionTitle icon="groups" title="Roster" sub="Click a student to correct their record, change probation, or run account repairs.">
+        <Button variant="soft" icon="campaign" onClick={() => setNotify(true)}>
+          Send notice to these students
+        </Button>
+      </SectionTitle>
       <div className="flex flex-wrap gap-2">
         <label className="relative flex-1">
           <Icon name="search" className="absolute top-2.5 left-2 text-muted" />
@@ -251,6 +310,23 @@ function Roster() {
           ))}
         </Select>
       </div>
+      <details className="group rounded-xs bg-surface-low p-3" open={isTargeted(filter)}>
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-label font-semibold text-ink [&::-webkit-details-marker]:hidden">
+          <span className="flex flex-wrap items-center gap-2">
+            <Icon name="filter_alt" /> Department, programme, batch, CGPA
+            <FilterChips f={filter} programmes={progs.data} />
+          </span>
+          <Icon name="expand_more" className="transition-transform group-open:rotate-180" />
+        </summary>
+        <div className="flex flex-col gap-2 pt-3">
+          <StudentFilterFields value={filter} onChange={(f) => (setFilter(f), reset())} />
+          {isTargeted(filter) && (
+            <Button size="sm" variant="ghost" icon="filter_alt_off" className="self-start" onClick={() => (setFilter(EMPTY_FILTER), reset())}>
+              Clear filters
+            </Button>
+          )}
+        </div>
+      </details>
       <div className="overflow-x-auto">
         <State data={list.data} error={list.error} retry={() => list.mutate()} rows={5}>
           {({ data, page }) =>
@@ -316,6 +392,18 @@ function Roster() {
           }
         </State>
       </div>
+      {notify && (
+        <Modal title="Notice to these students" onClose={() => setNotify(false)} wide>
+          {(q || status) && (
+            <p role="note" className="flex items-start gap-2 rounded-xs bg-tertiary-fixed px-3 py-2 text-body text-on-accent">
+              <Icon name="info" />
+              Notices target by department, programme, batch, CGPA and placement only. The {[q && "name search", status && "status filter"].filter(Boolean).join(" and ")} you set
+              on the roster can&apos;t be applied, so this notice reaches every active student matching the other filters.
+            </p>
+          )}
+          <NoticeComposer initial={filter} />
+        </Modal>
+      )}
       {open && <ManageStudent s={open} programmes={progs.data ?? []} onClose={() => (setOpen(null), list.mutate())} />}
     </Card>
   );
@@ -405,6 +493,8 @@ function ManageStudent({ s, programmes, onClose }: { s: Row; programmes: Program
           <Notice msg={edit.msg} />
         </div>
       </form>
+
+      <StudentRecords id={s.id} />
 
       <div className="flex flex-col gap-2 rounded-xs bg-surface-low p-3">
         <p className="text-label font-bold text-ink uppercase">Academic probation</p>
@@ -512,5 +602,52 @@ function ManageStudent({ s, programmes, onClose }: { s: Row; programmes: Program
         Enrolled {s.year_of_admission ?? "—"} • DOB {fmtDate(s.dob)}
       </p>
     </Modal>
+  );
+}
+
+const KIND = { certificate: "Certificate", internship: "Internship", project: "Project" } as const;
+
+function StudentRecords({ id }: { id: string }) {
+  const recs = useSWR(["admin/student-records", id], () => call(api.GET("/api/v1/admin/students/{id}/records", { params: { path: { id } } })));
+  return (
+    <div className="flex flex-col gap-2 rounded-xs bg-surface-low p-3">
+      <p className="text-label font-bold text-ink uppercase">Certificates, internships &amp; projects</p>
+      <State data={recs.data} error={recs.error} retry={() => recs.mutate()} rows={2}>
+        {(rows) =>
+          !rows.length ? (
+            <p className="text-body text-muted">The student hasn&apos;t added any yet.</p>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {rows.map((r) => (
+                <li key={r.id} className="flex flex-col justify-between gap-2 rounded-xs bg-white p-2 sm:flex-row sm:items-center">
+                  <div className="min-w-0">
+                    <p className="flex flex-wrap items-center gap-2 text-body font-semibold text-ink">
+                      <Badge tone="soft">{KIND[r.kind]}</Badge>
+                      <span className="break-words">{r.title}</span>
+                    </p>
+                    <p className="text-caption break-words text-muted">
+                      {[r.organisation, [r.start_month, r.end_month].filter(Boolean).join(" to ")].filter(Boolean).join(" • ")}
+                    </p>
+                    {r.description && <p className="text-caption break-words text-muted">{r.description}</p>}
+                  </div>
+                  <span className="flex shrink-0 gap-2">
+                    {r.url && (
+                      <a href={r.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-xs px-2 py-1 text-caption font-semibold text-primary underline">
+                        <Icon name="link" /> Link
+                      </a>
+                    )}
+                    {r.file_id && (
+                      <Button type="button" size="sm" variant="ghost" icon="attach_file" onClick={() => openFile(r.file_id!)}>
+                        File
+                      </Button>
+                    )}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </State>
+    </div>
   );
 }

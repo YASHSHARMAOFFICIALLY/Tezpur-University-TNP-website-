@@ -3,10 +3,12 @@
 import { useState } from "react";
 import useSWR from "swr";
 import { AppShell } from "@/components/AppShell";
-import { Badge, Button, Card, Empty, Field, Input, Notice, PageHead, SectionTitle, Select, State, Textarea, cx, useRun } from "@/components/ui";
-import { api, call, useSession } from "@/lib/api";
+import { Badge, Button, Card, Empty, Field, Icon, Input, Notice, PageHead, SectionTitle, Select, State, Textarea, cx, useRun } from "@/components/ui";
+import { api, call, fileBody, openFile, useSession } from "@/lib/api";
 import { fmtDate, initialsOf } from "@/lib/format";
 import { ADMIN_NAV } from "../nav";
+import { NoticeComposer } from "../NoticeComposer";
+import { EMPTY_FILTER, FilterChips, StudentFilterFields, filterQuery, isTargeted, useProgrammes } from "../StudentFilterFields";
 
 export default function CommsPage() {
   return (
@@ -29,86 +31,64 @@ export default function CommsPage() {
 }
 
 function PostNotice() {
-  const { busy, msg, run } = useRun();
-  const board = useSWR("noticeboard");
   return (
     <Card className="flex flex-col gap-3 p-5">
       <SectionTitle icon="campaign" title="Post a Notice" sub="Shows on the portal noticeboard. Email copies drain slowly under the daily mail cap." />
-      <form
-        className="flex flex-col gap-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          const form = e.currentTarget;
-          const fd = new FormData(form);
-          run(
-            "post",
-            async () => {
-              await call(
-                api.POST("/api/v1/admin/notices", {
-                  body: {
-                    audience: fd.get("audience") as "students" | "companies" | "all",
-                    title: String(fd.get("title")),
-                    body: String(fd.get("body")),
-                    email: fd.has("email"),
-                  },
-                }),
-              );
-              form.reset();
-              board.mutate();
-            },
-            "Notice published.",
-          );
-        }}
-      >
-        <div className="grid grid-cols-[160px_1fr] gap-3">
-          <Field label="Audience">
-            <Select name="audience" defaultValue="students">
-              <option value="students">Students</option>
-              <option value="companies">Recruiters</option>
-              <option value="all">Everyone</option>
-            </Select>
-          </Field>
-          <Field label="Title *">
-            <Input name="title" required maxLength={200} placeholder="Interview Protocol Alert" />
-          </Field>
-        </div>
-        <Field label="Message *">
-          <Textarea name="body" required rows={5} />
-        </Field>
-        <label className="flex items-center gap-2 text-body text-ink">
-          <input type="checkbox" name="email" className="accent-primary" /> Also email the audience
-        </label>
-        <Notice msg={msg} />
-        <Button type="submit" busy={busy === "post"} icon="send" className="self-end">
-          Publish Notice
-        </Button>
-      </form>
+      <NoticeComposer />
     </Card>
   );
 }
 
 function NoticeHistory() {
-  const board = useSWR("noticeboard", () => call(api.GET("/api/v1/noticeboard", { params: { query: { limit: 100 } } })));
+  const [filter, setFilter] = useState(EMPTY_FILTER);
+  const progs = useProgrammes();
+  const q = filterQuery(filter);
+  const notices = useSWR(["admin/notices", JSON.stringify(q)], () =>
+    call(api.GET("/api/v1/admin/notices", { params: { query: { limit: 100, departments: q.departments, programme_ids: q.programme_ids, batches: q.batches } } })),
+  );
   return (
     <Card className="flex flex-col gap-3 p-5">
-      <SectionTitle icon="history" title="Noticeboard" sub="Most recent first." />
-      <State data={board.data} error={board.error} retry={() => board.mutate()} empty={(d) => !d.data.length}>
-        {({ data }) => (
-          <ul className="flex max-h-[420px] flex-col gap-2 overflow-y-auto">
-            {data.map((n) => (
-              <li key={n.id} className="rounded-xs bg-surface-low p-3">
-                <p className="flex items-start justify-between gap-2 text-body font-semibold text-ink">
-                  {n.title}
-                  <Badge tone="muted" className="shrink-0 capitalize">
-                    {n.audience === "companies" ? "recruiters" : n.audience}
-                  </Badge>
-                </p>
-                <p className="line-clamp-3 text-body whitespace-pre-line text-muted">{n.body}</p>
-                <p className="pt-1 text-caption text-muted">{fmtDate(n.published_at, true)}</p>
-              </li>
-            ))}
-          </ul>
-        )}
+      <SectionTitle icon="history" title="Notice History" sub="Most recent first. Filter to see what a department, programme or batch received." />
+      <details className="group rounded-xs bg-surface-low p-3">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-label font-semibold text-ink [&::-webkit-details-marker]:hidden">
+          <span className="flex items-center gap-1">
+            <Icon name="filter_alt" /> Filter history {isTargeted(filter) && "(on)"}
+          </span>
+          <Icon name="expand_more" className="transition-transform group-open:rotate-180" />
+        </summary>
+        <div className="pt-3">
+          <StudentFilterFields basic value={filter} onChange={setFilter} />
+        </div>
+      </details>
+      <State data={notices.data} error={notices.error} retry={() => notices.mutate()}>
+        {({ data }) =>
+          !data.length ? (
+            <Empty icon="campaign" text={isTargeted(filter) ? "No notices reach this group." : "No notices yet."} />
+          ) : (
+            <ul className="flex max-h-[520px] flex-col gap-2 overflow-y-auto">
+              {data.map((n) => (
+                <li key={n.id} className="flex flex-col gap-1 rounded-xs bg-surface-low p-3">
+                  <p className="flex items-start justify-between gap-2 text-body font-semibold text-ink">
+                    <span className="min-w-0 break-words">{n.title}</span>
+                    <Badge tone="muted" className="shrink-0 capitalize">
+                      {n.audience === "companies" ? "recruiters" : n.audience}
+                    </Badge>
+                  </p>
+                  <FilterChips f={n} programmes={progs.data} />
+                  <p className="line-clamp-3 text-body whitespace-pre-line text-muted">{n.body}</p>
+                  <p className="flex items-center justify-between gap-2 pt-1 text-caption text-muted">
+                    {fmtDate(n.published_at, true)}
+                    {n.file_id && (
+                      <Button size="sm" variant="white" icon="picture_as_pdf" onClick={() => openFile(n.file_id!)}>
+                        PDF
+                      </Button>
+                    )}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )
+        }
       </State>
     </Card>
   );
@@ -174,6 +154,11 @@ function Inbox() {
                             {m.subject} <span className="text-caption font-normal text-muted">{fmtDate(m.created_at, true)}</span>
                           </p>
                           <p className="text-body whitespace-pre-line text-muted">{m.body}</p>
+                          {m.file_id && (
+                            <Button size="sm" variant="white" icon="picture_as_pdf" className="mt-1" onClick={() => openFile(m.file_id!)}>
+                              Attachment
+                            </Button>
+                          )}
                         </div>
                       );
                     })
@@ -187,10 +172,12 @@ function Inbox() {
                 e.preventDefault();
                 const form = e.currentTarget;
                 const fd = new FormData(form);
+                const file = fd.get("pdf") as File | null;
                 run(
                   "send",
                   async () => {
-                    await call(api.POST("/api/v1/messages", { body: { company_id: co.id, subject: String(fd.get("subject")), body: String(fd.get("body")) } }));
+                    const m = await call(api.POST("/api/v1/messages", { body: { company_id: co.id, subject: String(fd.get("subject")), body: String(fd.get("body")) } }));
+                    if (file?.size) await call(api.POST("/api/v1/messages/{id}/attachment", { params: { path: { id: m.id } }, ...fileBody(file) }));
                     form.reset();
                     thread.mutate();
                   },
@@ -200,6 +187,14 @@ function Inbox() {
             >
               <Input name="subject" required maxLength={200} placeholder="Subject" aria-label="Reply subject" />
               <Textarea name="body" required rows={3} placeholder={`Reply to ${co.name}…`} aria-label="Reply message" />
+              <Field label="PDF attachment (optional)">
+                <Input
+                  name="pdf"
+                  type="file"
+                  accept="application/pdf"
+                  className="py-1.5 file:mr-3 file:rounded-xs file:border-0 file:bg-surface file:px-3 file:py-1 file:text-label file:font-semibold file:text-primary"
+                />
+              </Field>
               <Notice msg={msg} />
               <Button type="submit" busy={busy === "send"} icon="reply" className="self-end">
                 Send Reply

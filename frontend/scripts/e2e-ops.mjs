@@ -76,9 +76,9 @@ await step("CSV import creates a student (job polled to finish)", async () => {
   );
   await adm.getByLabel("CSV file").setInputFiles(csv);
   await adm.getByRole("button", { name: "Start Import" }).click();
-  await adm.getByText("Import queued.").waitFor();
-  await adm.getByText(/Job [0-9a-f]{8}/).waitFor();
-  await adm.waitForFunction(() => /done|failed/.test(document.body.innerText), null, { timeout: 30_000 });
+  await adm.getByText("Import started.").waitFor();
+  await adm.getByText("Import finished").waitFor({ timeout: 30_000 });
+  await adm.getByText("1 added").waitFor();
   await adm.getByLabel("Search students").fill(CSV_ENROL);
   await adm.getByRole("cell", { name: CSV_ENROL, exact: true }).waitFor();
 });

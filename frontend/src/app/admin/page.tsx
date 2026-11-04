@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import useSWR from "swr";
 import { AppShell } from "@/components/AppShell";
 import { ADMIN_NAV } from "./nav";
-import { Badge, Button, Card, Empty, Field, Icon, Input, Notice, Select, State, cx, useRun } from "@/components/ui";
+import { Badge, Button, Card, Empty, Field, Icon, Input, Notice, Select, State, Tabs, cx, useRun } from "@/components/ui";
 import { api, call, listAll, openFile } from "@/lib/api";
 import { downloadCsv } from "@/lib/csv";
 import type { paths } from "@/lib/api-types";
@@ -18,33 +18,20 @@ const useOpps = () => useSWR("admin/opportunities", () => call(api.GET("/api/v1/
 const useCompanies = () => useSWR("admin/companies", () => call(api.GET("/api/v1/admin/companies", { params: { query: { limit: 100 } } })));
 
 export default function AdminPage() {
-  const uni = useSWR("university", () => call(api.GET("/api/v1/university")));
   return (
     <AppShell role="admin" nav={ADMIN_NAV} active="/admin">
       <div className="mx-auto flex max-w-[976px] flex-col gap-5">
         <Header />
         <Stats />
-        <div className="flex items-center gap-4 rounded-lg bg-surface-low p-5 shadow-card">
-          <span className="grid size-10 shrink-0 place-items-center rounded-xs bg-surface-high text-primary">
-            <Icon name="gavel" className="text-[20px]" />
-          </span>
-          <div className="flex-1">
-            <p className="text-card font-bold text-primary">Central Governance Mandate &amp; NIRF Audit Readiness</p>
-            <p className="text-body text-muted">All candidate resume validations must conclude 24 hours prior to Slot 1 Corporate Assessments.</p>
-          </div>
-          {uni.data?.ranking && (
-            <Badge tone="soft" icon="shield" className="hidden bg-white sm:inline-flex">
-              {uni.data.ranking}
-            </Badge>
-          )}
-        </div>
         <Queue />
+        <Appeals />
         <div className="grid items-start gap-5 lg:grid-cols-[1fr_385px]">
           <EventCreator />
           <div className="flex flex-col gap-5">
             <PublishResults />
           </div>
         </div>
+        <StudentFeedback />
         <Reports />
       </div>
     </AppShell>
@@ -59,11 +46,11 @@ function Header() {
           <span className="size-2 rounded-xl bg-accent" /> Executive Operations Node • Confidential Authority
         </p>
         <h1 className="pt-1 font-display text-headline font-bold text-primary">TPO Administrative Control Center</h1>
-        <p className="text-[14px] leading-5 text-muted">Real-time governance, student credential verification, and corporate relations audit.</p>
+        <p className="text-[14px] leading-5 text-muted">Recruiter and posting approvals, appeals, sessions, results and student feedback.</p>
       </div>
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap md:max-w-[370px] md:justify-end">
         <Link href="/admin/content" className="flex items-center justify-center gap-1 rounded-xs bg-surface-high px-3 py-1 text-label font-semibold text-ink">
-          <Icon name="tune" /> Edit Master Metrics &amp; NIRF
+          <Icon name="tune" /> Edit Landing Page &amp; Records
         </Link>
         <a href="#events" className="flex items-center justify-center gap-1 rounded-xs bg-surface-high px-3 py-1 text-label font-semibold text-ink">
           <Icon name="event_available" /> Host New Session
@@ -113,31 +100,20 @@ function Stats() {
         <div className="relative flex gap-1">
           <Badge tone="info">{pending.data?.opportunities.length ?? 0} Awaiting Approval</Badge>
         </div>
-        <svg viewBox="0 0 200 30" className="mt-auto h-8 w-full" aria-hidden>
-          <path d="M0 25 C40 25 50 10 90 18 S150 28 200 5" fill="none" stroke="#d5e3ff" strokeWidth="3" />
-        </svg>
       </StatCard>
       <StatCard label="Registered Candidates" icon="badge">
-        <Big v={nStudents} unit="Verified" />
-        <Badge tone="warn" icon="pending" className="relative w-fit">
-          {pending.data?.students.length ?? 0} Pending Audit
-        </Badge>
-        <span className="relative mt-auto h-1.5 rounded-xl bg-surface-high">
-          <span
-            className="block h-1.5 rounded-xl bg-primary"
-            style={{
-              width:
-                students.data && pending.data
-                  ? `${(students.data.data.length / Math.max(1, students.data.data.length + pending.data.students.length)) * 100}%`
-                  : "0%",
-            }}
-          />
-        </span>
+        <Big v={nStudents} unit="Active" />
+        <p className="relative text-caption text-muted">Students activate themselves by verifying the emailed code.</p>
+        {!!pending.data?.students.length && (
+          <Badge tone="warn" icon="pending" className="relative w-fit">
+            {pending.data.students.length} older sign-up{pending.data.students.length === 1 ? "" : "s"} to approve
+          </Badge>
+        )}
       </StatCard>
       <StatCard label="Approved Recruiters" icon="handshake">
         <Big v={cos.length} unit="Active Partners" />
         <Badge tone="info" icon="domain" className="relative w-fit">
-          {pending.data?.recruiters.length ?? 0} KYC Pending
+          {pending.data?.recruiters.length ?? 0} Awaiting Approval
         </Badge>
         <p className="relative mt-auto flex justify-between text-caption text-muted">
           <span>MNC: {share(["mnc"])}%</span>
@@ -163,7 +139,7 @@ type QTab = "students" | "recruiters" | "opportunities";
 
 function Queue() {
   const pending = usePending();
-  const [tab, setTab] = useState<QTab>("students");
+  const [tab, setTab] = useState<QTab>("recruiters");
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState("");
   const [rejecting, setRejecting] = useState<string | null>(null);
@@ -246,9 +222,9 @@ function Queue() {
         <div role="tablist" className="flex gap-1 overflow-x-auto">
           {(
             [
-              ["students", "school", "Student Registrations", d?.students.length],
               ["recruiters", "corporate_fare", "Recruiter Onboarding", d?.recruiters.length],
               ["opportunities", "work", "Job & Internship Postings", d?.opportunities.length],
+              ["students", "school", "Older Student Sign-ups", d?.students.length],
             ] as const
           ).map(([id, icon, label, n]) => (
             <button
@@ -297,7 +273,7 @@ function Queue() {
             <h2 className="font-display text-title font-bold text-primary">
               {
                 {
-                  students: "Verification Queue: Academic Records & Resumes",
+                  students: "Student Sign-ups from Before Email Verification",
                   recruiters: "Recruiter KYC & Organisation Audit",
                   opportunities: "Posting Review: JNF / INF Compliance",
                 }[tab]
@@ -306,7 +282,8 @@ function Queue() {
             <p className="text-body text-muted">
               {
                 {
-                  students: "Validate candidate CGPA against official Tezpur University Examination Cell registers.",
+                  students:
+                    "New students need no approval: verifying the code emailed to their university inbox activates them. Only accounts created before that change wait here.",
                   recruiters: "Confirm corporate identity before granting drive access.",
                   opportunities: "Approve postings to make them visible to eligible students.",
                 }[tab]
@@ -331,9 +308,9 @@ function Queue() {
                 <table className="w-full min-w-[820px] text-left text-body">
                   <thead className="bg-surface-low text-caption font-semibold tracking-[0.55px] text-muted uppercase">
                     <tr>
-                      {["Enrollment No", "Candidate Name", "Department", "CGPA", "Backlogs", "Official Email", "Resume Status", "Governance Actions"].map(
+                      {["Enrollment No", "Candidate Name", "Department", "CGPA", "Official Email", "Resume", "Actions"].map(
                         (h, i) => (
-                          <th key={h} className={cx("px-3 py-2", i === 7 && "text-right")}>
+                          <th key={h} className={cx("px-3 py-2", i === 6 && "text-right")}>
                             {h}
                           </th>
                         ),
@@ -359,9 +336,6 @@ function Queue() {
                             {st?.programme && <p className="text-caption">{st.programme.name}</p>}
                           </td>
                           <td className="px-3 py-3 font-bold">{st?.cgpa?.toFixed(2) ?? "—"}</td>
-                          <td className="px-3 py-3">
-                            <span className="rounded-xs bg-surface-high px-2 py-0.5 text-caption">0 Cleared</span>
-                          </td>
                           <td className="px-3 py-3 text-muted">{s.email}</td>
                           <td className="px-3 py-3">
                             {st?.resume_file_id ? (
@@ -369,7 +343,7 @@ function Queue() {
                                 onClick={() => openFile(st.resume_file_id!)}
                                 className="flex items-center gap-1 rounded-xs bg-surface-high px-2 py-1 text-caption font-semibold cursor-pointer"
                               >
-                                <Icon name="description" /> PDF Valid
+                                <Icon name="description" /> View PDF
                               </button>
                             ) : (
                               <Badge tone="error" icon="warning">
@@ -387,7 +361,7 @@ function Queue() {
                 <table className="w-full min-w-[720px] text-left text-body">
                   <thead className="bg-surface-low text-caption font-semibold tracking-[0.55px] text-muted uppercase">
                     <tr>
-                      {["Organisation", "Category", "Contact", "Official Email", "Registered", "Governance Actions"].map((h, i) => (
+                      {["Organisation", "Category", "Contact", "Official Email", "Registered", "Actions"].map((h, i) => (
                         <th key={h} className={cx("px-3 py-2", i === 5 && "text-right")}>
                           {h}
                         </th>
@@ -422,7 +396,7 @@ function Queue() {
                 <table className="w-full min-w-[720px] text-left text-body">
                   <thead className="bg-surface-low text-caption font-semibold tracking-[0.55px] text-muted uppercase">
                     <tr>
-                      {["Posting", "Company", "Type", "Min CGPA", "Deadline", "Governance Actions"].map((h, i) => (
+                      {["Posting", "Company", "Type", "Min CGPA", "Deadline", "Actions"].map((h, i) => (
                         <th key={h} className={cx("px-3 py-2", i === 5 && "text-right")}>
                           {h}
                         </th>
@@ -816,14 +790,7 @@ function PublishResults() {
                   </div>
                 ))}
               </div>
-              <ul className="flex flex-col gap-1 text-body text-ink">
-                <li className="flex items-center gap-2">
-                  <Icon name="check_box" className="text-primary" /> Notify students on the noticeboard &amp; email
-                </li>
-                <li className="flex items-center gap-2">
-                  <Icon name="check_box" className="text-primary" /> Update year-wise placement report
-                </li>
-              </ul>
+              <p className="text-caption text-muted">Publishing posts the result on the noticeboard, emails the candidates and updates the placement report.</p>
               {msg && (
                 <p
                   className={cx(
@@ -912,5 +879,158 @@ function Reports() {
         </State>
       </Card>
     </div>
+  );
+}
+
+function Appeals() {
+  const appeals = useSWR("admin/appeals", () => call(api.GET("/api/v1/admin/appeals")));
+  const [notes, setNotes] = useState<Record<string, string>>({});
+  const { busy, msg, run } = useRun();
+  const decide = (a: { student_id: string; name: string }, grant: boolean) =>
+    run(
+      `${grant ? "g" : "r"}${a.student_id}`,
+      async () => {
+        await call(
+          api.POST("/api/v1/admin/students/{id}/appeal", {
+            params: { path: { id: a.student_id } },
+            body: { grant, note: notes[a.student_id]?.trim() || undefined },
+          }),
+        );
+        await appeals.mutate();
+      },
+      grant ? `${a.name} can apply again.` : `${a.name}'s appeal rejected.`,
+    );
+  return (
+    <Card className="flex flex-col gap-3 p-5" >
+      <div id="appeals" className="flex scroll-mt-24 items-start justify-between gap-2">
+        <div>
+          <h2 className="font-display text-title font-bold text-primary">Appeals to Apply Again</h2>
+          <p className="text-body text-muted">Placed students can&apos;t apply to new drives. Granting an appeal reopens applying for that student.</p>
+        </div>
+        <Badge tone={appeals.data?.length ? "warn" : "muted"}>{appeals.data?.length ?? "…"}</Badge>
+      </div>
+      <Notice msg={msg} />
+      <State data={appeals.data} error={appeals.error} retry={() => appeals.mutate()} rows={2}>
+        {(rows) =>
+          !rows.length ? (
+            <Empty icon="task_alt" text="No open appeals." />
+          ) : (
+            <ul className="flex flex-col gap-3">
+              {rows.map((a) => (
+                <li key={a.student_id} className="flex flex-col gap-2 rounded-xs bg-surface-low p-3">
+                  <p className="flex flex-wrap items-baseline justify-between gap-2">
+                    <span className="text-body font-semibold text-ink">
+                      {a.name} <span className="font-normal text-muted">• {a.enrolment_no}</span>
+                    </span>
+                    <span className="text-caption text-muted">{fmtDate(a.at, true)}</span>
+                  </p>
+                  <p className="text-body break-words whitespace-pre-line text-ink">{a.reason}</p>
+                  {!!a.selections.length && (
+                    <p className="flex flex-wrap items-center gap-1 text-caption text-muted">
+                      Selected in:
+                      {a.selections.map((x) => (
+                        <Badge key={x.opportunity_id} tone="info">
+                          {x.title} • {x.company}
+                        </Badge>
+                      ))}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Input
+                      value={notes[a.student_id] ?? ""}
+                      onChange={(e) => setNotes({ ...notes, [a.student_id]: e.target.value })}
+                      maxLength={1000}
+                      placeholder="Note to the student (optional)"
+                      aria-label={`Note to ${a.name}`}
+                      className="min-w-0 flex-1 basis-56"
+                    />
+                    <Button size="sm" icon="lock_open" busy={busy === `g${a.student_id}`} disabled={!!busy} onClick={() => decide(a, true)}>
+                      Grant
+                    </Button>
+                    <Button size="sm" variant="danger" busy={busy === `r${a.student_id}`} disabled={!!busy} onClick={() => decide(a, false)}>
+                      Reject
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </State>
+    </Card>
+  );
+}
+
+type Rating = Json<"/api/v1/admin/student-feedback">[number];
+
+function StudentFeedback() {
+  const [target, setTarget] = useState<"event" | "opportunity">("event");
+  const fb = useSWR(["admin/student-feedback", target], () => call(api.GET("/api/v1/admin/student-feedback", { params: { query: { target } } })));
+  const groups = Object.values(Object.groupBy(fb.data ?? [], (r) => r.target_id)).map((rs) => {
+    const list = rs as Rating[];
+    return { id: list[0].target_id, name: list[0].target_name, avg: list.reduce((n, r) => n + r.rating, 0) / list.length, list };
+  });
+  return (
+    <Card className="flex flex-col gap-3 p-5">
+      <div id="feedback" className="flex scroll-mt-24 flex-col justify-between gap-2 sm:flex-row sm:items-start">
+        <div>
+          <h2 className="font-display text-title font-bold text-primary">Student Feedback</h2>
+          <p className="text-body text-muted">Ratings (1 to 5) students gave to trainings they attended and recruiters they applied to.</p>
+        </div>
+        <Tabs
+          value={target}
+          onChange={setTarget}
+          tabs={[
+            { id: "event", label: "Trainings", icon: "school" },
+            { id: "opportunity", label: "Recruiters", icon: "corporate_fare" },
+          ]}
+        />
+      </div>
+      <State data={fb.data} error={fb.error} retry={() => fb.mutate()} rows={2}>
+        {() =>
+          !groups.length ? (
+            <Empty icon="star" text={target === "event" ? "No training ratings yet." : "No recruiter ratings yet."} />
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {groups
+                .toSorted((a, b) => b.list.length - a.list.length)
+                .map((g) => (
+                  <li key={g.id} className="rounded-xs bg-surface-low p-3">
+                    <details className="group">
+                      <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-2 [&::-webkit-details-marker]:hidden">
+                        <span className="min-w-0 text-body font-semibold break-words text-ink">{g.name}</span>
+                        <span className="flex items-center gap-2 text-body">
+                          <span className="flex items-center gap-0.5 font-bold text-tertiary" aria-label={`Average ${g.avg.toFixed(1)} out of 5`}>
+                            <Icon name="star" filled /> {g.avg.toFixed(1)}
+                          </span>
+                          <span className="text-caption text-muted">
+                            {g.list.length} rating{g.list.length === 1 ? "" : "s"}
+                          </span>
+                          <Icon name="expand_more" className="text-muted transition-transform group-open:rotate-180" />
+                        </span>
+                      </summary>
+                      <ul className="flex flex-col gap-1 pt-2">
+                        {g.list.map((r) => (
+                          <li key={r.id} className="flex flex-col gap-0.5 rounded-xs bg-white p-2 text-body">
+                            <span className="flex flex-wrap justify-between gap-2 text-caption text-muted">
+                              <span>
+                                {r.student.name} • {r.student.enrolment_no}
+                              </span>
+                              <span>
+                                {r.rating}/5 • {fmtDate(r.created_at)}
+                              </span>
+                            </span>
+                            {r.comment ? <span className="break-words text-ink">{r.comment}</span> : <span className="text-muted">No comment.</span>}
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  </li>
+                ))}
+            </ul>
+          )
+        }
+      </State>
+    </Card>
   );
 }
