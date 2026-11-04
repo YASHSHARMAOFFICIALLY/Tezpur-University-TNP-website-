@@ -42,7 +42,7 @@ afterEach(() => {
 });
 
 describe("approval queue", () => {
-  it("shows the admin a pending student's academic record and resume, not just the enrolment number", async () => {
+  it("an OTP-verified student is active at once and never waits in the admin queue", async () => {
     const programme = (await admin.post("/admin/programmes", { department: "Civil Engineering", name: "B.Tech Civil", code: "BTCE" })).body;
     const email = "queue1@tezu.ac.in";
     await request(app)
@@ -50,13 +50,9 @@ describe("approval queue", () => {
       .send({ email, password: "student-pass", name: "Queue Student", enrolment_no: "CEB30001", mobile: "9876543210", programme_id: programme.id })
       .expect(201);
     await request(app).post(api("/auth/verify-otp")).send({ email, code: await lastOtp(email) }).expect(200);
-    await db.student.update({ where: { enrolment_no: "CEB30001" }, data: { cgpa: 8.25, department: "Civil", resume_file_id: "resume-1", photo_file_id: "photo-1" } });
-
-    const row = (await admin.get("/admin/pending")).body.students.find((s: { email: string }) => s.email === email);
-    expect(row.student).toEqual({
-      enrolment_no: "CEB30001", department: "Civil", cgpa: 8.25, programme_id: programme.id,
-      programme: { name: "B.Tech Civil", department: "Civil Engineering" }, resume_file_id: "resume-1", photo_file_id: "photo-1",
-    });
+    expect((await db.user.findUniqueOrThrow({ where: { email } })).status).toBe("active");
+    expect((await admin.get("/admin/pending")).body.students.find((s: { email: string }) => s.email === email)).toBeUndefined();
+    await login(email, "student-pass");
   });
 });
 

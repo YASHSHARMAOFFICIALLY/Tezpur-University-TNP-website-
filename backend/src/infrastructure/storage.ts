@@ -64,7 +64,7 @@ export async function inFileTx<T>(fn: (tx: Tx, files: FileStore) => Promise<T>):
 async function storeFile(tx: Tx, ownerUserId: string, kind: FileKind, f: UploadedFile | null, copied: string[]) {
   if (!f) fail("VALIDATION_FAILED", { field: "file", reason: "missing" });
   const policy = FILE_POLICY[kind];
-  const maxBytes = Math.min(Math.floor((await getSetting("upload_max_mb"))[kind] * MB), policy.maxBytes);
+  const maxBytes = Math.min(Math.floor(((await getSetting("upload_max_mb"))[kind] ?? Infinity) * MB), policy.maxBytes);
   if (f.size > maxBytes) fail("FILE_TOO_LARGE", { maxBytes });
   const fh = await fs.open(f.path);
   const head = Buffer.alloc(8);

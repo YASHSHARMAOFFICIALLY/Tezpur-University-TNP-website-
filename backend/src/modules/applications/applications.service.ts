@@ -34,7 +34,12 @@ export const listMine = (userId: string) => (args: object) =>
     ...args,
     where: { student: { user_id: userId } },
     include: {
-      opportunity: { select: { id: true, title: true, type: true, company: { select: { name: true } }, result: { select: { published_at: true } } } },
+      opportunity: {
+        select: {
+          id: true, title: true, type: true, drive_mode: true, hiring_from: true, hiring_to: true, venue: true, logistics: true, jd_file_id: true,
+          company: { select: { id: true, name: true } }, result: { select: { published_at: true } },
+        },
+      },
       interviews: true,
     },
   });
@@ -42,7 +47,7 @@ export const listMine = (userId: string) => (args: object) =>
 // ---------- admin ----------
 
 export const listForAdmin = (opportunityId: string, status?: AppStatus) => (args: object) =>
-  db.application.findMany({ ...args, where: { opportunity_id: opportunityId, status }, include: { student: { include: { user: { select: STUDENT_USER } } }, interviews: true } });
+  db.application.findMany({ ...args, where: { opportunity_id: opportunityId, status }, include: { student: { include: { user: { select: STUDENT_USER }, records: true } }, interviews: true } });
 
 /** The only way the gate opens. Idempotent: already-released rows are skipped. */
 export async function release(opportunityId: string, applicationIds: string[] | undefined, actor: Actor) {

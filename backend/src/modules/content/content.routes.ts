@@ -25,8 +25,15 @@ import {
   ProgrammeList,
   ProgrammeOut,
   ProgrammePatch,
+  NoticeQuery,
+  PlacementRecordPatch,
+  Reach,
   University,
+  UniversityOut,
 } from "./content.schemas.js";
+import { StudentFilter } from "../students/students.filter.js";
+
+const Attached = z.object({ file_id: z.string() });
 
 export const contentModule: ModuleDef = {
   name: "content",
@@ -53,11 +60,11 @@ export const contentModule: ModuleDef = {
 
     // ---- university master data (public read: recruiters see it before registering) ----
     route({
-      method: "get", path: "/university", summary: "University profile", auth: "public", response: University.nullable(),
+      method: "get", path: "/university", summary: "University profile and the public landing-page copy (site)", auth: "public", response: UniversityOut.nullable(),
       handler: () => svc.getUniversity(),
     }),
     route({
-      method: "put", path: "/admin/university", summary: "Set the university profile", auth: ["admin"], body: University, response: University,
+      method: "put", path: "/admin/university", summary: "Set the university profile", auth: ["admin"], body: University, response: UniversityOut,
       handler: ({ body }) => svc.setUniversity(body),
     }),
     route({
@@ -88,6 +95,14 @@ export const contentModule: ModuleDef = {
       upload: { maxBytes: 20 << 20 }, status: 201, response: BrochureUploaded,
       handler: ({ user, params, file }) => svc.uploadBrochure(user.id, params.id, file),
     }),
+    route({
+      method: "patch", path: "/admin/placement-records/:id", summary: "Correct a year's placement record", auth: ["admin"], params: Id, body: PlacementRecordPatch,
+      response: PlacementRecordOut, errors: ["NOT_FOUND"], handler: ({ params, body }) => svc.updatePlacementRecord(params.id, body),
+    }),
+    route({
+      method: "delete", path: "/admin/placement-records/:id", summary: "Delete a year's placement record", auth: ["admin"], params: Id,
+      response: Ok, errors: ["NOT_FOUND"], handler: ({ params }) => svc.deletePlacementRecord(params.id),
+    }),
 
     // ---- noticeboard ----
     route({
@@ -99,6 +114,21 @@ export const contentModule: ModuleDef = {
       auth: ["admin"], status: 201, body: NoticeCreate,
       response: Notice,
       handler: ({ user, body }) => svc.postNotice(user, body),
+    }),
+    route({
+      method: "get", path: "/admin/notices", summary: "Notice history, optionally only notices that reach a department / programme / batch",
+      auth: ["admin"], query: PageQuery.extend(NoticeQuery.shape), response: pageOf(Notice),
+      handler: ({ query }) => svc.adminNotices(query),
+    }),
+    route({
+      method: "get", path: "/admin/notices/reach", summary: "How many active students a department / programme / batch / CGPA filter reaches",
+      auth: ["admin"], query: StudentFilter, response: Reach,
+      handler: ({ query }) => svc.reach(query),
+    }),
+    route({
+      method: "post", path: "/admin/notices/:id/attachment", summary: "Attach (or replace) a PDF on a notice", auth: ["admin"], params: Id,
+      upload: { maxBytes: 10 << 20 }, status: 201, response: Attached, errors: ["NOT_FOUND", "FILE_TOO_LARGE", "FILE_TYPE_NOT_ALLOWED"],
+      handler: ({ user, params, file }) => svc.attachNoticeFile(user.id, params.id, file),
     }),
 
     // ---- admin <-> recruiter messages (one thread per company) ----
@@ -115,6 +145,11 @@ export const contentModule: ModuleDef = {
       auth: ["company", "admin"], status: 201, body: MessageCreate,
       response: Message, errors: ["VALIDATION_FAILED", "NOT_FOUND"],
       handler: ({ user, body }) => svc.sendMessage(user, body),
+    }),
+    route({
+      method: "post", path: "/messages/:id/attachment", summary: "Attach (or replace) a PDF on a message you sent", auth: ["company", "admin"], params: Id,
+      upload: { maxBytes: 10 << 20 }, status: 201, response: Attached, errors: ["NOT_FOUND", "FILE_TOO_LARGE", "FILE_TYPE_NOT_ALLOWED"],
+      handler: ({ user, params, file }) => svc.attachMessageFile(user, params.id, file),
     }),
 
     // ---- recruiter feedback ----

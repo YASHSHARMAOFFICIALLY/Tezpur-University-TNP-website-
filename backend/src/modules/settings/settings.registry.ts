@@ -48,7 +48,7 @@ export const SETTINGS = {
     unit: "domain",
   }),
   upload_max_mb: def({
-    schema: z.object({ resume: mbUpTo(FILE_POLICY.resume.maxBytes), photo: mbUpTo(FILE_POLICY.photo.maxBytes), jd: mbUpTo(FILE_POLICY.jd.maxBytes), brochure: mbUpTo(FILE_POLICY.brochure.maxBytes) }),
+    schema: z.object({ resume: mbUpTo(FILE_POLICY.resume.maxBytes), photo: mbUpTo(FILE_POLICY.photo.maxBytes), jd: mbUpTo(FILE_POLICY.jd.maxBytes), brochure: mbUpTo(FILE_POLICY.brochure.maxBytes), attachment: mbUpTo(FILE_POLICY.attachment.maxBytes).optional(), record: mbUpTo(FILE_POLICY.record.maxBytes).optional() }),
     default: capMb,
     label: "Upload size limits",
     help: `Largest file accepted for each kind of upload; each can only be lowered below the built-in maximum (resume ${capMb.resume}, photo ${capMb.photo}, JD ${capMb.jd}, brochure ${capMb.brochure}).`,

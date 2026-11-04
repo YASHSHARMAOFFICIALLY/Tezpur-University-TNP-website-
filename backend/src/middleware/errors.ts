@@ -30,6 +30,9 @@ export const ERRORS = {
 
   NOT_ELIGIBLE: { status: 422, message: "You do not meet the eligibility criteria", hint: "The student does not meet this posting's criteria; details list each rule. Edit the posting if the criteria are wrong." },
   OPPORTUNITY_NOT_OPEN: { status: 409, message: "Opportunity is not accepting applications", hint: "The posting is closed, not yet approved, or past its deadline. Check its status and deadline." },
+  PLACED: { status: 409, message: "You are already placed. Applying is closed unless the T&P cell grants your appeal.", hint: "The student has a published selection. Grant their appeal under Appeals if they may apply again." },
+  NOT_PARTICIPANT: { status: 403, message: "You can only give feedback on events you registered for and recruiters you applied to", hint: "The student did not take part in this event or posting." },
+  CANNOT_DELETE: { status: 409, message: "This account cannot be deleted", hint: "You cannot delete your own account or the last admin account." },
   ALREADY_APPLIED: { status: 409, message: "Already applied", hint: "The student has already applied to this posting. Nothing to do." },
   INVALID_TRANSITION: { status: 409, message: "That status change is not allowed from the current state", hint: "That action does not fit the record's current state. Reload to see the current status first." },
 

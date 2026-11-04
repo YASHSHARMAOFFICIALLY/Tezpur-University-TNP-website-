@@ -40,6 +40,25 @@ enum FileKind {
   photo
   jd
   brochure
+  attachment
+  record
+}
+
+enum DriveMode {
+  online
+  offline
+  hybrid
+}
+
+enum RecordKind {
+  certificate
+  internship
+  project
+}
+
+enum FeedbackTarget {
+  event
+  opportunity
 }
 
 enum CompanyCategory {
@@ -143,48 +162,55 @@ model OtpCode {
 }
 
 model Student {
-  id                    String           @id @default(uuid(7))
-  user_id               String           @unique
-  user                  User             @relation(fields: [user_id], references: [id])
-  enrolment_no          String           @unique
-  mobile                String?
-  dob                   DateTime?        @db.Date
-  gender                String?
-  category              String?
-  minority              Boolean?
-  specially_abled       Boolean?
-  regional_diversity    String?
-  jee_rank              Int?
-  jee_score             Float?
-  jee_percentile        Float?
-  gate_qualified        Boolean?
-  gate_score            Float?
-  programme_id          String?
-  programme             Programme?       @relation(fields: [programme_id], references: [id])
-  department            String?
-  year_of_admission     Int?
-  year_of_completion    Int?
-  cgpa                  Float?
-  current_address       String?
-  permanent_address     String?
-  marks_10              Float?
-  yop_10                Int?
-  marks_12              Float?
-  yop_12                Int?
-  marks_ug              Float?
-  yop_ug                Int?
-  marks_pg              Float?
-  yop_pg                Int?
-  other_courses         String?
+  id                     String              @id @default(uuid(7))
+  user_id                String              @unique
+  user                   User                @relation(fields: [user_id], references: [id])
+  enrolment_no           String              @unique
+  mobile                 String?
+  dob                    DateTime?           @db.Date
+  gender                 String?
+  category               String?
+  minority               Boolean?
+  specially_abled        Boolean?
+  regional_diversity     String?
+  jee_rank               Int?
+  jee_score              Float?
+  jee_percentile         Float?
+  gate_qualified         Boolean?
+  gate_score             Float?
+  programme_id           String?
+  programme              Programme?          @relation(fields: [programme_id], references: [id])
+  department             String?
+  year_of_admission      Int?
+  year_of_completion     Int?
+  cgpa                   Float?
+  current_address        String?
+  permanent_address      String?
+  marks_10               Float?
+  yop_10                 Int?
+  marks_12               Float?
+  yop_12                 Int?
+  marks_ug               Float?
+  yop_ug                 Int?
+  marks_pg               Float?
+  yop_pg                 Int?
+  other_courses          String?
   professional_interests String?
-  certifications        String?
-  portfolio_url         String?
-  linkedin_url          String?
-  resume_file_id        String?
-  photo_file_id         String?
-  academic_standing     AcademicStanding
-  applications          Application[]
-  registrations         EventRegistration[]
+  certifications         String?
+  portfolio_url          String?
+  linkedin_url           String?
+  resume_file_id         String?
+  photo_file_id          String?
+  academic_standing      AcademicStanding
+  /// Placed students cannot apply. An admin-granted appeal reopens applying for selections published before this time.
+  apply_unlocked_at      DateTime?
+  appeal_reason          String?
+  appeal_at              DateTime?
+  appeal_note            String?
+  applications           Application[]
+  registrations          EventRegistration[]
+  records                StudentRecord[]
+  feedback               StudentFeedback[]
 
   @@map("students")
 }
@@ -218,7 +244,7 @@ model CompanyContact {
 }
 
 model UniversityProfile {
-  id             Int     @id @default(1)
+  id             Int      @id @default(1)
   name           String
   address        String?
   website        String?
@@ -227,6 +253,8 @@ model UniversityProfile {
   achievements   String?
   contact_emails String[]
   admin_mobiles  String[]
+  /// Editable public-page copy (hero, schools, brochure, directorate). Missing keys fall back to the built-in text.
+  site           Json     @default("{}")
 
   @@map("university_profile")
 }
@@ -254,9 +282,9 @@ model PlacementRecord {
 }
 
 model Opportunity {
-  id                String        @id @default(uuid(7))
+  id                String            @id @default(uuid(7))
   company_id        String
-  company           Company       @relation(fields: [company_id], references: [id])
+  company           Company           @relation(fields: [company_id], references: [id])
   type              OppType
   title             String
   job_profile       String?
@@ -270,13 +298,20 @@ model Opportunity {
   eligibility       Json
   selection_process Json
   jd_file_id        String?
+  drive_mode        DriveMode?
+  /// Probable hiring period, "YYYY-MM". hiring_to null = a single month.
+  hiring_from       String?
+  hiring_to         String?
+  /// Campus logistics. Shown only to students who applied to this posting.
+  venue             String?
+  logistics         String?
   status            OppStatus
   review_note       String?
   posted_by         String
   applications      Application[]
   result            Result?
   feedback_requests FeedbackRequest[]
-  created_at        DateTime      @default(now())
+  created_at        DateTime          @default(now())
 
   @@index([status, type])
   @@index([company_id])
@@ -358,12 +393,21 @@ model EventRegistration {
 }
 
 model Notice {
-  id           String   @id @default(uuid(7))
-  audience     Audience
-  title        String
-  body         String
-  created_by   String?
-  published_at DateTime @default(now())
+  id            String   @id @default(uuid(7))
+  audience      Audience
+  title         String
+  body          String
+  /// Student targeting. Empty array / null = no restriction on that criterion.
+  departments   String[] @default([])
+  programme_ids String[] @default([])
+  batches       Int[]    @default([])
+  min_cgpa      Float?
+  max_cgpa      Float?
+  /// true = only placed students, false = only unplaced, null = both.
+  placed        Boolean?
+  file_id       String?
+  created_by    String?
+  published_at  DateTime @default(now())
 
   @@index([audience, published_at])
   @@map("notices")
@@ -375,6 +419,7 @@ model Message {
   from_user  String
   subject    String
   body       String
+  file_id    String?
   read_at    DateTime?
   created_at DateTime  @default(now())
 
@@ -490,4 +535,39 @@ model BackupRun {
   detail      String?
 
   @@map("backup_runs")
+}
+
+model StudentRecord {
+  id           String     @id @default(uuid(7))
+  student_id   String
+  student      Student    @relation(fields: [student_id], references: [id])
+  kind         RecordKind
+  title        String
+  organisation String?
+  description  String?
+  /// "YYYY-MM"
+  start_month  String?
+  end_month    String?
+  url          String?
+  file_id      String?
+  created_at   DateTime   @default(now())
+
+  @@index([student_id, kind])
+  @@map("student_records")
+}
+
+/// A student's rating of a training event they registered for, or of a recruiter whose posting they applied to.
+model StudentFeedback {
+  id         String         @id @default(uuid(7))
+  student_id String
+  student    Student        @relation(fields: [student_id], references: [id])
+  target     FeedbackTarget
+  target_id  String
+  rating     Int
+  comment    String?
+  created_at DateTime       @default(now())
+
+  @@unique([student_id, target, target_id])
+  @@index([target, target_id])
+  @@map("student_feedback")
 }

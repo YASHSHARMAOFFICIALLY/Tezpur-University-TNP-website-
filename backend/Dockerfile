@@ -3,7 +3,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-RUN npx prisma generate && npm run build
+# prisma.config.ts needs a DATABASE_URL to load; generate never connects, so a placeholder is enough.
+RUN DATABASE_URL=postgresql://build@localhost/build npx prisma generate && npm run build
 
 FROM node:22-bookworm-slim
 WORKDIR /app

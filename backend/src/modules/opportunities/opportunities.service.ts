@@ -1,6 +1,8 @@
+import { createHash } from "node:crypto";
 import { db, defineMachine, inTx, type Actor, type Tx } from "../../infrastructure/db.js";
 import { fail } from "../../middleware/errors.js";
 import { inFileTx } from "../../infrastructure/storage.js";
+import { mail } from "../../infrastructure/mailer.js";
 import { paginate } from "../../http/route.js";
 import type { UploadedFile } from "../../middleware/upload.js";
 import type { Prisma } from "../../generated/prisma/client.js";
@@ -76,6 +78,19 @@ export async function updateDraft(companyId: string, id: string, input: Partial<
     if (!o) fail("NOT_FOUND");
     if (o.status !== "draft") fail("INVALID_TRANSITION", { reason: "only drafts can be edited", status: o.status });
     return tx.opportunity.update({ where: { id }, data: input });
+  });
+}
+
+/** Logistics change after approval too (venue is often fixed late). Applicants still in the running are mailed. */
+export async function setLogistics(companyId: string, id: string, body: { venue?: string; logistics?: string }) {
+  return inTx(async (tx) => {
+    const o = await findOwn(tx, companyId, id);
+    if (!o) fail("NOT_FOUND");
+    const updated = await tx.opportunity.update({ where: { id }, data: { venue: body.venue ?? null, logistics: body.logistics ?? null } });
+    const apps = await tx.application.findMany({ where: { opportunity_id: id, status: { not: "rejected" } }, include: { student: { include: { user: { select: { email: true } } } } } });
+    const text = `Venue: ${updated.venue ?? "to be announced"}\n${updated.logistics ?? ""}`.trim();
+    for (const a of apps) await mail(tx, { to: a.student.user.email, subject: `Campus logistics: ${o.title}`, text }, { dedupeKey: `logistics:${id}:${a.id}:${createHash("sha1").update(text).digest("hex")}` });
+    return updated;
   });
 }
 

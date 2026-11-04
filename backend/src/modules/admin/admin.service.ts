@@ -8,6 +8,8 @@ import { userMachine } from "../auth/auth.service.js";
 import { deadlineAhead, opportunityMachine } from "../opportunities/opportunities.service.js";
 import type { AdminStudentPatch } from "../students/students.schemas.js";
 import type { Decision } from "./admin.schemas.js";
+import { studentWhere, type StudentFilter } from "../students/students.filter.js";
+import type { Prisma } from "../../generated/prisma/client.js";
 
 type Page = z.infer<typeof PageQuery>;
 
@@ -80,17 +82,36 @@ export async function createTeacher(body: { email: string; name: string }, actor
   }
 }
 
+export const deleteTeacher = (id: string, selfId: string, actor: Actor) =>
+  inTx(async (tx) => {
+    const u = await tx.user.findFirst({ where: { id, role: "admin" } });
+    if (!u) fail("NOT_FOUND");
+    if (id === selfId) fail("CANNOT_DELETE", { reason: "you cannot delete your own account" });
+    if ((await tx.user.count({ where: { role: "admin", status: "active" } })) <= 1 && u.status === "active") fail("CANNOT_DELETE", { reason: "last admin" });
+    await tx.otpCode.deleteMany({ where: { user_id: id } });
+    await tx.user.delete({ where: { id } });
+    await audit(tx, actor, "user.deleted", "user", id, { email: u.email, role: u.role });
+    return { ok: true as const };
+  });
+
 export const listTeachers = (query: Page) => paginate((a) => db.user.findMany({ ...a, where: { role: "admin" } }), query);
 
-export const searchStudents = (query: Page & { q?: string; status?: "pending_email_verify" | "pending_admin" | "active" | "rejected" | "alumni" }) =>
+type RosterQuery = Page & StudentFilter & { q?: string; status?: "pending_email_verify" | "pending_admin" | "active" | "rejected" | "alumni" };
+
+export const rosterWhere = (query: Omit<RosterQuery, keyof Page>): Prisma.StudentWhereInput => ({
+  AND: [
+    studentWhere(query),
+    { user: { status: query.status } },
+    query.q ? { OR: [{ enrolment_no: { contains: query.q, mode: "insensitive" } }, { user: { name: { contains: query.q, mode: "insensitive" } } }] } : {},
+  ],
+});
+
+export const searchStudents = (query: RosterQuery) =>
   paginate(
     (a) =>
       db.student.findMany({
         ...a,
-        where: {
-          user: { status: query.status },
-          ...(query.q ? { OR: [{ enrolment_no: { contains: query.q, mode: "insensitive" } }, { user: { name: { contains: query.q, mode: "insensitive" } } }] } : {}),
-        },
+        where: rosterWhere(query),
         include: { user: { select: { name: true, email: true, status: true } } },
       }),
     query,

@@ -51,6 +51,9 @@
                   "PROFILE_INCOMPLETE",
                   "NOT_ELIGIBLE",
                   "OPPORTUNITY_NOT_OPEN",
+                  "PLACED",
+                  "NOT_PARTICIPANT",
+                  "CANNOT_DELETE",
                   "ALREADY_APPLIED",
                   "INVALID_TRANSITION",
                   "REGISTRATION_CLOSED",
@@ -443,6 +446,77 @@
           "user"
         ]
       },
+      "StudentRecord": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "certificate",
+              "internship",
+              "project"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "organisation": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "start_month": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "end_month": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "file_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "organisation",
+          "description",
+          "start_month",
+          "end_month",
+          "url",
+          "file_id",
+          "created_at"
+        ]
+      },
       "Opportunity": {
         "type": "object",
         "properties": {
@@ -536,6 +610,42 @@
               }
             }
           },
+          "drive_mode": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "online",
+              "offline",
+              "hybrid",
+              null
+            ]
+          },
+          "hiring_from": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hiring_to": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "venue": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "logistics": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "id": {
             "type": "string"
           },
@@ -582,6 +692,11 @@
           "apply_deadline",
           "eligibility",
           "selection_process",
+          "drive_mode",
+          "hiring_from",
+          "hiring_to",
+          "venue",
+          "logistics",
           "id",
           "company_id",
           "status",
@@ -1105,6 +1220,103 @@
           "contacts"
         ]
       },
+      "SiteContent": {
+        "type": "object",
+        "properties": {
+          "hero_badge": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "hero_title": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "hero_text": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "brochure_label": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "schools_title": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "schools_text": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "brochure_title": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "brochure_text": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "directorate_title": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "directorate_text": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "contacts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                },
+                "role": {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "line": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "required": [
+                "name",
+                "role",
+                "line"
+              ]
+            },
+            "maxItems": 10
+          },
+          "schools": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "department": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                },
+                "tag": {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "foot": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "required": [
+                "department"
+              ]
+            },
+            "maxItems": 30
+          }
+        }
+      },
       "Notice": {
         "type": "object",
         "properties": {
@@ -1128,6 +1340,48 @@
           "published_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "departments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "programme_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "batches": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "min_cgpa": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "max_cgpa": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "placed": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "file_id": {
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [
@@ -1135,7 +1389,14 @@
           "audience",
           "title",
           "body",
-          "published_at"
+          "published_at",
+          "departments",
+          "programme_ids",
+          "batches",
+          "min_cgpa",
+          "max_cgpa",
+          "placed",
+          "file_id"
         ]
       }
     },
@@ -1207,7 +1468,8 @@
                       "type": "string",
                       "enum": [
                         "pending_email_verify",
-                        "pending_admin"
+                        "pending_admin",
+                        "active"
                       ]
                     }
                   },
@@ -1368,7 +1630,8 @@
                       "type": "string",
                       "enum": [
                         "pending_email_verify",
-                        "pending_admin"
+                        "pending_admin",
+                        "active"
                       ]
                     }
                   },
@@ -1417,7 +1680,7 @@
         "tags": [
           "auth"
         ],
-        "summary": "Verify email with the 6-digit code; account moves to the admin approval queue",
+        "summary": "Verify email with the 6-digit code. Students become active at once; recruiters move to the admin approval queue",
         "security": [],
         "description": "Public",
         "requestBody": {
@@ -1456,7 +1719,8 @@
                       "type": "string",
                       "enum": [
                         "pending_email_verify",
-                        "pending_admin"
+                        "pending_admin",
+                        "active"
                       ]
                     }
                   },
@@ -1587,9 +1851,17 @@
                 "type": "object",
                 "properties": {
                   "email": {
-                    "type": "string",
-                    "maxLength": 200,
-                    "format": "email"
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 200,
+                        "format": "email"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^[A-Za-z]{3}\\d{5,6}$"
+                      }
+                    ]
                   },
                   "password": {
                     "type": "string",
@@ -2086,7 +2358,8 @@
                       "type": "string",
                       "enum": [
                         "pending_email_verify",
-                        "pending_admin"
+                        "pending_admin",
+                        "active"
                       ]
                     }
                   },
@@ -2689,6 +2962,1294 @@
         }
       }
     },
+    "/api/v1/students/me/placement": {
+      "get": {
+        "tags": [
+          "students"
+        ],
+        "summary": "Am I placed (applying closed)? Selections, appeal state",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: student",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "placed": {
+                      "type": "boolean"
+                    },
+                    "selections": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "opportunity_id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "company": {
+                            "type": "string"
+                          },
+                          "published_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "opportunity_id",
+                          "title",
+                          "company",
+                          "published_at"
+                        ]
+                      }
+                    },
+                    "apply_unlocked_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "appeal": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "reason": {
+                          "type": "string"
+                        },
+                        "at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      },
+                      "required": [
+                        "reason",
+                        "at"
+                      ]
+                    },
+                    "appeal_note": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "placed",
+                    "selections",
+                    "apply_unlocked_at",
+                    "appeal",
+                    "appeal_note"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/me/appeal": {
+      "post": {
+        "tags": [
+          "students"
+        ],
+        "summary": "Placed students ask the T&P cell to reopen applying",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: student",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 2000
+                  }
+                },
+                "required": [
+                  "reason"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "placed": {
+                      "type": "boolean"
+                    },
+                    "selections": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "opportunity_id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "company": {
+                            "type": "string"
+                          },
+                          "published_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "opportunity_id",
+                          "title",
+                          "company",
+                          "published_at"
+                        ]
+                      }
+                    },
+                    "apply_unlocked_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "appeal": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "reason": {
+                          "type": "string"
+                        },
+                        "at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      },
+                      "required": [
+                        "reason",
+                        "at"
+                      ]
+                    },
+                    "appeal_note": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "placed",
+                    "selections",
+                    "apply_unlocked_at",
+                    "appeal",
+                    "appeal_note"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "INVALID_TRANSITION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/me/records": {
+      "get": {
+        "tags": [
+          "students"
+        ],
+        "summary": "My certificates, internships and projects",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: student",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StudentRecord"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "students"
+        ],
+        "summary": "Add a certificate, internship or project",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: student",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "certificate",
+                      "internship",
+                      "project"
+                    ]
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 200
+                  },
+                  "organisation": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 2000
+                  },
+                  "start_month": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                  },
+                  "end_month": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                  },
+                  "url": {
+                    "type": "string",
+                    "maxLength": 500,
+                    "format": "uri"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "title"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/me/records/{id}": {
+      "delete": {
+        "tags": [
+          "students"
+        ],
+        "summary": "Remove a record",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: student",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    }
+                  },
+                  "required": [
+                    "ok"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/me/records/{id}/file": {
+      "post": {
+        "tags": [
+          "students"
+        ],
+        "summary": "Attach proof to a record (PDF, JPEG or PNG, max 5 MB)",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: student",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "file_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "file_id"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FILE_TOO_LARGE",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "FILE_TYPE_NOT_ALLOWED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/me/feedback": {
+      "get": {
+        "tags": [
+          "students"
+        ],
+        "summary": "Ratings I gave",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: student",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "target": {
+                        "type": "string",
+                        "enum": [
+                          "event",
+                          "opportunity"
+                        ]
+                      },
+                      "target_id": {
+                        "type": "string"
+                      },
+                      "rating": {
+                        "type": "number"
+                      },
+                      "comment": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "target",
+                      "target_id",
+                      "rating",
+                      "comment",
+                      "created_at"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "students"
+        ],
+        "summary": "Rate a training event I registered for, or a recruiter I applied to (re-sending replaces it)",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: student",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "target": {
+                    "type": "string",
+                    "enum": [
+                      "event",
+                      "opportunity"
+                    ]
+                  },
+                  "target_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "rating": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  },
+                  "comment": {
+                    "type": "string",
+                    "maxLength": 2000
+                  }
+                },
+                "required": [
+                  "target",
+                  "target_id",
+                  "rating"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "target": {
+                      "type": "string",
+                      "enum": [
+                        "event",
+                        "opportunity"
+                      ]
+                    },
+                    "target_id": {
+                      "type": "string"
+                    },
+                    "rating": {
+                      "type": "number"
+                    },
+                    "comment": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "target",
+                    "target_id",
+                    "rating",
+                    "comment",
+                    "created_at"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN | NOT_PARTICIPANT",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/appeals": {
+      "get": {
+        "tags": [
+          "students"
+        ],
+        "summary": "Placed students asking to apply again",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: admin",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "student_id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "enrolment_no": {
+                        "type": "string"
+                      },
+                      "reason": {
+                        "type": "string"
+                      },
+                      "at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "selections": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "opportunity_id": {
+                              "type": "string"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "company": {
+                              "type": "string"
+                            },
+                            "published_at": {
+                              "type": "string",
+                              "format": "date-time"
+                            }
+                          },
+                          "required": [
+                            "opportunity_id",
+                            "title",
+                            "company",
+                            "published_at"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "student_id",
+                      "name",
+                      "enrolment_no",
+                      "reason",
+                      "at",
+                      "selections"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/students/{id}/appeal": {
+      "post": {
+        "tags": [
+          "students"
+        ],
+        "summary": "Grant (reopen applying) or reject a student's appeal",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: admin",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "grant": {
+                    "type": "boolean"
+                  },
+                  "note": {
+                    "type": "string",
+                    "maxLength": 1000
+                  }
+                },
+                "required": [
+                  "grant"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "changed": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "changed"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/students/{id}/records": {
+      "get": {
+        "tags": [
+          "students"
+        ],
+        "summary": "A student's certificates, internships and projects",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: admin",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StudentRecord"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/student-feedback": {
+      "get": {
+        "tags": [
+          "students"
+        ],
+        "summary": "Student ratings of trainings and recruiters",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: admin",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "event",
+                "opportunity"
+              ]
+            },
+            "required": false,
+            "name": "target",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "target": {
+                        "type": "string",
+                        "enum": [
+                          "event",
+                          "opportunity"
+                        ]
+                      },
+                      "target_id": {
+                        "type": "string"
+                      },
+                      "rating": {
+                        "type": "number"
+                      },
+                      "comment": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "target_name": {
+                        "type": "string"
+                      },
+                      "student": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "enrolment_no": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "enrolment_no"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "target",
+                      "target_id",
+                      "rating",
+                      "comment",
+                      "created_at",
+                      "target_name",
+                      "student"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/admin/students/{id}/probation": {
       "post": {
         "tags": [
@@ -2800,7 +4361,7 @@
         "tags": [
           "students"
         ],
-        "summary": "Bulk-add students from CSV (columns: enrolment_no,name,email[,programme_code,year_of_completion,mobile]). Runs as a job.",
+        "summary": "Bulk-add or update students from CSV. Required: enrolment_no,name,email. Optional: programme_code and any profile field (see the admin roster page). Existing students (same email + enrolment) are updated. Runs as a job.",
         "security": [
           {
             "bearer": []
@@ -3046,6 +4607,30 @@
                         "default": false
                       }
                     }
+                  },
+                  "drive_mode": {
+                    "type": "string",
+                    "enum": [
+                      "online",
+                      "offline",
+                      "hybrid"
+                    ]
+                  },
+                  "hiring_from": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                  },
+                  "hiring_to": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                  },
+                  "venue": {
+                    "type": "string",
+                    "maxLength": 300
+                  },
+                  "logistics": {
+                    "type": "string",
+                    "maxLength": 5000
                   }
                 },
                 "required": [
@@ -3319,6 +4904,46 @@
                         "default": false
                       }
                     }
+                  },
+                  "drive_mode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "enum": [
+                      "online",
+                      "offline",
+                      "hybrid",
+                      null
+                    ]
+                  },
+                  "hiring_from": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                  },
+                  "hiring_to": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                  },
+                  "venue": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 300
+                  },
+                  "logistics": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 5000
                   }
                 }
               }
@@ -3471,6 +5096,102 @@
           },
           "403": {
             "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/company/opportunities/{id}/logistics": {
+      "put": {
+        "tags": [
+          "opportunities"
+        ],
+        "summary": "Set campus logistics (venue, reporting, notes) at any stage. Mailed to this posting's applicants only.",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: company",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "venue": {
+                    "type": "string",
+                    "maxLength": 300
+                  },
+                  "logistics": {
+                    "type": "string",
+                    "maxLength": 5000
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Opportunity"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NOT_FOUND",
             "content": {
               "application/json": {
                 "schema": {
@@ -3831,6 +5552,30 @@
                               }
                             }
                           },
+                          "drive_mode": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "enum": [
+                              "online",
+                              "offline",
+                              "hybrid",
+                              null
+                            ]
+                          },
+                          "hiring_from": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "hiring_to": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "id": {
                             "type": "string"
                           },
@@ -3912,6 +5657,9 @@
                           "apply_deadline",
                           "eligibility",
                           "selection_process",
+                          "drive_mode",
+                          "hiring_from",
+                          "hiring_to",
                           "id",
                           "company_id",
                           "status",
@@ -4103,6 +5851,30 @@
                         }
                       }
                     },
+                    "drive_mode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "enum": [
+                        "online",
+                        "offline",
+                        "hybrid",
+                        null
+                      ]
+                    },
+                    "hiring_from": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "hiring_to": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "id": {
                       "type": "string"
                     },
@@ -4184,6 +5956,9 @@
                     "apply_deadline",
                     "eligibility",
                     "selection_process",
+                    "drive_mode",
+                    "hiring_from",
+                    "hiring_to",
                     "id",
                     "company_id",
                     "status",
@@ -4431,12 +6206,58 @@
                               "company": {
                                 "type": "object",
                                 "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
                                   "name": {
                                     "type": "string"
                                   }
                                 },
                                 "required": [
+                                  "id",
                                   "name"
+                                ]
+                              },
+                              "drive_mode": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "enum": [
+                                  "online",
+                                  "offline",
+                                  "hybrid",
+                                  null
+                                ]
+                              },
+                              "hiring_from": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "hiring_to": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "venue": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "logistics": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "jd_file_id": {
+                                "type": [
+                                  "string",
+                                  "null"
                                 ]
                               }
                             },
@@ -4444,7 +6265,13 @@
                               "id",
                               "title",
                               "type",
-                              "company"
+                              "company",
+                              "drive_mode",
+                              "hiring_from",
+                              "hiring_to",
+                              "venue",
+                              "logistics",
+                              "jd_file_id"
                             ]
                           },
                           "interviews": {
@@ -4633,7 +6460,320 @@
                             "format": "date-time"
                           },
                           "student": {
-                            "$ref": "#/components/schemas/StudentProfile"
+                            "type": "object",
+                            "properties": {
+                              "mobile": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "maxLength": 20
+                              },
+                              "gender": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "maxLength": 30
+                              },
+                              "category": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "maxLength": 30
+                              },
+                              "minority": {
+                                "type": [
+                                  "boolean",
+                                  "null"
+                                ]
+                              },
+                              "specially_abled": {
+                                "type": [
+                                  "boolean",
+                                  "null"
+                                ]
+                              },
+                              "regional_diversity": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "maxLength": 100
+                              },
+                              "jee_rank": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "exclusiveMinimum": 0
+                              },
+                              "jee_score": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "jee_percentile": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ],
+                                "minimum": 0,
+                                "maximum": 100
+                              },
+                              "gate_qualified": {
+                                "type": [
+                                  "boolean",
+                                  "null"
+                                ]
+                              },
+                              "gate_score": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "programme_id": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "format": "uuid"
+                              },
+                              "department": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "maxLength": 200
+                              },
+                              "year_of_admission": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "minimum": 1990,
+                                "maximum": 2100
+                              },
+                              "year_of_completion": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "minimum": 1990,
+                                "maximum": 2100
+                              },
+                              "cgpa": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ],
+                                "minimum": 0,
+                                "maximum": 10
+                              },
+                              "current_address": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "maxLength": 500
+                              },
+                              "permanent_address": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "maxLength": 500
+                              },
+                              "marks_10": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ],
+                                "minimum": 0,
+                                "maximum": 100
+                              },
+                              "yop_10": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "marks_12": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ],
+                                "minimum": 0,
+                                "maximum": 100
+                              },
+                              "yop_12": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "marks_ug": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ],
+                                "minimum": 0,
+                                "maximum": 100
+                              },
+                              "yop_ug": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "marks_pg": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ],
+                                "minimum": 0,
+                                "maximum": 100
+                              },
+                              "yop_pg": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "other_courses": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "maxLength": 2000
+                              },
+                              "professional_interests": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "maxLength": 2000
+                              },
+                              "certifications": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "maxLength": 2000
+                              },
+                              "portfolio_url": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "format": "uri"
+                              },
+                              "linkedin_url": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "format": "uri"
+                              },
+                              "id": {
+                                "type": "string"
+                              },
+                              "enrolment_no": {
+                                "type": "string"
+                              },
+                              "dob": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "resume_file_id": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "photo_file_id": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "academic_standing": {
+                                "type": "string",
+                                "enum": [
+                                  "good",
+                                  "probation"
+                                ]
+                              },
+                              "user": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "email": {
+                                    "type": "string"
+                                  },
+                                  "status": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "name",
+                                  "email",
+                                  "status"
+                                ]
+                              },
+                              "records": {
+                                "type": "array",
+                                "items": {
+                                  "$ref": "#/components/schemas/StudentRecord"
+                                }
+                              }
+                            },
+                            "required": [
+                              "mobile",
+                              "gender",
+                              "category",
+                              "minority",
+                              "specially_abled",
+                              "regional_diversity",
+                              "jee_rank",
+                              "jee_score",
+                              "jee_percentile",
+                              "gate_qualified",
+                              "gate_score",
+                              "programme_id",
+                              "department",
+                              "year_of_admission",
+                              "year_of_completion",
+                              "cgpa",
+                              "current_address",
+                              "permanent_address",
+                              "marks_10",
+                              "yop_10",
+                              "marks_12",
+                              "yop_12",
+                              "marks_ug",
+                              "yop_ug",
+                              "marks_pg",
+                              "yop_pg",
+                              "other_courses",
+                              "professional_interests",
+                              "certifications",
+                              "portfolio_url",
+                              "linkedin_url",
+                              "id",
+                              "enrolment_no",
+                              "dob",
+                              "resume_file_id",
+                              "photo_file_id",
+                              "academic_standing",
+                              "user",
+                              "records"
+                            ]
                           },
                           "interviews": {
                             "type": "array",
@@ -5266,6 +7406,12 @@
                                   "email",
                                   "status"
                                 ]
+                              },
+                              "records": {
+                                "type": "array",
+                                "items": {
+                                  "$ref": "#/components/schemas/StudentRecord"
+                                }
                               }
                             },
                             "required": [
@@ -5305,7 +7451,8 @@
                               "dob",
                               "resume_file_id",
                               "photo_file_id",
-                              "user"
+                              "user",
+                              "records"
                             ]
                           },
                           "interviews": {
@@ -7641,6 +9788,42 @@
                               }
                             }
                           },
+                          "drive_mode": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "enum": [
+                              "online",
+                              "offline",
+                              "hybrid",
+                              null
+                            ]
+                          },
+                          "hiring_from": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "hiring_to": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "venue": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "logistics": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "id": {
                             "type": "string"
                           },
@@ -7698,6 +9881,11 @@
                           "apply_deadline",
                           "eligibility",
                           "selection_process",
+                          "drive_mode",
+                          "hiring_from",
+                          "hiring_to",
+                          "venue",
+                          "logistics",
                           "id",
                           "company_id",
                           "status",
@@ -8519,12 +10707,110 @@
         }
       }
     },
+    "/api/v1/admin/teachers/{id}": {
+      "delete": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Delete a staff (admin/teacher) account. You cannot delete yourself or the last admin.",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: admin",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    }
+                  },
+                  "required": [
+                    "ok"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "CANNOT_DELETE",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/admin/students": {
       "get": {
         "tags": [
           "admin"
         ],
-        "summary": "Search students",
+        "summary": "Search students by name/enrolment, status, department, programme, batch, CGPA range, placed",
         "security": [
           {
             "bearer": []
@@ -8550,6 +10836,100 @@
             },
             "required": false,
             "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "maxItems": 100,
+              "default": []
+            },
+            "required": false,
+            "name": "departments",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "maxItems": 100,
+              "default": []
+            },
+            "required": false,
+            "name": "programme_ids",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1990,
+                "maximum": 2100
+              },
+              "maxItems": 100,
+              "default": []
+            },
+            "required": false,
+            "name": "batches",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 10,
+              "default": null
+            },
+            "required": false,
+            "name": "min_cgpa",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 10,
+              "default": null
+            },
+            "required": false,
+            "name": "max_cgpa",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "required": false,
+            "name": "placed",
             "in": "query"
           },
           {
@@ -9898,7 +12278,7 @@
         "tags": [
           "content"
         ],
-        "summary": "University profile",
+        "summary": "University profile and the public landing-page copy (site)",
         "security": [],
         "description": "Public",
         "responses": {
@@ -9962,6 +12342,9 @@
                         "type": "string",
                         "maxLength": 20
                       }
+                    },
+                    "site": {
+                      "$ref": "#/components/schemas/SiteContent"
                     }
                   },
                   "required": [
@@ -9972,7 +12355,8 @@
                     "ranking",
                     "achievements",
                     "contact_emails",
-                    "admin_mobiles"
+                    "admin_mobiles",
+                    "site"
                   ]
                 }
               }
@@ -10059,6 +12443,9 @@
                       "type": "string",
                       "maxLength": 20
                     }
+                  },
+                  "site": {
+                    "$ref": "#/components/schemas/SiteContent"
                   }
                 },
                 "required": [
@@ -10133,6 +12520,9 @@
                         "type": "string",
                         "maxLength": 20
                       }
+                    },
+                    "site": {
+                      "$ref": "#/components/schemas/SiteContent"
                     }
                   },
                   "required": [
@@ -10143,7 +12533,8 @@
                     "ranking",
                     "achievements",
                     "contact_emails",
-                    "admin_mobiles"
+                    "admin_mobiles",
+                    "site"
                   ]
                 }
               }
@@ -10773,6 +13164,204 @@
         }
       }
     },
+    "/api/v1/admin/placement-records/{id}": {
+      "patch": {
+        "tags": [
+          "content"
+        ],
+        "summary": "Correct a year's placement record",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: admin",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "year": {
+                    "type": "integer"
+                  },
+                  "data": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "year": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "year",
+                    "data",
+                    "id"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "content"
+        ],
+        "summary": "Delete a year's placement record",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: admin",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    }
+                  },
+                  "required": [
+                    "ok"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/noticeboard": {
       "get": {
         "tags": [
@@ -10899,6 +13488,70 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "departments": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200
+                    },
+                    "maxItems": 100,
+                    "default": []
+                  },
+                  "programme_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "maxItems": 100,
+                    "default": []
+                  },
+                  "batches": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1990,
+                      "maximum": 2100
+                    },
+                    "maxItems": 100,
+                    "default": []
+                  },
+                  "min_cgpa": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 10,
+                    "default": null
+                  },
+                  "max_cgpa": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 10,
+                    "default": null
+                  },
+                  "placed": {
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null
+                  },
                   "audience": {
                     "type": "string",
                     "enum": [
@@ -10973,6 +13626,442 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "summary": "Notice history, optionally only notices that reach a department / programme / batch",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: admin",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "maxItems": 100,
+              "default": []
+            },
+            "required": false,
+            "name": "departments",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "maxItems": 100,
+              "default": []
+            },
+            "required": false,
+            "name": "programme_ids",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1990,
+                "maximum": 2100
+              },
+              "maxItems": 100,
+              "default": []
+            },
+            "required": false,
+            "name": "batches",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Notice"
+                      }
+                    },
+                    "page": {
+                      "type": "object",
+                      "properties": {
+                        "cursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "has_more": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "cursor",
+                        "has_more"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "page"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/notices/reach": {
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "summary": "How many active students a department / programme / batch / CGPA filter reaches",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: admin",
+        "parameters": [
+          {
+            "schema": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "maxItems": 100,
+              "default": []
+            },
+            "required": false,
+            "name": "departments",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "maxItems": 100,
+              "default": []
+            },
+            "required": false,
+            "name": "programme_ids",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1990,
+                "maximum": 2100
+              },
+              "maxItems": 100,
+              "default": []
+            },
+            "required": false,
+            "name": "batches",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 10,
+              "default": null
+            },
+            "required": false,
+            "name": "min_cgpa",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 10,
+              "default": null
+            },
+            "required": false,
+            "name": "max_cgpa",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "required": false,
+            "name": "placed",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "students": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "students"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/notices/{id}/attachment": {
+      "post": {
+        "tags": [
+          "content"
+        ],
+        "summary": "Attach (or replace) a PDF on a notice",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: admin",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "file_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "file_id"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FILE_TOO_LARGE",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "FILE_TYPE_NOT_ALLOWED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/messages": {
@@ -11037,6 +14126,12 @@
                           "body": {
                             "type": "string"
                           },
+                          "file_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "read_at": {
                             "type": "string",
                             "format": "date-time"
@@ -11052,6 +14147,7 @@
                           "from_user",
                           "subject",
                           "body",
+                          "file_id",
                           "read_at",
                           "created_at"
                         ]
@@ -11179,6 +14275,12 @@
                     "body": {
                       "type": "string"
                     },
+                    "file_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "read_at": {
                       "type": "string",
                       "format": "date-time"
@@ -11194,6 +14296,7 @@
                     "from_user",
                     "subject",
                     "body",
+                    "file_id",
                     "read_at",
                     "created_at"
                   ]
@@ -11315,6 +14418,12 @@
                           "body": {
                             "type": "string"
                           },
+                          "file_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "read_at": {
                             "type": "string",
                             "format": "date-time"
@@ -11330,6 +14439,7 @@
                           "from_user",
                           "subject",
                           "body",
+                          "file_id",
                           "read_at",
                           "created_at"
                         ]
@@ -11384,6 +14494,129 @@
           },
           "403": {
             "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/messages/{id}/attachment": {
+      "post": {
+        "tags": [
+          "content"
+        ],
+        "summary": "Attach (or replace) a PDF on a message you sent",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Roles: company, admin",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "file_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "file_id"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_FAILED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FILE_TOO_LARGE",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "FILE_TYPE_NOT_ALLOWED",
             "content": {
               "application/json": {
                 "schema": {
@@ -12529,6 +15762,9 @@
                 "PROFILE_INCOMPLETE",
                 "NOT_ELIGIBLE",
                 "OPPORTUNITY_NOT_OPEN",
+                "PLACED",
+                "NOT_PARTICIPANT",
+                "CANNOT_DELETE",
                 "ALREADY_APPLIED",
                 "INVALID_TRANSITION",
                 "REGISTRATION_CLOSED",
@@ -12751,6 +15987,9 @@
                           "PROFILE_INCOMPLETE",
                           "NOT_ELIGIBLE",
                           "OPPORTUNITY_NOT_OPEN",
+                          "PLACED",
+                          "NOT_PARTICIPANT",
+                          "CANNOT_DELETE",
                           "ALREADY_APPLIED",
                           "INVALID_TRANSITION",
                           "REGISTRATION_CLOSED",

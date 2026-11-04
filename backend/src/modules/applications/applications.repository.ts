@@ -41,7 +41,7 @@ export const listForRecruiter = (scope: RecruiterScope, opportunityId: string) =
   const rows = await db.application.findMany({
     ...args,
     where: recruiterWhere(scope, opportunityId),
-    include: { student: { include: { user: { select: STUDENT_USER } } }, interviews: true },
+    include: { student: { include: { user: { select: STUDENT_USER }, records: { orderBy: { id: "desc" } } } }, interviews: true },
   });
   // recruiterWhere excludes `applied`; the route's response enum re-checks it at runtime.
   return rows as (Omit<(typeof rows)[number], "status"> & { status: Exclude<AppStatus, "applied"> })[];

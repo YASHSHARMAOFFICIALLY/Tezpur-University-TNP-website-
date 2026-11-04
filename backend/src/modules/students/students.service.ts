@@ -9,7 +9,9 @@ import type { UploadedFile } from "../../middleware/upload.js";
 import { getSetting } from "../settings/settings.service.js";
 import { userMachine } from "../auth/auth.service.js";
 import { findProfile } from "./students.repository.js";
-import { ImportRow } from "./students.schemas.js";
+import { IMPORT_FIELDS, ImportRow, type FeedbackBody, type RecordBody } from "./students.schemas.js";
+import { mail } from "../../infrastructure/mailer.js";
+import { audit } from "../../infrastructure/db.js";
 
 /** Probation is a guarded, audited state like any other status. */
 export const standingMachine = defineMachine({
@@ -32,12 +34,14 @@ export type Participant = {
 };
 export type EligibilityFacts = { cgpa: number | null; programme_id: string | null; year_of_completion: number | null; dob: Date | null };
 
-/** Order is contract: ON_PROBATION first, then PROFILE_INCOMPLETE (apply only). */
+/** Order is contract: ON_PROBATION first, then PLACED and PROFILE_INCOMPLETE (apply only). */
 export async function loadParticipant(tx: Tx, userId: string, purpose: "apply" | "event"): Promise<Participant> {
   const s = await tx.student.findUnique({ where: { user_id: userId } });
   if (!s) fail("FORBIDDEN");
   if (s.academic_standing === "probation") fail("ON_PROBATION");
   if (purpose === "apply") {
+    const placed = await selectionsSince(tx, s.id, s.apply_unlocked_at);
+    if (placed.length) fail("PLACED", { selections: placed });
     const missing = PROFILE_REQUIRED.filter((k) => s[k] == null);
     if (missing.length) fail("PROFILE_INCOMPLETE", { missing });
   }
@@ -115,12 +119,30 @@ export const importStudentsJob = defineJob({
   maxAttempts: 3,
   run: async ({ rows, by }) => {
     const programmes = new Map((await db.programme.findMany({ select: { id: true, code: true } })).map((p) => [p.code, p.id]));
-    const report = { created: 0, skipped: [] as { enrolment_no: string; reason: string }[] };
+    const report = { created: 0, updated: 0, skipped: [] as { enrolment_no: string; reason: string }[] };
     const actor: Actor = { kind: "user", userId: by, role: "admin" };
     for (const r of rows) {
-      const exists = await db.user.findFirst({ where: { OR: [{ email: r.email }, { student: { enrolment_no: r.enrolment_no } }] }, select: { id: true } });
+      const fields = Object.fromEntries(IMPORT_FIELDS.filter((k) => r[k] !== undefined).map((k) => [k, r[k]]));
+      if (r.programme_code) {
+        if (!programmes.has(r.programme_code)) {
+          report.skipped.push({ enrolment_no: r.enrolment_no, reason: `unknown programme_code ${r.programme_code}` });
+          continue;
+        }
+        fields.programme_id = programmes.get(r.programme_code);
+      }
+      const exists = await db.user.findFirst({ where: { OR: [{ email: r.email }, { student: { enrolment_no: r.enrolment_no } }] }, include: { student: { select: { enrolment_no: true } } } });
       if (exists) {
-        report.skipped.push({ enrolment_no: r.enrolment_no, reason: "already exists" });
+        // Re-importing the roster fills in / corrects profile fields of the same student. A clash is reported, never merged.
+        if (exists.email !== r.email || exists.student?.enrolment_no !== r.enrolment_no) {
+          report.skipped.push({ enrolment_no: r.enrolment_no, reason: "email and enrolment number belong to different accounts" });
+          continue;
+        }
+        await inTx(async (tx) => {
+          await tx.user.update({ where: { id: exists.id }, data: { name: r.name } });
+          await tx.student.update({ where: { user_id: exists.id }, data: fields });
+          await audit(tx, actor, "student.updated_by_import", "student", exists.id, { fields: Object.keys(fields) });
+        });
+        report.updated++;
         continue;
       }
       await inTx((tx) =>
@@ -132,13 +154,7 @@ export const importStudentsJob = defineJob({
             name: r.name,
             password_hash: "",
             student: {
-              create: {
-                enrolment_no: r.enrolment_no,
-                mobile: r.mobile,
-                year_of_completion: r.year_of_completion,
-                programme_id: r.programme_code ? programmes.get(r.programme_code) : undefined,
-                academic_standing: "good",
-              },
+              create: { ...fields, enrolment_no: r.enrolment_no, academic_standing: "good" },
             },
           },
           actor,
@@ -197,4 +213,114 @@ export async function scheduleDailyJobs() {
 export async function graduateNow() {
   await inTx((tx) => enqueue(tx, graduateJob, {}));
   return { ok: true as const };
+}
+
+// ---------- placement lock and appeal ----------
+
+/** Selections published after the last granted appeal. Any one of them means "placed". */
+export async function selectionsSince(tx: Tx, studentId: string, unlockedAt: Date | null) {
+  const rows = await tx.application.findMany({
+    where: { student_id: studentId, status: "selected", opportunity: { result: { published_at: unlockedAt ? { gt: unlockedAt } : { not: null } } } },
+    include: { opportunity: { include: { company: { select: { name: true } }, result: { select: { published_at: true } } } } },
+  });
+  return rows.map((a) => ({ opportunity_id: a.opportunity_id, title: a.opportunity.title, company: a.opportunity.company.name, published_at: a.opportunity.result!.published_at! }));
+}
+
+export async function placement(userId: string) {
+  const s = await db.student.findUniqueOrThrow({ where: { user_id: userId } });
+  const selections = await selectionsSince(db, s.id, s.apply_unlocked_at);
+  return {
+    placed: selections.length > 0,
+    selections,
+    apply_unlocked_at: s.apply_unlocked_at,
+    appeal: s.appeal_reason && s.appeal_at ? { reason: s.appeal_reason, at: s.appeal_at } : null,
+    appeal_note: s.appeal_note,
+  };
+}
+
+export async function fileAppeal(userId: string, reason: string) {
+  const s = await db.student.findUniqueOrThrow({ where: { user_id: userId } });
+  if (!(await selectionsSince(db, s.id, s.apply_unlocked_at)).length) fail("INVALID_TRANSITION", { reason: "you are not placed, so there is nothing to appeal" });
+  await db.student.update({ where: { id: s.id }, data: { appeal_reason: reason, appeal_at: new Date(), appeal_note: null } });
+  return placement(userId);
+}
+
+export async function listAppeals() {
+  const rows = await db.student.findMany({ where: { appeal_at: { not: null } }, include: { user: { select: { name: true } } }, orderBy: { appeal_at: "asc" }, take: 200 });
+  return Promise.all(
+    rows.map(async (s) => ({ student_id: s.id, name: s.user.name, enrolment_no: s.enrolment_no, reason: s.appeal_reason ?? "", at: s.appeal_at!, selections: await selectionsSince(db, s.id, s.apply_unlocked_at) })),
+  );
+}
+
+/** Grant reopens applying for every selection published so far; a later selection locks again. Idempotent per pending appeal. */
+export const decideAppeal = (studentId: string, grant: boolean, note: string | undefined, actor: Actor) =>
+  inTx(async (tx) => {
+    const s = await tx.student.findUnique({ where: { id: studentId }, include: { user: { select: { email: true } } } });
+    if (!s) fail("NOT_FOUND");
+    if (!s.appeal_at) return { changed: false };
+    await tx.student.update({
+      where: { id: s.id },
+      data: { appeal_reason: null, appeal_at: null, appeal_note: note ?? null, ...(grant ? { apply_unlocked_at: new Date() } : {}) },
+    });
+    await audit(tx, actor, grant ? "student.appeal_granted" : "student.appeal_rejected", "student", s.id, { note });
+    await mail(tx, {
+      to: s.user.email,
+      subject: grant ? "Your appeal is granted: you may apply again" : "Your appeal was not granted",
+      text: grant ? `You can apply to open postings again.${note ? `\nNote: ${note}` : ""}` : `Note from the T&P cell: ${note ?? "no reason given"}`,
+    });
+    return { changed: true };
+  });
+
+// ---------- certificates, internships, projects ----------
+
+const studentIdOf = async (userId: string) => (await db.student.findUniqueOrThrow({ where: { user_id: userId }, select: { id: true } })).id;
+
+export const listRecords = async (userId: string) => db.studentRecord.findMany({ where: { student_id: await studentIdOf(userId) }, orderBy: { id: "desc" } });
+
+export const recordsOf = (studentId: string) => db.studentRecord.findMany({ where: { student_id: studentId }, orderBy: { id: "desc" } });
+
+export const addRecord = async (userId: string, body: z.output<typeof RecordBody>) => db.studentRecord.create({ data: { ...body, student_id: await studentIdOf(userId) } });
+
+// ponytail: the attached file's bytes stay on disk after a record is deleted; add a sweep if storage ever matters.
+export async function deleteRecord(userId: string, id: string) {
+  const { count } = await db.studentRecord.deleteMany({ where: { id, student_id: await studentIdOf(userId) } });
+  if (!count) fail("NOT_FOUND");
+  return { ok: true as const };
+}
+
+export const attachRecordFile = (userId: string, id: string, file: UploadedFile | null) =>
+  inFileTx(async (tx, files) => {
+    const r = await tx.studentRecord.findFirst({ where: { id, student: { user_id: userId } }, select: { file_id: true } });
+    if (!r) fail("NOT_FOUND");
+    const f = await files.store(userId, "record", file, { replaces: r.file_id });
+    await tx.studentRecord.update({ where: { id }, data: { file_id: f.id } });
+    return { file_id: f.id };
+  });
+
+// ---------- student feedback on trainings and recruiters ----------
+
+/** Re-sending replaces the earlier rating, so the call is idempotent. */
+export async function giveFeedback(userId: string, body: z.output<typeof FeedbackBody>) {
+  const studentId = await studentIdOf(userId);
+  const tookPart =
+    body.target === "event"
+      ? await db.eventRegistration.count({ where: { event_id: body.target_id, student_id: studentId, status: { not: "cancelled" } } })
+      : await db.application.count({ where: { opportunity_id: body.target_id, student_id: studentId } });
+  if (!tookPart) fail("NOT_PARTICIPANT");
+  const key = { student_id_target_target_id: { student_id: studentId, target: body.target, target_id: body.target_id } };
+  const data = { rating: body.rating, comment: body.comment ?? null };
+  return db.studentFeedback.upsert({ where: key, create: { student_id: studentId, target: body.target, target_id: body.target_id, ...data }, update: data });
+}
+
+export const myFeedback = async (userId: string) => db.studentFeedback.findMany({ where: { student_id: await studentIdOf(userId) } });
+
+export async function allFeedback(target?: "event" | "opportunity") {
+  const rows = await db.studentFeedback.findMany({ where: { target }, include: { student: { select: { enrolment_no: true, user: { select: { name: true } } } } }, orderBy: { id: "desc" }, take: 1000 });
+  const ids = (t: "event" | "opportunity") => rows.filter((r) => r.target === t).map((r) => r.target_id);
+  const [events, opps] = await Promise.all([
+    db.event.findMany({ where: { id: { in: ids("event") } }, select: { id: true, name: true } }),
+    db.opportunity.findMany({ where: { id: { in: ids("opportunity") } }, select: { id: true, title: true, company: { select: { name: true } } } }),
+  ]);
+  const names = new Map<string, string>([...events.map((e) => [e.id, e.name] as const), ...opps.map((o) => [o.id, `${o.company.name}: ${o.title}`] as const)]);
+  return rows.map((r) => ({ ...r, target_name: names.get(r.target_id) ?? "(deleted)", student: { name: r.student.user.name, enrolment_no: r.student.enrolment_no } }));
 }

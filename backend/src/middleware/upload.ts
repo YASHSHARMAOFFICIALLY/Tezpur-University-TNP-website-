@@ -26,4 +26,8 @@ export const FILE_POLICY: Record<FileKind, { mimes: readonly Mime[]; maxBytes: n
   photo: { mimes: ["image/jpeg", "image/png"], maxBytes: 2 * MB },
   jd: { mimes: ["application/pdf"], maxBytes: 10 * MB },
   brochure: { mimes: ["application/pdf"], maxBytes: 20 * MB },
+  /** Notice and message attachments. */
+  attachment: { mimes: ["application/pdf"], maxBytes: 10 * MB },
+  /** Student certificate / internship / project proof. */
+  record: { mimes: ["application/pdf", "image/jpeg", "image/png"], maxBytes: 5 * MB },
 };

@@ -1,0 +1,12 @@
+node_modules
+dist
+data
+.env
+.env.*
+!.env.example
+deploy/local.env
+deploy/certs
+.vitest
+.verify-artifacts
+.claude
+test
