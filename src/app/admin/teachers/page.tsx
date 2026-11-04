@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import useSWR from "swr";
 import { AppShell } from "@/components/AppShell";
 import { Badge, Button, Card, Empty, Field, Input, Notice, PageHead, SectionTitle, State, initials, useRun } from "@/components/ui";
@@ -11,6 +12,7 @@ export default function TeachersPage() {
   const add = useRun();
   const repair = useRun();
   const me = useSession()?.user.id;
+  const [confirming, setConfirming] = useState<string | null>(null);
 
   return (
     <AppShell role="admin" nav={ADMIN_NAV} active="/admin/teachers">
@@ -107,6 +109,37 @@ export default function TeachersPage() {
                             >
                               Unlock
                             </Button>
+                            {confirming === t.id ? (
+                              <>
+                                <Button
+                                  size="sm"
+                                  variant="danger"
+                                  icon="delete_forever"
+                                  busy={repair.busy === `d${t.id}`}
+                                  onClick={() =>
+                                    repair
+                                      .run(
+                                        `d${t.id}`,
+                                        async () => {
+                                          await call(api.DELETE("/api/v1/admin/teachers/{id}", { params: { path: { id: t.id } } }));
+                                          await staff.mutate();
+                                        },
+                                        `${t.name}'s account deleted.`,
+                                      )
+                                      .then(() => setConfirming(null))
+                                  }
+                                >
+                                  Confirm Delete
+                                </Button>
+                                <Button size="sm" variant="ghost" onClick={() => setConfirming(null)}>
+                                  Cancel
+                                </Button>
+                              </>
+                            ) : (
+                              <Button size="sm" variant="danger" icon="delete" onClick={() => setConfirming(t.id)}>
+                                Delete
+                              </Button>
+                            )}
                           </>
                         )}
                       </span>

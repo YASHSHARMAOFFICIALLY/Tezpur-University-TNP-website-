@@ -83,11 +83,7 @@ await step("student self-registration + OTP verification (UI)", async () => {
   await guest.getByRole("button", { name: /Register & Send Code/ }).click();
   await guest.getByLabel("Verification Code *").fill(await otpFor(NEW_STUDENT));
   await guest.getByRole("button", { name: /Verify & Submit/ }).click();
-  await guest.getByText("Submitted for TPO verification").waitFor();
-});
-await step("unapproved student can't sign in yet (pending message)", async () => {
-  await login(guest, NEW_STUDENT, NEW_PW);
-  await guest.getByRole("alert").filter({ hasText: "Account awaiting admin approval" }).waitFor();
+  await guest.getByText("Your account is active").first().waitFor();
 });
 
 // ---------- recruiter creates a posting ----------
@@ -106,7 +102,7 @@ await step("recruiter creates + submits posting via Posting Studio (retry after 
   await d.getByLabel("Base Compensation (INR LPA)").fill("9");
   await d.getByLabel("B.Tech Computer Science & Engg").check();
   await d.getByLabel("Minimum Cutoff CGPA").fill("5");
-  await d.getByLabel("Passing-out Batch *").selectOption("2026");
+  await d.getByLabel("Passing-out Batch *").selectOption("2028");
   await d.getByLabel("Apply Deadline *").fill(DEADLINE);
   await rec.route(/\/company\/opportunities\/[^/]+\/submit$/, (r) => r.fulfill({ status: 503, body: "down" }), { times: 1 });
   await d.getByRole("button", { name: "Publish Opening to Students" }).click();
@@ -150,12 +146,11 @@ await step("admin dashboard counts only active students and active recruiters", 
     else await adm.waitForTimeout(1000);
   }
 });
-await step("admin queue shows the new student's real programme, exports formula-safe CSV, then approves", async () => {
-  const row = adm.getByRole("row").filter({ hasText: NEW_STUDENT });
-  await row.getByRole("cell", { name: "School of Engineering B.Tech Computer Science & Engg" }).waitFor();
-  await exportedCsvIsSafe(adm, adm.getByRole("button", { name: "Export CSV" }));
-  await row.getByRole("button", { name: "Approve" }).click();
-  await row.waitFor({ state: "detached" });
+await step("OTP-verified student never waits in the admin queue", async () => {
+  await adm.getByText("Recruiter Onboarding").first().waitFor();
+  const { access_token } = await apiCall("POST", "/auth/login", { body: { email: ADMIN, password: PW } });
+  const pending = await apiCall("GET", "/admin/pending", { token: access_token });
+  assert.ok(!pending.students.some((s) => s.email === NEW_STUDENT), "new student is in the approval queue");
 });
 await step("admin approves the posting (postings tab)", async () => {
   await adm.getByRole("tab", { name: /Job & Internship Postings/ }).click();
@@ -211,7 +206,7 @@ await step("a failed event transition (Complete) shows the error to the admin", 
 
 // ---------- students ----------
 const stuNew = await newPage();
-await step("approved new student logs in; posting shows ineligible (no CGPA yet)", async () => {
+await step("OTP-verified new student logs in; posting shows ineligible (no CGPA yet)", async () => {
   await login(stuNew, NEW_STUDENT, NEW_PW);
   await stuNew.waitForURL(/\/student$/);
   const card = stuNew.locator("article").filter({ hasText: JOB });
@@ -230,7 +225,7 @@ await step("new student completes profile (photo + resume upload) and applies wi
   await d.getByLabel(/Resume \(PDF/).setInputFiles(pdf);
   await d.getByLabel("Date of Birth *").fill("2004-02-10");
   await d.getByLabel("Cumulative CGPA *").fill("5.5");
-  await d.getByLabel("Year of Completion *").fill("2026");
+  await d.getByLabel("Year of Completion *").fill("2028");
   await d.getByRole("button", { name: "Save Profile" }).click();
   await d.waitFor({ state: "detached" });
   const card = stuNew.locator("article").filter({ hasText: JOB });
@@ -238,7 +233,6 @@ await step("new student completes profile (photo + resume upload) and applies wi
   await card.getByText(/Applied • Awaiting T&P Release/).waitFor();
 });
 await step("new student registers for the event", async () => {
-  await stuNew.getByRole("tab", { name: /Training & Workshops/ }).click();
   const card = stuNew.locator("article").filter({ hasText: `E2E Resume Clinic ${run}` });
   await card.getByRole("button", { name: "Register" }).click();
   await card.getByRole("button", { name: "Cancel Registration" }).waitFor();
@@ -246,6 +240,14 @@ await step("new student registers for the event", async () => {
 
 const stu = await newPage();
 await step("seeded student applies to new posting (one-click)", async () => {
+  // Earlier runs place the seed student, and placed students cannot apply; an admin-granted appeal reopens applying.
+  const S = (await apiCall("POST", "/auth/login", { body: { email: SEED_STUDENT, password: PW } })).access_token;
+  if ((await apiCall("GET", "/students/me/placement", { token: S })).placed) {
+    const A = (await apiCall("POST", "/auth/login", { body: { email: ADMIN, password: PW } })).access_token;
+    await apiCall("POST", "/students/me/appeal", { token: S, body: { reason: "E2E rerun: reopen applying for the suite." } });
+    const appeal = (await apiCall("GET", "/admin/appeals", { token: A })).find((x) => x.enrolment_no === "CSB21045");
+    await apiCall("POST", `/admin/students/${appeal.student_id}/appeal`, { token: A, body: { grant: true } });
+  }
   await login(stu, SEED_STUDENT, PW);
   await stu.waitForURL(/\/student$/);
   const card = stu.locator("article").filter({ hasText: JOB });
@@ -297,7 +299,7 @@ await step("recruiter bulk-shortlists + schedules interview", async () => {
   await d.getByLabel("Date & time *").fill(new Date(Date.now() + 2 * 864e5).toISOString().slice(0, 16));
   await d.getByLabel("Venue or meeting link *").fill("Computer Center Lab 2");
   await d.getByRole("button", { name: "Schedule & Notify" }).click();
-  await rec.getByText("Interview scheduled").waitFor();
+  await rec.getByText("Interview scheduled; candidates are notified.").waitFor();
 });
 await step("recruiter submits final selection", async () => {
   await rec.getByLabel("Select Priyanshu Sharma").check();
@@ -326,11 +328,9 @@ await step("recruiter closes the drive; admin still publishes results", async ()
 });
 await step("student sees selection on their card", async () => {
   await stu.reload();
-  await stu
-    .locator("article")
-    .filter({ hasText: JOB })
-    .getByText(/Selected • Offer/)
-    .waitFor();
+  // A published result closes the drive, so it moves from the drive cards to "My applications".
+  const app = stu.getByRole("listitem", { name: new RegExp(`Application: .*${JOB}`) });
+  await app.locator("[class*=badge], span").filter({ hasText: /^Selected/ }).first().waitFor();
 });
 await step("recruiter sends liaison message", async () => {
   await rec.getByLabel("SUBJECT HEADER").fill(`E2E slot ${run}`);

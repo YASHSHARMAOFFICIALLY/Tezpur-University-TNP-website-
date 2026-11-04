@@ -28,6 +28,7 @@ if (!local.DEMO_PASSWORD && !process.env.DEMO_PASSWORD) {
   appendFileSync(localFile, `DEMO_PASSWORD=Demo-${randomBytes(9).toString("base64url")}\n`);
   local = readEnv(localFile);
 }
+const SEED_PW = process.env.SEED_ADMIN_PASSWORD ?? backendEnv.SEED_ADMIN_PASSWORD;
 const PW = process.env.DEMO_PASSWORD ?? local.DEMO_PASSWORD; // env wins: lets it run on a server with no .env.local
 const DOMAIN = backendEnv.STUDENT_EMAIL_DOMAIN || "tezu.ac.in";
 const ADMIN = process.env.SEED_ADMIN_EMAIL ?? backendEnv.SEED_ADMIN_EMAIL;
@@ -83,10 +84,10 @@ const step = (s) => console.log("•", s);
 // 1. admin: first login uses the seed password, then is forced to change it to DEMO_PASSWORD
 let admin = await req("POST", "/auth/login", { body: { email: ADMIN, password: PW }, ok: ["INVALID_CREDENTIALS"] });
 if (admin.skipped) {
-  admin = await req("POST", "/auth/login", { body: { email: ADMIN, password: backendEnv.SEED_ADMIN_PASSWORD } });
+  admin = await req("POST", "/auth/login", { body: { email: ADMIN, password: SEED_PW } });
   admin = await req("POST", "/auth/change-password", {
     token: admin.access_token,
-    body: { current_password: backendEnv.SEED_ADMIN_PASSWORD, new_password: PW },
+    body: { current_password: SEED_PW, new_password: PW },
   });
   step("admin password set to DEMO_PASSWORD");
 }

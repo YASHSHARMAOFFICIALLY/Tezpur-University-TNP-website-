@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { homeFor, useSession } from "@/lib/api";
+import useSWR from "swr";
+import { api, call, homeFor, useSession } from "@/lib/api";
 import { Icon, cx, initials } from "./ui";
 
 const PORTALS = [
@@ -25,6 +26,8 @@ const NAV = [
 
 /** Public header + footer from the "Public Portal & Dual Registration Flow" frame. */
 export function PublicShell({ active = "/", children }: { active?: string; children: ReactNode }) {
+  // Same SWR key as the landing page, so an admin edit to the university profile shows in the footer too.
+  const uni = useSWR("university", () => call(api.GET("/api/v1/university"))).data;
   const session = useSession();
   return (
     <div className="flex min-h-screen flex-col bg-bg">
@@ -101,16 +104,14 @@ export function PublicShell({ active = "/", children }: { active?: string; child
       <footer id="contact" className="bg-primary text-surface-high">
         <div className="mx-auto grid max-w-[1280px] gap-6 p-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-2">
-            <p className="font-display text-title font-semibold text-white uppercase">Tezpur University</p>
-            <p className="text-body">
-              Training and Placement Cell, Napaam, Sonitpur, Assam - 784028. Fostering industry-academia synergy and career progression.
-            </p>
+            <p className="font-display text-title font-semibold text-white uppercase">{uni?.name ?? "Tezpur University"}</p>
+            <p className="text-body">Training and Placement Cell, {uni?.address ?? "Napaam, Sonitpur, Assam - 784028"}.</p>
           </div>
           <FooterCol
             title="Quick Portals"
             items={[
-              ["Active Placement Drives", "/student#placements"],
-              ["Summer Internships 2024-25", "/student#internships"],
+              ["Active Placement Drives", "/student#drives"],
+              ["My Applications", "/student#applications"],
               ["Corporate Registration (JNF/INF)", "/#register"],
             ]}
           />
@@ -125,16 +126,21 @@ export function PublicShell({ active = "/", children }: { active?: string; child
           <div className="flex flex-col gap-2">
             <p className="text-card font-semibold text-white">Office Contacts</p>
             <p className="text-body">
-              Email: <a href="mailto:adtp@tezu.ernet.in">adtp@tezu.ernet.in</a>
-              <br />
-              Phone: +91 3712 273005
-              <br />
-              Placement Operations Desk
+              {(uni?.contact_emails.length ? uni.contact_emails : ["adtp@tezu.ernet.in"]).map((e) => (
+                <span key={e} className="block">
+                  Email: <a href={`mailto:${e}`}>{e}</a>
+                </span>
+              ))}
+              {(uni?.admin_mobiles.length ? uni.admin_mobiles : ["+91 3712 273005"]).map((m) => (
+                <span key={m} className="block">
+                  Phone: {m}
+                </span>
+              ))}
             </p>
           </div>
         </div>
         <p className="bg-[#00142e] px-8 py-2 text-center text-caption font-semibold">
-          © 2025 Training &amp; Placement Cell, Tezpur University. All Rights Reserved.
+          © Training &amp; Placement Cell, {uni?.name ?? "Tezpur University"}. All Rights Reserved.
         </p>
       </footer>
     </div>

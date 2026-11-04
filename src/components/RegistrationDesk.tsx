@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import useSWR from "swr";
 import { api, call } from "@/lib/api";
@@ -327,11 +328,11 @@ function StudentFlow() {
         title="Student Enrolment"
         sub="TU Inbox Verification Workflow"
         text="Currently enrolled Tezpur University students register with their official university email. Imported students set their first password from the sign-in page instead."
-        step={email ? 2 : 0}
+        step={email ? 1 : 0}
         steps={[
           ["Academic Identity", "Enrolment number & programme"],
           ["Email Verification", "6-digit code to your TU inbox"],
-          ["TPO Approval", "Credential verification audit"],
+          ["Sign in", "Active as soon as your email is verified"],
         ]}
       />
       {email ? (
@@ -380,16 +381,15 @@ function StudentFlow() {
 }
 
 function VerifyOtp({ email }: { email: string }) {
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useState<"active" | "pending_admin" | "pending_email_verify" | null>(null);
   const [msg, setMsg] = useState({ tone: "", text: "" });
   const [busy, setBusy] = useState(false);
 
-  async function act(fn: () => Promise<unknown>, ok: string, finish = false) {
+  async function act(fn: () => Promise<unknown>, ok: string) {
     setBusy(true);
     try {
       await fn();
       setMsg({ tone: "ok", text: ok });
-      if (finish) setDone(true);
     } catch (e) {
       setMsg({ tone: "error", text: (e as Error).message });
     } finally {
@@ -397,13 +397,25 @@ function VerifyOtp({ email }: { email: string }) {
     }
   }
 
+  if (done === "active")
+    return (
+      <FormCard title="Your account is active" stage="Complete">
+        <div className="flex items-start gap-3 rounded-sm bg-primary-fixed p-4 text-primary">
+          <Icon name="verified" className="text-[24px]" />
+          <p className="text-body">Email verified. Your account is active, sign in with {email} or your enrolment number.</p>
+        </div>
+        <Link href="/login" className="w-fit rounded-xs bg-primary px-5 py-3 text-body font-semibold text-white">
+          Sign in
+        </Link>
+      </FormCard>
+    );
   if (done)
     return (
       <FormCard title="Submitted for TPO verification" stage="Complete">
         <div className="flex items-start gap-3 rounded-sm bg-primary-fixed p-4 text-primary">
-          <Icon name="verified" className="text-[24px]" />
+          <Icon name="hourglass_top" className="text-[24px]" />
           <p className="text-body">
-            Email verified. Your account is now in the T&amp;P cell&apos;s approval queue. You can sign in once it&apos;s approved; we&apos;ll email {email}.
+            Email verified. Your account is awaiting T&amp;P approval. You can sign in once it&apos;s approved; we&apos;ll email {email}.
           </p>
         </div>
       </FormCard>
@@ -415,7 +427,7 @@ function VerifyOtp({ email }: { email: string }) {
       onSubmit={(e) => {
         e.preventDefault();
         const code = String(new FormData(e.currentTarget).get("code"));
-        act(() => call(api.POST("/api/v1/auth/verify-otp", { body: { email, code } })), "Verified.", true);
+        act(async () => setDone((await call(api.POST("/api/v1/auth/verify-otp", { body: { email, code } }))).status), "Verified.");
       }}
     >
       <FormCard title="Verify your email" stage="Final stage">

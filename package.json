@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "types": "openapi-typescript ../backend/openapi.json -o src/lib/api-types.ts",
+    "types": "openapi-typescript ../backend-deploy/openapi.json -o src/lib/api-types.ts",
     "format": "prettier --write src scripts"
   },
   "dependencies": {

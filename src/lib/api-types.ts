@@ -47,7 +47,7 @@ export interface paths {
                     content: {
                         "application/json": {
                             /** @enum {string} */
-                            status: "pending_email_verify" | "pending_admin";
+                            status: "pending_email_verify" | "pending_admin" | "active";
                         };
                     };
                 };
@@ -149,7 +149,7 @@ export interface paths {
                     content: {
                         "application/json": {
                             /** @enum {string} */
-                            status: "pending_email_verify" | "pending_admin";
+                            status: "pending_email_verify" | "pending_admin" | "active";
                         };
                     };
                 };
@@ -198,7 +198,7 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Verify email with the 6-digit code; account moves to the admin approval queue
+         * Verify email with the 6-digit code. Students become active at once; recruiters move to the admin approval queue
          * @description Public
          */
         post: {
@@ -226,7 +226,7 @@ export interface paths {
                     content: {
                         "application/json": {
                             /** @enum {string} */
-                            status: "pending_email_verify" | "pending_admin";
+                            status: "pending_email_verify" | "pending_admin" | "active";
                         };
                     };
                 };
@@ -355,7 +355,6 @@ export interface paths {
             requestBody?: {
                 content: {
                     "application/json": {
-                        /** Format: email */
                         email: string;
                         password: string;
                     };
@@ -794,7 +793,7 @@ export interface paths {
                     content: {
                         "application/json": {
                             /** @enum {string} */
-                            status: "pending_email_verify" | "pending_admin";
+                            status: "pending_email_verify" | "pending_admin" | "active";
                         };
                     };
                 };
@@ -1253,6 +1252,962 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/students/me/placement": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Am I placed (applying closed)? Selections, appeal state
+         * @description Roles: student
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            placed: boolean;
+                            selections: {
+                                opportunity_id: string;
+                                title: string;
+                                company: string;
+                                /** Format: date-time */
+                                published_at: string;
+                            }[];
+                            /** Format: date-time */
+                            apply_unlocked_at: string;
+                            appeal: {
+                                reason: string;
+                                /** Format: date-time */
+                                at: string;
+                            } | null;
+                            appeal_note: string | null;
+                        };
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/students/me/appeal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Placed students ask the T&P cell to reopen applying
+         * @description Roles: student
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            placed: boolean;
+                            selections: {
+                                opportunity_id: string;
+                                title: string;
+                                company: string;
+                                /** Format: date-time */
+                                published_at: string;
+                            }[];
+                            /** Format: date-time */
+                            apply_unlocked_at: string;
+                            appeal: {
+                                reason: string;
+                                /** Format: date-time */
+                                at: string;
+                            } | null;
+                            appeal_note: string | null;
+                        };
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description INVALID_TRANSITION */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/students/me/records": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * My certificates, internships and projects
+         * @description Roles: student
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StudentRecord"][];
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Add a certificate, internship or project
+         * @description Roles: student
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        kind: "certificate" | "internship" | "project";
+                        title: string;
+                        organisation?: string;
+                        description?: string;
+                        start_month?: string;
+                        end_month?: string;
+                        /** Format: uri */
+                        url?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StudentRecord"];
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/students/me/records/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Remove a record
+         * @description Roles: student
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            ok: true;
+                        };
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/students/me/records/{id}/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Attach proof to a record (PDF, JPEG or PNG, max 5 MB)
+         * @description Roles: student
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "multipart/form-data": {
+                        /** Format: binary */
+                        file: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            file_id: string;
+                        };
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FILE_TOO_LARGE */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FILE_TYPE_NOT_ALLOWED */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/students/me/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ratings I gave
+         * @description Roles: student
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id: string;
+                            /** @enum {string} */
+                            target: "event" | "opportunity";
+                            target_id: string;
+                            rating: number;
+                            comment: string | null;
+                            /** Format: date-time */
+                            created_at: string;
+                        }[];
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Rate a training event I registered for, or a recruiter I applied to (re-sending replaces it)
+         * @description Roles: student
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        target: "event" | "opportunity";
+                        /** Format: uuid */
+                        target_id: string;
+                        rating: number;
+                        comment?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id: string;
+                            /** @enum {string} */
+                            target: "event" | "opportunity";
+                            target_id: string;
+                            rating: number;
+                            comment: string | null;
+                            /** Format: date-time */
+                            created_at: string;
+                        };
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN | NOT_PARTICIPANT */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/appeals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Placed students asking to apply again
+         * @description Roles: admin
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            student_id: string;
+                            name: string;
+                            enrolment_no: string;
+                            reason: string;
+                            /** Format: date-time */
+                            at: string;
+                            selections: {
+                                opportunity_id: string;
+                                title: string;
+                                company: string;
+                                /** Format: date-time */
+                                published_at: string;
+                            }[];
+                        }[];
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/students/{id}/appeal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Grant (reopen applying) or reject a student's appeal
+         * @description Roles: admin
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        grant: boolean;
+                        note?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            changed: boolean;
+                        };
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/students/{id}/records": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * A student's certificates, internships and projects
+         * @description Roles: admin
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StudentRecord"][];
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/student-feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Student ratings of trainings and recruiters
+         * @description Roles: admin
+         */
+        get: {
+            parameters: {
+                query?: {
+                    target?: "event" | "opportunity";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id: string;
+                            /** @enum {string} */
+                            target: "event" | "opportunity";
+                            target_id: string;
+                            rating: number;
+                            comment: string | null;
+                            /** Format: date-time */
+                            created_at: string;
+                            target_name: string;
+                            student: {
+                                name: string;
+                                enrolment_no: string;
+                            };
+                        }[];
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/students/{id}/probation": {
         parameters: {
             query?: never;
@@ -1349,7 +2304,7 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Bulk-add students from CSV (columns: enrolment_no,name,email[,programme_code,year_of_completion,mobile]). Runs as a job.
+         * Bulk-add or update students from CSV. Required: enrolment_no,name,email. Optional: programme_code and any profile field (see the admin roster page). Existing students (same email + enrolment) are updated. Runs as a job.
          * @description Roles: admin
          */
         post: {
@@ -1593,6 +2548,12 @@ export interface paths {
                             /** @default false */
                             hr_interview?: boolean;
                         };
+                        /** @enum {string} */
+                        drive_mode?: "online" | "offline" | "hybrid";
+                        hiring_from?: string;
+                        hiring_to?: string;
+                        venue?: string;
+                        logistics?: string;
                     };
                 };
             };
@@ -1697,6 +2658,12 @@ export interface paths {
                             /** @default false */
                             hr_interview?: boolean;
                         };
+                        /** @enum {string|null} */
+                        drive_mode?: "online" | "offline" | "hybrid" | null;
+                        hiring_from?: string | null;
+                        hiring_to?: string | null;
+                        venue?: string | null;
+                        logistics?: string | null;
                     };
                 };
             };
@@ -1830,6 +2797,90 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/company/opportunities/{id}/logistics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set campus logistics (venue, reporting, notes) at any stage. Mailed to this posting's applicants only.
+         * @description Roles: company
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        venue?: string;
+                        logistics?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Opportunity"];
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2072,6 +3123,10 @@ export interface paths {
                                     /** @default false */
                                     hr_interview: boolean;
                                 };
+                                /** @enum {string|null} */
+                                drive_mode: "online" | "offline" | "hybrid" | null;
+                                hiring_from: string | null;
+                                hiring_to: string | null;
                                 id: string;
                                 company_id: string;
                                 /** @enum {string} */
@@ -2191,6 +3246,10 @@ export interface paths {
                                 /** @default false */
                                 hr_interview: boolean;
                             };
+                            /** @enum {string|null} */
+                            drive_mode: "online" | "offline" | "hybrid" | null;
+                            hiring_from: string | null;
+                            hiring_to: string | null;
                             id: string;
                             company_id: string;
                             /** @enum {string} */
@@ -2399,8 +3458,16 @@ export interface paths {
                                     title: string;
                                     type: string;
                                     company: {
+                                        id: string;
                                         name: string;
                                     };
+                                    /** @enum {string|null} */
+                                    drive_mode: "online" | "offline" | "hybrid" | null;
+                                    hiring_from: string | null;
+                                    hiring_to: string | null;
+                                    venue: string | null;
+                                    logistics: string | null;
+                                    jd_file_id: string | null;
                                 };
                                 interviews: {
                                     id: string;
@@ -2493,7 +3560,56 @@ export interface paths {
                                 status: "applied" | "released_to_recruiter" | "shortlisted" | "rejected" | "selected";
                                 /** Format: date-time */
                                 created_at: string;
-                                student: components["schemas"]["StudentProfile"];
+                                student: {
+                                    mobile: string | null;
+                                    gender: string | null;
+                                    category: string | null;
+                                    minority: boolean | null;
+                                    specially_abled: boolean | null;
+                                    regional_diversity: string | null;
+                                    jee_rank: number | null;
+                                    jee_score: number | null;
+                                    jee_percentile: number | null;
+                                    gate_qualified: boolean | null;
+                                    gate_score: number | null;
+                                    /** Format: uuid */
+                                    programme_id: string | null;
+                                    department: string | null;
+                                    year_of_admission: number | null;
+                                    year_of_completion: number | null;
+                                    cgpa: number | null;
+                                    current_address: string | null;
+                                    permanent_address: string | null;
+                                    marks_10: number | null;
+                                    yop_10: number | null;
+                                    marks_12: number | null;
+                                    yop_12: number | null;
+                                    marks_ug: number | null;
+                                    yop_ug: number | null;
+                                    marks_pg: number | null;
+                                    yop_pg: number | null;
+                                    other_courses: string | null;
+                                    professional_interests: string | null;
+                                    certifications: string | null;
+                                    /** Format: uri */
+                                    portfolio_url: string | null;
+                                    /** Format: uri */
+                                    linkedin_url: string | null;
+                                    id: string;
+                                    enrolment_no: string;
+                                    /** Format: date-time */
+                                    dob: string;
+                                    resume_file_id: string | null;
+                                    photo_file_id: string | null;
+                                    /** @enum {string} */
+                                    academic_standing: "good" | "probation";
+                                    user: {
+                                        name: string;
+                                        email: string;
+                                        status: string;
+                                    };
+                                    records: components["schemas"]["StudentRecord"][];
+                                };
                                 interviews: {
                                     id: string;
                                     round: string;
@@ -2805,6 +3921,7 @@ export interface paths {
                                         email: string;
                                         status: string;
                                     };
+                                    records: components["schemas"]["StudentRecord"][];
                                 };
                                 interviews: {
                                     id: string;
@@ -4430,6 +5547,12 @@ export interface paths {
                                     /** @default false */
                                     hr_interview: boolean;
                                 };
+                                /** @enum {string|null} */
+                                drive_mode: "online" | "offline" | "hybrid" | null;
+                                hiring_from: string | null;
+                                hiring_to: string | null;
+                                venue: string | null;
+                                logistics: string | null;
                                 id: string;
                                 company_id: string;
                                 /** @enum {string} */
@@ -5003,6 +6126,95 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/teachers/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete a staff (admin/teacher) account. You cannot delete yourself or the last admin.
+         * @description Roles: admin
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            ok: true;
+                        };
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description CANNOT_DELETE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/students": {
         parameters: {
             query?: never;
@@ -5011,7 +6223,7 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Search students
+         * Search students by name/enrolment, status, department, programme, batch, CGPA range, placed
          * @description Roles: admin
          */
         get: {
@@ -5019,6 +6231,12 @@ export interface paths {
                 query?: {
                     cursor?: string;
                     limit?: number;
+                    departments?: string[] | null;
+                    programme_ids?: string[];
+                    batches?: number[];
+                    min_cgpa?: number | null;
+                    max_cgpa?: number | null;
+                    placed?: boolean | string | null;
                     q?: string;
                     status?: "pending_email_verify" | "pending_admin" | "active" | "rejected" | "alumni";
                 };
@@ -5965,7 +7183,7 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * University profile
+         * University profile and the public landing-page copy (site)
          * @description Public
          */
         get: {
@@ -5992,6 +7210,7 @@ export interface paths {
                             achievements: string | null;
                             contact_emails: string[];
                             admin_mobiles: string[];
+                            site: components["schemas"]["SiteContent"];
                         } | null;
                     };
                 };
@@ -6044,6 +7263,7 @@ export interface paths {
                         achievements: string | null;
                         contact_emails: string[];
                         admin_mobiles: string[];
+                        site?: components["schemas"]["SiteContent"];
                     };
                 };
             };
@@ -6063,6 +7283,7 @@ export interface paths {
                             achievements: string | null;
                             contact_emails: string[];
                             admin_mobiles: string[];
+                            site: components["schemas"]["SiteContent"];
                         };
                     };
                 };
@@ -6538,6 +7759,162 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/placement-records/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete a year's placement record
+         * @description Roles: admin
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            ok: true;
+                        };
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Correct a year's placement record
+         * @description Roles: admin
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        year?: number;
+                        data?: {
+                            [key: string]: unknown;
+                        };
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            year: number;
+                            data: {
+                                [key: string]: unknown;
+                            };
+                            id: string;
+                        };
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/v1/noticeboard": {
         parameters: {
             query?: never;
@@ -6620,7 +7997,69 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Notice history, optionally only notices that reach a department / programme / batch
+         * @description Roles: admin
+         */
+        get: {
+            parameters: {
+                query?: {
+                    cursor?: string;
+                    limit?: number;
+                    departments?: string[] | null;
+                    programme_ids?: string[];
+                    batches?: number[];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: components["schemas"]["Notice"][];
+                            page: {
+                                cursor: string | null;
+                                has_more: boolean;
+                            };
+                        };
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
         put?: never;
         /**
          * Post a notice. email=true also mails the audience (drains slowly under the Gmail cap).
@@ -6636,6 +8075,18 @@ export interface paths {
             requestBody?: {
                 content: {
                     "application/json": {
+                        /** @default [] */
+                        departments?: string[] | null;
+                        /** @default [] */
+                        programme_ids?: string[];
+                        /** @default [] */
+                        batches?: number[];
+                        /** @default null */
+                        min_cgpa?: number | null;
+                        /** @default null */
+                        max_cgpa?: number | null;
+                        /** @default null */
+                        placed?: boolean | string | null;
                         /** @enum {string} */
                         audience: "students" | "companies" | "all";
                         title: string;
@@ -6690,6 +8141,185 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/notices/reach": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * How many active students a department / programme / batch / CGPA filter reaches
+         * @description Roles: admin
+         */
+        get: {
+            parameters: {
+                query?: {
+                    departments?: string[] | null;
+                    programme_ids?: string[];
+                    batches?: number[];
+                    min_cgpa?: number | null;
+                    max_cgpa?: number | null;
+                    placed?: boolean | string | null;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            students: number;
+                        };
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/notices/{id}/attachment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Attach (or replace) a PDF on a notice
+         * @description Roles: admin
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "multipart/form-data": {
+                        /** Format: binary */
+                        file: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            file_id: string;
+                        };
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FILE_TOO_LARGE */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FILE_TYPE_NOT_ALLOWED */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/messages": {
         parameters: {
             query?: never;
@@ -6726,6 +8356,7 @@ export interface paths {
                                 from_user: string;
                                 subject: string;
                                 body: string;
+                                file_id: string | null;
                                 /** Format: date-time */
                                 read_at: string;
                                 /** Format: date-time */
@@ -6802,6 +8433,7 @@ export interface paths {
                             from_user: string;
                             subject: string;
                             body: string;
+                            file_id: string | null;
                             /** Format: date-time */
                             read_at: string;
                             /** Format: date-time */
@@ -6891,6 +8523,7 @@ export interface paths {
                                 from_user: string;
                                 subject: string;
                                 body: string;
+                                file_id: string | null;
                                 /** Format: date-time */
                                 read_at: string;
                                 /** Format: date-time */
@@ -6934,6 +8567,110 @@ export interface paths {
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/messages/{id}/attachment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Attach (or replace) a PDF on a message you sent
+         * @description Roles: company, admin
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "multipart/form-data": {
+                        /** Format: binary */
+                        file: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            file_id: string;
+                        };
+                    };
+                };
+                /** @description VALIDATION_FAILED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description UNAUTHENTICATED */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FORBIDDEN */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FILE_TOO_LARGE */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description FILE_TYPE_NOT_ALLOWED */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -7696,7 +9433,7 @@ export interface paths {
                 query?: {
                     cursor?: string;
                     limit?: number;
-                    code?: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT" | "RATE_LIMITED" | "INTERNAL" | "INVALID_CREDENTIALS" | "REFRESH_INVALID" | "EMAIL_TAKEN" | "ENROLMENT_TAKEN" | "EMAIL_DOMAIN_NOT_ALLOWED" | "EMAIL_NOT_VERIFIED" | "PENDING_ADMIN_APPROVAL" | "ACCOUNT_REJECTED" | "PASSWORD_CHANGE_REQUIRED" | "ALUMNI_READ_ONLY" | "OTP_INVALID" | "OTP_LOCKED" | "OTP_RESEND_TOO_SOON" | "ON_PROBATION" | "PROFILE_INCOMPLETE" | "NOT_ELIGIBLE" | "OPPORTUNITY_NOT_OPEN" | "ALREADY_APPLIED" | "INVALID_TRANSITION" | "REGISTRATION_CLOSED" | "ALREADY_REGISTERED" | "FILE_TOO_LARGE" | "FILE_TYPE_NOT_ALLOWED" | "JOB_FAILED";
+                    code?: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT" | "RATE_LIMITED" | "INTERNAL" | "INVALID_CREDENTIALS" | "REFRESH_INVALID" | "EMAIL_TAKEN" | "ENROLMENT_TAKEN" | "EMAIL_DOMAIN_NOT_ALLOWED" | "EMAIL_NOT_VERIFIED" | "PENDING_ADMIN_APPROVAL" | "ACCOUNT_REJECTED" | "PASSWORD_CHANGE_REQUIRED" | "ALUMNI_READ_ONLY" | "OTP_INVALID" | "OTP_LOCKED" | "OTP_RESEND_TOO_SOON" | "ON_PROBATION" | "PROFILE_INCOMPLETE" | "NOT_ELIGIBLE" | "OPPORTUNITY_NOT_OPEN" | "PLACED" | "NOT_PARTICIPANT" | "CANNOT_DELETE" | "ALREADY_APPLIED" | "INVALID_TRANSITION" | "REGISTRATION_CLOSED" | "ALREADY_REGISTERED" | "FILE_TOO_LARGE" | "FILE_TYPE_NOT_ALLOWED" | "JOB_FAILED";
                     from?: string | null;
                     to?: string | null;
                     q?: string;
@@ -7800,7 +9537,7 @@ export interface paths {
                     content: {
                         "application/json": {
                             /** @enum {string} */
-                            code: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT" | "RATE_LIMITED" | "INTERNAL" | "INVALID_CREDENTIALS" | "REFRESH_INVALID" | "EMAIL_TAKEN" | "ENROLMENT_TAKEN" | "EMAIL_DOMAIN_NOT_ALLOWED" | "EMAIL_NOT_VERIFIED" | "PENDING_ADMIN_APPROVAL" | "ACCOUNT_REJECTED" | "PASSWORD_CHANGE_REQUIRED" | "ALUMNI_READ_ONLY" | "OTP_INVALID" | "OTP_LOCKED" | "OTP_RESEND_TOO_SOON" | "ON_PROBATION" | "PROFILE_INCOMPLETE" | "NOT_ELIGIBLE" | "OPPORTUNITY_NOT_OPEN" | "ALREADY_APPLIED" | "INVALID_TRANSITION" | "REGISTRATION_CLOSED" | "ALREADY_REGISTERED" | "FILE_TOO_LARGE" | "FILE_TYPE_NOT_ALLOWED" | "JOB_FAILED";
+                            code: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT" | "RATE_LIMITED" | "INTERNAL" | "INVALID_CREDENTIALS" | "REFRESH_INVALID" | "EMAIL_TAKEN" | "ENROLMENT_TAKEN" | "EMAIL_DOMAIN_NOT_ALLOWED" | "EMAIL_NOT_VERIFIED" | "PENDING_ADMIN_APPROVAL" | "ACCOUNT_REJECTED" | "PASSWORD_CHANGE_REQUIRED" | "ALUMNI_READ_ONLY" | "OTP_INVALID" | "OTP_LOCKED" | "OTP_RESEND_TOO_SOON" | "ON_PROBATION" | "PROFILE_INCOMPLETE" | "NOT_ELIGIBLE" | "OPPORTUNITY_NOT_OPEN" | "PLACED" | "NOT_PARTICIPANT" | "CANNOT_DELETE" | "ALREADY_APPLIED" | "INVALID_TRANSITION" | "REGISTRATION_CLOSED" | "ALREADY_REGISTERED" | "FILE_TOO_LARGE" | "FILE_TYPE_NOT_ALLOWED" | "JOB_FAILED";
                             status: number;
                             message: string;
                             hint: string;
@@ -8272,7 +10009,7 @@ export interface components {
         Error: {
             error: {
                 /** @enum {string} */
-                code: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT" | "RATE_LIMITED" | "INTERNAL" | "INVALID_CREDENTIALS" | "REFRESH_INVALID" | "EMAIL_TAKEN" | "ENROLMENT_TAKEN" | "EMAIL_DOMAIN_NOT_ALLOWED" | "EMAIL_NOT_VERIFIED" | "PENDING_ADMIN_APPROVAL" | "ACCOUNT_REJECTED" | "PASSWORD_CHANGE_REQUIRED" | "ALUMNI_READ_ONLY" | "OTP_INVALID" | "OTP_LOCKED" | "OTP_RESEND_TOO_SOON" | "ON_PROBATION" | "PROFILE_INCOMPLETE" | "NOT_ELIGIBLE" | "OPPORTUNITY_NOT_OPEN" | "ALREADY_APPLIED" | "INVALID_TRANSITION" | "REGISTRATION_CLOSED" | "ALREADY_REGISTERED" | "FILE_TOO_LARGE" | "FILE_TYPE_NOT_ALLOWED";
+                code: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT" | "RATE_LIMITED" | "INTERNAL" | "INVALID_CREDENTIALS" | "REFRESH_INVALID" | "EMAIL_TAKEN" | "ENROLMENT_TAKEN" | "EMAIL_DOMAIN_NOT_ALLOWED" | "EMAIL_NOT_VERIFIED" | "PENDING_ADMIN_APPROVAL" | "ACCOUNT_REJECTED" | "PASSWORD_CHANGE_REQUIRED" | "ALUMNI_READ_ONLY" | "OTP_INVALID" | "OTP_LOCKED" | "OTP_RESEND_TOO_SOON" | "ON_PROBATION" | "PROFILE_INCOMPLETE" | "NOT_ELIGIBLE" | "OPPORTUNITY_NOT_OPEN" | "PLACED" | "NOT_PARTICIPANT" | "CANNOT_DELETE" | "ALREADY_APPLIED" | "INVALID_TRANSITION" | "REGISTRATION_CLOSED" | "ALREADY_REGISTERED" | "FILE_TOO_LARGE" | "FILE_TYPE_NOT_ALLOWED";
                 message: string;
                 details: {
                     [key: string]: unknown;
@@ -8342,6 +10079,20 @@ export interface components {
                 status: string;
             };
         };
+        StudentRecord: {
+            id: string;
+            /** @enum {string} */
+            kind: "certificate" | "internship" | "project";
+            title: string;
+            organisation: string | null;
+            description: string | null;
+            start_month: string | null;
+            end_month: string | null;
+            url: string | null;
+            file_id: string | null;
+            /** Format: date-time */
+            created_at: string;
+        };
         Opportunity: {
             /** @enum {string} */
             type: "job" | "internship" | "competition";
@@ -8370,6 +10121,12 @@ export interface components {
                 /** @default false */
                 hr_interview: boolean;
             };
+            /** @enum {string|null} */
+            drive_mode: "online" | "offline" | "hybrid" | null;
+            hiring_from: string | null;
+            hiring_to: string | null;
+            venue: string | null;
+            logistics: string | null;
             id: string;
             company_id: string;
             /** @enum {string} */
@@ -8470,6 +10227,28 @@ export interface components {
                 email: string | null;
             }[];
         };
+        SiteContent: {
+            hero_badge?: string;
+            hero_title?: string;
+            hero_text?: string;
+            brochure_label?: string;
+            schools_title?: string;
+            schools_text?: string;
+            brochure_title?: string;
+            brochure_text?: string;
+            directorate_title?: string;
+            directorate_text?: string;
+            contacts?: {
+                name: string;
+                role: string;
+                line: string;
+            }[];
+            schools?: {
+                department: string;
+                tag?: string;
+                foot?: string;
+            }[];
+        };
         Notice: {
             id: string;
             /** @enum {string} */
@@ -8478,6 +10257,13 @@ export interface components {
             body: string;
             /** Format: date-time */
             published_at: string;
+            departments: string[];
+            programme_ids: string[];
+            batches: number[];
+            min_cgpa: number | null;
+            max_cgpa: number | null;
+            placed: boolean | null;
+            file_id: string | null;
         };
     };
     responses: never;

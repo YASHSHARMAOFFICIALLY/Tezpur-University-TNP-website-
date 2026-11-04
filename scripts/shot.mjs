@@ -19,7 +19,7 @@ const env = (f) =>
   );
 const backend = env(resolve(here, "../backend/.env"));
 const EMAIL = {
-  admin: backend.SEED_ADMIN_EMAIL,
+  admin: process.env.SEED_ADMIN_EMAIL ?? backend.SEED_ADMIN_EMAIL,
   student: `csb21045@${backend.STUDENT_EMAIL_DOMAIN || "tezu.ac.in"}`,
   recruiter: "hr.demo@cognizant-demo.test",
 };
@@ -37,7 +37,7 @@ if (who !== "guest") {
   const r = await fetch(`${WEB}/api/v1/auth/login`, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ email: EMAIL[who], password: env(resolve(here, ".env.local")).DEMO_PASSWORD }),
+    body: JSON.stringify({ email: EMAIL[who], password: process.env.DEMO_PASSWORD ?? env(resolve(here, ".env.local")).DEMO_PASSWORD }),
   });
   if (!r.ok) throw new Error(`login ${who} failed: ${r.status}`);
   const session = await r.text();

@@ -13,7 +13,7 @@ const TITLES: Record<Mode, [string, string]> = {
   login: ["Sign in to your portal", "Students, recruiters and T&P staff use the same sign-in. You'll land on your own portal."],
   forgot: ["Reset or set your password", "First time here after a CSV import? Enter your TU email and we'll send a 6-digit code."],
   reset: ["Enter the code from your email", "The code expires in a few minutes. Check spam if it hasn't arrived."],
-  verify: ["Verify your email", "Enter the 6-digit code we emailed you. After that, the T&P cell approves your account."],
+  verify: ["Verify your email", "Enter the 6-digit code we emailed you. Students can sign in right after; recruiters wait for T&P approval."],
   resubmit: [
     "Correct & resubmit your organisation",
     "The T&P cell returned your registration. Fix the details below and it goes back into their approval queue.",
@@ -93,9 +93,15 @@ export default function LoginPage() {
         setMsg({ tone: "ok", text: "Password saved. Sign in with your new password." });
       });
     return run(async () => {
-      await call(api.POST("/api/v1/auth/verify-otp", { body: { email, code: f.code } }));
+      const { status } = await call(api.POST("/api/v1/auth/verify-otp", { body: { email, code: f.code } }));
       setMode("login");
-      setMsg({ tone: "ok", text: "Email verified. The T&P cell will review your account; you can sign in once it's approved." });
+      setMsg({
+        tone: "ok",
+        text:
+          status === "active"
+            ? "Email verified. Your account is active, sign in below."
+            : "Email verified. Your account is awaiting T&P approval; you can sign in once it's approved.",
+      });
     });
   }
 
@@ -150,14 +156,16 @@ export default function LoginPage() {
             </p>
           )}
 
-          <Field label="Email *">
+          <Field label={mode === "login" ? "Enrolment number or Email *" : "Email *"} hint={mode === "login" ? "Students can use their enrolment number, e.g. CSB21045." : undefined}>
             <Input
-              type="email"
+              type={mode === "login" ? "text" : "email"}
               required
-              autoComplete="email"
+              autoComplete={mode === "login" ? "username" : "email"}
+              autoCapitalize="none"
+              spellCheck={false}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@tezu.ac.in"
+              placeholder={mode === "login" ? "you@tezu.ac.in or CSB21045" : "you@tezu.ac.in"}
               readOnly={mode === "reset" || mode === "verify" || mode === "resubmit"}
             />
           </Field>
