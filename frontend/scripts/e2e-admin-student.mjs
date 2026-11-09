@@ -131,5 +131,24 @@ await step("event: admin publishes it; the student sees it, registers, and it is
   assert.ok(mine.data.some((r) => JSON.stringify(r.event).includes(EVENT) && r.status !== "cancelled"), "registration is recorded");
 });
 
+await step("backlog rule: a no-backlog drive shows the student why they can't apply, then opens once they record 0", async () => {
+  const title = `E2E No Backlog Drive ${run}`;
+  const { id } = await apiCall("POST", "/company/opportunities", {
+    token: R,
+    body: { type: "job", title, description: "Drive that only takes students with no active backlogs.", apply_deadline: new Date(Date.now() + 7 * 864e5).toISOString(), eligibility: { max_active_backlogs: 0 }, selection_process: {} },
+  });
+  await apiCall("POST", `/company/opportunities/${id}/submit`, { token: R });
+  await apiCall("POST", `/admin/opportunities/${id}/decision`, { token: A, body: { decision: "approve" } });
+  const card = () => stu.locator("article").filter({ hasText: title });
+  await studentView("drives");
+  await card().getByText("Ineligible: No active backlogs allowed (yours not entered)").waitFor(); // the student never entered backlogs
+  await apiCall("PATCH", "/students/me", { token: S, body: { active_backlogs: 2, cleared_backlogs: 1 } });
+  await studentView("drives");
+  await card().getByText("Ineligible: No active backlogs allowed (yours 2)").waitFor();
+  await apiCall("PATCH", "/students/me", { token: S, body: { active_backlogs: 0 } });
+  await studentView("drives");
+  await card().getByRole("button", { name: /Apply Now/ }).waitFor();
+});
+
 await browser.close();
 summary();

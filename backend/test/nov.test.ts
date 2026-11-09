@@ -20,7 +20,7 @@ async function drainJobs() {
 }
 
 /** An active student with a complete profile. */
-async function student(enrolment: string, f: { programme_id: string; year_of_completion: number; cgpa: number }) {
+async function student(enrolment: string, f: { programme_id: string; year_of_completion: number; cgpa: number; active_backlogs?: number }) {
   const email = `${enrolment.toLowerCase()}@tezu.ac.in`;
   await inTx(async (tx) =>
     userMachine.create(
@@ -237,6 +237,24 @@ describe("backlog status", () => {
     expect(ok.body).toMatchObject({ active_backlogs: 0, cleared_backlogs: 4 });
     expect((await s.get("/students/me")).body).toMatchObject({ active_backlogs: 0, cleared_backlogs: 4 });
     expect(code(await s.patch("/students/me", { active_backlogs: -1 }))).toBe("VALIDATION_FAILED");
+  });
+});
+
+describe("backlog eligibility", () => {
+  it("a drive can require no active backlogs: zero passes, some or unknown fail, applying is refused", async () => {
+    const r = await recruiter("hr@backlog.example");
+    const id = await approvedPosting(r, { eligibility: { max_active_backlogs: 0 } });
+    const base = { programme_id: cse, year_of_completion: 2026, cgpa: 8 };
+    const clean = await student("CSB26080", { ...base, active_backlogs: 0 });
+    const dirty = await student("CSB26081", { ...base, active_backlogs: 2 });
+    const unknown = await student("CSB26082", base);
+    const elig = async (a: typeof clean) => (await a.get(`/opportunities/${id}`)).body.my_eligibility;
+    expect(await elig(clean)).toMatchObject({ eligible: true });
+    expect(await elig(dirty)).toMatchObject({ eligible: false, reasons: [{ rule: "max_active_backlogs", required: 0, actual: 2 }] });
+    expect(await elig(unknown), "not entering backlogs does not pass").toMatchObject({ eligible: false, reasons: [{ rule: "max_active_backlogs", actual: null }] });
+    expect(code(await dirty.post(`/opportunities/${id}/apply`))).toBe("NOT_ELIGIBLE");
+    expect((await clean.post(`/opportunities/${id}/apply`)).status).toBe(201);
+    expect(code(await r.post("/company/opportunities", { type: "job", title: "Bad", description: "Negative backlog rule.", apply_deadline: new Date(Date.now() + 86_400_000).toISOString(), eligibility: { max_active_backlogs: -1 }, selection_process: {} }))).toBe("VALIDATION_FAILED");
   });
 });
 

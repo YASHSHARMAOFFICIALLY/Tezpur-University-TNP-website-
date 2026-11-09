@@ -28,6 +28,8 @@ export function reasonText(r: Reason) {
       return "Your batch isn't eligible";
     case "max_age":
       return `Age limit ${r.required}`;
+    case "max_active_backlogs":
+      return `${r.required === 0 ? "No active backlogs allowed" : `At most ${r.required} active backlogs`} (${r.actual == null ? "yours not entered" : `yours ${r.actual}`})`;
     default:
       return String(r.rule ?? "Not eligible");
   }

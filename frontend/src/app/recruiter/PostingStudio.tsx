@@ -53,6 +53,7 @@ export function PostingStudio({ onClose, onDone, initial }: { onClose: () => voi
         eligibility: {
           ...initial?.eligibility,
           min_cgpa: Number(g("min_cgpa") || 0),
+          max_active_backlogs: g("max_backlogs") === "" ? undefined : Number(g("max_backlogs")), // blank = no rule; 0 = none allowed
           programmes,
           completion_years: g("batch").split(",").map(Number),
         },
@@ -195,6 +196,9 @@ export function PostingStudio({ onClose, onDone, initial }: { onClose: () => voi
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               <Field label="Minimum Cutoff CGPA">
                 <Input name="min_cgpa" type="number" step="0.1" min="0" max="10" defaultValue={initial?.eligibility.min_cgpa ?? 7.5} />
+              </Field>
+              <Field label="Maximum active backlogs" hint="Leave blank for no rule. 0 means none allowed.">
+                <Input name="max_backlogs" type="number" min="0" max="20" defaultValue={initial?.eligibility.max_active_backlogs ?? ""} />
               </Field>
               <Field label="Passing-out Batch *">
                 <Select name="batch" defaultValue={batches ?? year}>

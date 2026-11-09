@@ -10190,6 +10190,7 @@ export interface components {
             programmes?: string[];
             completion_years?: number[];
             max_age?: number;
+            max_active_backlogs?: number;
         };
         Event: {
             id: string;

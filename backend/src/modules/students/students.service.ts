@@ -32,7 +32,7 @@ export type Participant = {
   studentId: string;
   facts: EligibilityFacts;
 };
-export type EligibilityFacts = { cgpa: number | null; programme_id: string | null; year_of_completion: number | null; dob: Date | null };
+export type EligibilityFacts = { cgpa: number | null; programme_id: string | null; year_of_completion: number | null; dob: Date | null; active_backlogs: number | null };
 
 /** Order is contract: ON_PROBATION first, then PLACED and PROFILE_INCOMPLETE (apply only). */
 export async function loadParticipant(tx: Tx, userId: string, purpose: "apply" | "event"): Promise<Participant> {
@@ -53,6 +53,7 @@ export const factsOf = (s: EligibilityFacts): EligibilityFacts => ({
   programme_id: s.programme_id,
   year_of_completion: s.year_of_completion,
   dob: s.dob,
+  active_backlogs: s.active_backlogs,
 });
 
 /** Required before applying. The coloured photo and resume are mandated by the T&P cell. */
