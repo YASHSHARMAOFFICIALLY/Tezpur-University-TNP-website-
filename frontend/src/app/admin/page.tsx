@@ -727,6 +727,7 @@ function PublishResults() {
   const companies = useCompanies();
   const [id, setId] = useState("");
   const [busy, setBusy] = useState("");
+  const [confirmClose, setConfirmClose] = useState(false);
   const [msg, setMsg] = useState<{ tone: "ok" | "err"; text: string } | null>(null);
   const drives = opps.data?.data.filter((o) => o.status === "approved" || o.status === "closed") ?? [];
   const drive = drives.find((o) => o.id === id) ?? drives[0];
@@ -736,15 +737,26 @@ function PublishResults() {
   const coName = (cid: string) => companies.data?.data.find((c) => c.id === cid)?.name ?? "Company";
   const count = (s: string) => apps.data?.data.filter((a) => a.status === s).length ?? 0;
 
-  async function act(kind: "release" | "publish") {
+  async function act(kind: "release" | "publish" | "close") {
     if (!drive) return;
     setBusy(kind);
     setMsg(null);
     try {
       if (kind === "release") await call(api.POST("/api/v1/admin/opportunities/{id}/release", { params: { path: { id: drive.id } }, body: {} }));
+      else if (kind === "close") await call(api.POST("/api/v1/admin/opportunities/{id}/close", { params: { path: { id: drive.id } } }));
       else await call(api.POST("/api/v1/admin/opportunities/{id}/results/publish", { params: { path: { id: drive.id } } }));
-      setMsg({ tone: "ok", text: kind === "release" ? "Applicants released to the recruiter." : "Results published to the noticeboard; candidates notified." });
+      setMsg({
+        tone: "ok",
+        text:
+          kind === "release"
+            ? "Applicants released to the recruiter."
+            : kind === "close"
+              ? "Drive closed. Students can no longer apply."
+              : "Results published to the noticeboard; candidates notified.",
+      });
+      setConfirmClose(false);
       apps.mutate();
+      opps.mutate();
     } catch (e) {
       setMsg({ tone: "err", text: (e as Error).message });
     } finally {
@@ -815,6 +827,22 @@ function PublishResults() {
               >
                 Execute Select Rollout &amp; Notify Candidates
               </Button>
+              {drive.status === "approved" &&
+                (confirmClose ? (
+                  <div className="flex flex-wrap items-center gap-2 rounded-xs bg-error-container p-3 text-body text-on-error-container">
+                    <span className="min-w-0 flex-1">Close this drive? Students can no longer apply. Existing applications are kept.</span>
+                    <Button size="sm" variant="white" onClick={() => setConfirmClose(false)}>
+                      Keep open
+                    </Button>
+                    <Button size="sm" variant="danger" busy={busy === "close"} onClick={() => act("close")}>
+                      Close drive
+                    </Button>
+                  </div>
+                ) : (
+                  <Button variant="ghost" icon="block" onClick={() => setConfirmClose(true)}>
+                    Close drive to new applicants
+                  </Button>
+                ))}
             </>
           )
         }
