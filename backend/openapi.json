@@ -11940,6 +11940,18 @@
                           "created_at": {
                             "type": "string",
                             "format": "date-time"
+                          },
+                          "actor_name": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "entity_name": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
                           }
                         },
                         "required": [
@@ -11949,7 +11961,9 @@
                           "action",
                           "entity",
                           "entity_id",
-                          "created_at"
+                          "created_at",
+                          "actor_name",
+                          "entity_name"
                         ]
                       }
                     },

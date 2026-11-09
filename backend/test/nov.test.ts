@@ -240,6 +240,14 @@ describe("backlog status", () => {
   });
 });
 
+describe("audit log names", () => {
+  it("rows carry the actor's and a user entity's name, not just ids", async () => {
+    const rows = (await admin.get("/admin/audit-log?limit=100").expect(200)).body.data as { actor_user_id: string | null; actor_name: string | null; entity: string; entity_name: string | null }[];
+    expect(rows.filter((a) => a.actor_user_id).every((a) => typeof a.actor_name === "string"), "every row with an actor has a name").toBe(true);
+    expect(rows.some((a) => a.entity === "user" && a.entity_name), "a user entity shows the person's name").toBe(true);
+  });
+});
+
 describe("recruiter drive details", () => {
   it("drive mode and hiring period are stored; logistics reach applicants only", async () => {
     const r = await recruiter("hr@drive.example");

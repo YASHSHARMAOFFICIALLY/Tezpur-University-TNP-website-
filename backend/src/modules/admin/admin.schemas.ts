@@ -26,6 +26,6 @@ export const Teacher = z.object({ id: z.string(), email: z.string(), name: z.str
 
 export const Job = z.object({ id: z.string(), type: z.string(), status: z.string(), attempts: z.number(), last_error: z.string().nullable(), result: z.unknown(), created_at: Ts, finished_at: Ts.nullable() });
 export const EmailQueue = z.object({ queued: z.number(), sent_24h: z.number(), failed: z.number() });
-export const AuditEntry = z.object({ id: z.string(), actor_kind: z.string(), actor_user_id: z.string().nullable(), action: z.string(), entity: z.string(), entity_id: z.string(), metadata: z.unknown(), created_at: Ts });
+export const AuditEntry = z.object({ id: z.string(), actor_kind: z.string(), actor_user_id: z.string().nullable(), action: z.string(), entity: z.string(), entity_id: z.string(), metadata: z.unknown(), created_at: Ts, actor_name: z.string().nullable(), entity_name: z.string().nullable() });
 export const PlacementReport = z.array(z.object({ year: z.number().nullable(), students: z.number(), applied: z.number(), selected: z.number() }));
 export const EventReport = z.array(z.object({ id: z.string(), name: z.string(), type: z.string(), registered: z.number(), attended: z.number() }));

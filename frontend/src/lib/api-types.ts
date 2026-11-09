@@ -6652,6 +6652,8 @@ export interface paths {
                                 metadata?: unknown;
                                 /** Format: date-time */
                                 created_at: string;
+                                actor_name: string | null;
+                                entity_name: string | null;
                             }[];
                             page: {
                                 cursor: string | null;

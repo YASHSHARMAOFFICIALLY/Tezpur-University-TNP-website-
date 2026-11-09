@@ -143,7 +143,7 @@ function SettingRow({ s, reload }: { s: Setting; reload: () => void }) {
             {s.label} {s.is_overridden && <Badge tone="warn">Changed</Badge>}
           </p>
           <p className="text-caption text-muted">
-            {s.help} Default: <code>{JSON.stringify(s.default)}</code> {s.unit && `(${s.unit})`}
+            {s.help} Default: <code className="break-all">{JSON.stringify(s.default)}</code> {s.unit && `(${s.unit})`}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
@@ -337,11 +337,18 @@ function Audit() {
                         <td className="px-3 py-2 whitespace-nowrap text-muted">{fmtDate(a.created_at, true)}</td>
                         <td className="px-3 py-2 font-semibold text-ink">{a.action}</td>
                         <td className="px-3 py-2 text-muted">
-                          {a.entity} <code className="text-caption">{a.entity_id.slice(0, 8)}</code>
+                          {a.entity_name ? <span className="font-semibold text-ink">{a.entity_name}</span> : a.entity}{" "}
+                          <code className="text-caption" title={a.entity_id}>
+                            {a.entity_id.slice(0, 8)}
+                          </code>
                         </td>
                         <td className="px-3 py-2 text-muted">
-                          {a.actor_kind}
-                          {a.actor_user_id && <code className="pl-1 text-caption">{a.actor_user_id.slice(0, 8)}</code>}
+                          {a.actor_name ? <span className="font-semibold text-ink">{a.actor_name}</span> : a.actor_kind}
+                          {a.actor_user_id && (
+                            <code className="pl-1 text-caption" title={a.actor_user_id}>
+                              {a.actor_user_id.slice(0, 8)}
+                            </code>
+                          )}
                         </td>
                       </tr>
                     ))}

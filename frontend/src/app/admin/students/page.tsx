@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import useSWR from "swr";
 import { AppShell } from "@/components/AppShell";
 import { Badge, Button, Card, Empty, Field, Icon, Input, Modal, Notice, PageHead, SectionTitle, Select, State, cx, useRun } from "@/components/ui";
@@ -32,11 +32,11 @@ export default function StudentsPage() {
           title="Student Roster"
           sub="Search, correct records, manage probation, bulk-import from CSV and fix account problems."
         />
+        <Roster />
         <div className="grid gap-5 lg:grid-cols-2">
           <ImportCard />
           <GraduateCard />
         </div>
-        <Roster />
       </div>
     </AppShell>
   );
@@ -280,7 +280,22 @@ function GraduateCard() {
   );
 }
 
+/** True on phones; false on the server so desktop renders the table first. */
+const phoneQuery = "(max-width: 639px)";
+const onPhoneChange = (cb: () => void) => {
+  const m = matchMedia(phoneQuery);
+  m.addEventListener("change", cb);
+  return () => m.removeEventListener("change", cb);
+};
+const useIsPhone = () =>
+  useSyncExternalStore(
+    onPhoneChange,
+    () => matchMedia(phoneQuery).matches,
+    () => false,
+  );
+
 function Roster() {
+  const phone = useIsPhone();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<Status | "">("");
   const [filter, setFilter] = useState(EMPTY_FILTER);
@@ -346,54 +361,83 @@ function Roster() {
               <Empty icon="person_search" text="No students match." />
             ) : (
               <>
-                <table className="w-full min-w-[840px] text-left text-body">
-                  <thead className="bg-surface-low text-caption font-semibold tracking-[0.55px] text-muted uppercase">
-                    <tr>
-                      {["Enrolment", "Student", "Programme", "CGPA", "Batch", "Portal", "Status", ""].map((h) => (
-                        <th key={h} className="px-3 py-2">
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
+                {phone ? (
+                  <ul className="flex flex-col gap-2">
                     {data.map((s) => (
-                      <tr key={s.id} className="border-t border-surface">
-                        <td className="px-3 py-2.5 font-bold">{s.enrolment_no}</td>
-                        <td className="px-3 py-2.5">
-                          <span className="flex items-center gap-2">
-                            <span className="grid size-7 shrink-0 place-items-center rounded-xl bg-surface-high text-caption font-bold">
-                              {initialsOf(s.user.name)}
-                            </span>
-                            <span>
-                              <span className="block font-semibold">{s.user.name}</span>
-                              <span className="text-caption text-muted">{s.user.email}</span>
-                            </span>
-                          </span>
-                        </td>
-                        <td className="px-3 py-2.5 text-muted">{progs.data?.find((p) => p.id === s.programme_id)?.name ?? s.department ?? "—"}</td>
-                        <td className="px-3 py-2.5 font-bold">{s.cgpa ?? "—"}</td>
-                        <td className="px-3 py-2.5">{s.year_of_completion ?? "—"}</td>
-                        <td className="px-3 py-2.5">
-                          <Badge tone={s.account_claimed ? "info" : "muted"}>{s.account_claimed ? "Joined" : "Not joined"}</Badge>
-                        </td>
-                        <td className="px-3 py-2.5">
-                          <div className="flex flex-wrap gap-1">
-                            <Badge tone={s.user.status === "active" ? "info" : s.user.status === "rejected" ? "error" : "muted"}>
-                              {STATUS[s.user.status as Status] ?? s.user.status}
-                            </Badge>
-                            {s.academic_standing === "probation" && <Badge tone="error">Probation</Badge>}
+                      <li key={s.id} className="flex flex-col gap-1.5 rounded-sm bg-surface-low p-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="font-semibold break-words text-ink">{s.user.name}</p>
+                            <p className="text-caption break-all text-muted">{s.user.email}</p>
                           </div>
-                        </td>
-                        <td className="px-3 py-2.5 text-right">
                           <Button size="sm" variant="soft" onClick={() => setOpen(s)}>
                             Manage
                           </Button>
-                        </td>
-                      </tr>
+                        </div>
+                        <p className="text-label text-muted">
+                          <b className="text-ink">{s.enrolment_no}</b> • {progs.data?.find((p) => p.id === s.programme_id)?.name ?? s.department ?? "—"} • batch{" "}
+                          {s.year_of_completion ?? "—"} • CGPA {s.cgpa ?? "—"}
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          <Badge tone={s.account_claimed ? "info" : "muted"}>{s.account_claimed ? "Joined" : "Not joined"}</Badge>
+                          <Badge tone={s.user.status === "active" ? "info" : s.user.status === "rejected" ? "error" : "muted"}>
+                            {STATUS[s.user.status as Status] ?? s.user.status}
+                          </Badge>
+                          {s.academic_standing === "probation" && <Badge tone="error">Probation</Badge>}
+                        </div>
+                      </li>
                     ))}
-                  </tbody>
-                </table>
+                  </ul>
+                ) : (
+                  <table className="w-full min-w-[840px] text-left text-body">
+                    <thead className="bg-surface-low text-caption font-semibold tracking-[0.55px] text-muted uppercase">
+                      <tr>
+                        {["Enrolment", "Student", "Programme", "CGPA", "Batch", "Portal", "Status", ""].map((h) => (
+                          <th key={h} className="px-3 py-2">
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.map((s) => (
+                        <tr key={s.id} className="border-t border-surface">
+                          <td className="px-3 py-2.5 font-bold">{s.enrolment_no}</td>
+                          <td className="px-3 py-2.5">
+                            <span className="flex items-center gap-2">
+                              <span className="grid size-7 shrink-0 place-items-center rounded-xl bg-surface-high text-caption font-bold">
+                                {initialsOf(s.user.name)}
+                              </span>
+                              <span>
+                                <span className="block font-semibold">{s.user.name}</span>
+                                <span className="text-caption text-muted">{s.user.email}</span>
+                              </span>
+                            </span>
+                          </td>
+                          <td className="px-3 py-2.5 text-muted">{progs.data?.find((p) => p.id === s.programme_id)?.name ?? s.department ?? "—"}</td>
+                          <td className="px-3 py-2.5 font-bold">{s.cgpa ?? "—"}</td>
+                          <td className="px-3 py-2.5">{s.year_of_completion ?? "—"}</td>
+                          <td className="px-3 py-2.5">
+                            <Badge tone={s.account_claimed ? "info" : "muted"}>{s.account_claimed ? "Joined" : "Not joined"}</Badge>
+                          </td>
+                          <td className="px-3 py-2.5">
+                            <div className="flex flex-wrap gap-1">
+                              <Badge tone={s.user.status === "active" ? "info" : s.user.status === "rejected" ? "error" : "muted"}>
+                                {STATUS[s.user.status as Status] ?? s.user.status}
+                              </Badge>
+                              {s.academic_standing === "probation" && <Badge tone="error">Probation</Badge>}
+                            </div>
+                          </td>
+                          <td className="px-3 py-2.5 text-right">
+                            <Button size="sm" variant="soft" onClick={() => setOpen(s)}>
+                              Manage
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
                 <div className="flex justify-end gap-2 pt-3">
                   <Button size="sm" variant="ghost" disabled={cursors.length < 2} onClick={() => setCursors(cursors.slice(0, -1))}>
                     Previous
