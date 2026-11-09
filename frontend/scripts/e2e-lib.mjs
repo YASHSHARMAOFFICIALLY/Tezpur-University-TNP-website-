@@ -25,6 +25,7 @@ export const run = Date.now().toString().slice(-5);
 export const browser = await chromium.launch({
   executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
   headless: !process.argv.includes("--headed"),
+  slowMo: Number(process.env.SLOWMO ?? 0), // SLOWMO=400 to follow a --headed run by eye
 });
 const results = [];
 const consoleErrors = [];
