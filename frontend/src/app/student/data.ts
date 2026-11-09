@@ -17,6 +17,10 @@ export type Feedback = Json<"/api/v1/students/me/feedback", "get">[number];
 export type StudentRecord = components["schemas"]["StudentRecord"];
 export type Profile = components["schemas"]["StudentProfile"];
 export type Programme = Json<"/api/v1/programmes", "get">[number];
+export type Notice = components["schemas"]["Notice"];
+export type PlacementRecord = Json<"/api/v1/placement-records", "get">[number];
+/** Keys the T&P cell can fill in a year's record; every one is optional. */
+export type Metrics = { placement_rate?: number; corporate_partners?: number; highest_ctc_lpa?: number; summer_internships?: number; cohort?: string };
 
 export const useProfile = () => useSWR("students/me", () => call(api.GET("/api/v1/students/me")));
 export const useApps = () =>
@@ -42,3 +46,9 @@ export function fmtMonths(from?: string | null, to?: string | null) {
 }
 
 export const DRIVE_MODE = { online: "Online drive", offline: "On-campus drive", hybrid: "Hybrid drive" } as const;
+
+// Same SWR keys and fetchers as the drives screen and the header bell, so each list is requested once per visit.
+export const useOpps = () =>
+  useSWR("opportunities", () => listAll((cursor) => call(api.GET("/api/v1/opportunities", { params: { query: { limit: 100, cursor } } }))));
+export const useNotices = () => useSWR("noticeboard", () => call(api.GET("/api/v1/noticeboard", { params: { query: { limit: 100 } } })));
+export const useRecords = () => useSWR("placement-records", () => call(api.GET("/api/v1/placement-records")));

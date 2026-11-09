@@ -10,14 +10,18 @@ import { useFeedback, useMyEvents, type Ev } from "./data";
 
 export function Training() {
   const events = useSWR("events", () => call(api.GET("/api/v1/events", { params: { query: { limit: 100 } } })));
+  const mine = useMyEvents();
+  // events I'm registered for come first, then by start date
+  const registered = new Set(mine.data?.data.filter((r) => r.status !== "cancelled").map((r) => r.event.id));
+  const rank = (e: Ev) => (registered.has(e.id) ? 0 : 1);
   return (
     <Card className="flex scroll-mt-24 flex-col gap-4 p-5">
       <span id="training" />
-      <SectionTitle icon="lightbulb" title="Training & workshops" sub="Register while registration is open. Rate a session once it has started." />
+      <SectionTitle icon="lightbulb" title="Events" sub="Trainings, workshops and expert sessions. Your registrations come first. Rate a session once it has started." />
       <State data={events.data} error={events.error} retry={() => events.mutate()} empty={(d) => d.data.length === 0}>
         {(d) => (
           <div className="flex flex-col gap-3">
-            {d.data.map((e) => (
+            {d.data.toSorted((a, b) => rank(a) - rank(b) || +new Date(a.starts_at) - +new Date(b.starts_at)).map((e) => (
               <EventCard key={e.id} e={e} />
             ))}
           </div>

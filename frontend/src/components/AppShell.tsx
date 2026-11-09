@@ -10,6 +10,11 @@ import { Button, Field, Icon, Input, cx, initials } from "./ui";
 
 export type NavItem = { label: string; icon: string; href: string };
 
+/** In-page "#tab" links must be plain anchors: the pages listen for `hashchange`, and Next's <Link> navigates with pushState, which never fires it. */
+export function NavLink({ href, ...p }: React.ComponentProps<typeof Link>) {
+  return typeof href === "string" && href.startsWith("#") ? <a href={href} {...(p as React.ComponentProps<"a">)} /> : <Link href={href} {...p} />;
+}
+
 const PORTALS: { label: string; href: string; role?: Role }[] = [
   { label: "Public / Guest", href: "/" },
   { label: "Admin / TPO", href: "/admin", role: "admin" },
@@ -54,7 +59,7 @@ export function AppShell({ role, nav, active, children }: { role: Role; nav: Nav
         </div>
         <nav className="flex flex-1 flex-col gap-1 px-2">
           {nav.map((n) => (
-            <Link
+            <NavLink
               key={n.href}
               href={n.href}
               className={cx(
@@ -64,7 +69,7 @@ export function AppShell({ role, nav, active, children }: { role: Role; nav: Nav
             >
               <Icon name={n.icon} filled={active === n.href} />
               {n.label}
-            </Link>
+            </NavLink>
           ))}
         </nav>
         <div className="px-3 pt-2">
@@ -111,13 +116,13 @@ export function AppShell({ role, nav, active, children }: { role: Role; nav: Nav
       {/* below lg the aside is hidden: same links as a scroll strip */}
       <nav className="flex gap-1 overflow-x-auto bg-surface-low px-4 py-2 lg:hidden">
         {nav.map((n) => (
-          <Link
+          <NavLink
             key={n.href}
             href={n.href}
             className={cx("shrink-0 rounded-xs px-3 py-1 text-body", active === n.href ? "bg-primary-container text-white" : "text-muted")}
           >
             {n.label}
-          </Link>
+          </NavLink>
         ))}
       </nav>
 
@@ -132,14 +137,14 @@ function NoticeBell({ role }: { role: Role }) {
   const { data } = useSWR("noticeboard", () => call(api.GET("/api/v1/noticeboard", { params: { query: { limit: 100 } } })));
   const n = data?.data.length ?? 0;
   return (
-    <Link href={NOTICES_HREF[role]} aria-label={`${n} notices`} className="relative px-1 pt-1 pb-2.5 text-muted">
+    <NavLink href={NOTICES_HREF[role]} aria-label={`${n} notices`} className="relative px-1 pt-1 pb-2.5 text-muted">
       <Icon name="notifications" className="text-[18px]" />
       {n > 0 && (
         <span className="absolute top-0 -right-1 grid size-4 place-items-center rounded-xl bg-tertiary text-[10px] leading-none font-bold text-white">
           {n > 9 ? "9+" : n}
         </span>
       )}
-    </Link>
+    </NavLink>
   );
 }
 

@@ -61,6 +61,8 @@ await step("student signs in with the enrolment number", async () => {
   await page.getByLabel("Password *").fill(SPW);
   await page.getByRole("button", { name: "Sign in" }).click();
   await page.waitForURL(/\/student$/);
+  await page.getByRole("heading", { name: "Welcome back, Nova" }).waitFor(); // lands on Home
+  await page.getByRole("link", { name: "Profile", exact: true }).first().click();
   await page.getByRole("heading", { name: NAME }).waitFor();
 });
 

@@ -7,35 +7,6 @@ import { api, call, fileBody, fileUrl, openFile } from "@/lib/api";
 import { fmtDate, initialsOf } from "@/lib/format";
 import { useProfile, type Profile, type Programme } from "./data";
 
-export function NoticeBanner() {
-  const { data, error } = useSWR("noticeboard", () => call(api.GET("/api/v1/noticeboard", { params: { query: { limit: 100 } } })));
-  const [all, setAll] = useState(false);
-  if (error || !data?.data.length) return null;
-  const list = all ? data.data : data.data.slice(0, 1);
-  return (
-    <section id="notices" className="flex scroll-mt-24 flex-col gap-2 rounded-lg bg-accent/15 p-3 shadow-card">
-      {list.map((n) => (
-        <div key={n.id}>
-          <p className="flex items-start gap-2 text-[14px] leading-5 text-primary">
-            <Icon name="campaign" className="text-[20px] text-tertiary" />
-            <span className="min-w-0 break-words">
-              <strong className="font-semibold">{n.title}:</strong> {n.body}
-            </span>
-          </p>
-          <p className="flex items-center gap-1 pl-7 text-label font-semibold text-tertiary">
-            <Icon name="schedule" /> Posted {fmtDate(n.published_at, true)}
-          </p>
-        </div>
-      ))}
-      {data.data.length > 1 && (
-        <button onClick={() => setAll(!all)} className="w-fit pl-7 text-label font-semibold text-primary underline cursor-pointer">
-          {all ? "Show latest only" : `Show all ${data.data.length} notices`}
-        </button>
-      )}
-    </section>
-  );
-}
-
 function Photo({ id, name }: { id: string | null | undefined; name: string }) {
   const { data: src } = useSWR(id ? ["file", id] : null, () => fileUrl(id!));
   return src ? (
@@ -49,7 +20,7 @@ function Photo({ id, name }: { id: string | null | undefined; name: string }) {
 }
 
 /** What PROFILE_INCOMPLETE checks before applying; the strength meter shows the same list. */
-const REQUIRED: { key: keyof Profile; label: string; action: string }[] = [
+export const REQUIRED: { key: keyof Profile; label: string; action: string }[] = [
   { key: "photo_file_id", label: "Photo", action: "Add a coloured photo" },
   { key: "resume_file_id", label: "Resume", action: "Upload your resume" },
   { key: "cgpa", label: "CGPA", action: "Enter your CGPA" },
