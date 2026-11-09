@@ -199,6 +199,11 @@ model Student {
   certifications         String?
   portfolio_url          String?
   linkedin_url           String?
+  specialization         String?
+  career_interests       String?
+  technical_skills       String?
+  extracurriculars       String?
+  about_me               String?
   resume_file_id         String?
   photo_file_id          String?
   academic_standing      AcademicStanding
@@ -405,6 +410,8 @@ model Notice {
   max_cgpa      Float?
   /// true = only placed students, false = only unplaced, null = both.
   placed        Boolean?
+  /// female / male / other / unspecified; empty = everyone.
+  genders       String[] @default([])
   file_id       String?
   created_by    String?
   published_at  DateTime @default(now())

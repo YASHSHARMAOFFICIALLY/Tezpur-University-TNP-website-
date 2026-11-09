@@ -1022,6 +1022,11 @@ export interface paths {
                         portfolio_url?: string;
                         /** Format: uri */
                         linkedin_url?: string;
+                        specialization?: string;
+                        career_interests?: string;
+                        technical_skills?: string;
+                        extracurriculars?: string;
+                        about_me?: string;
                     };
                 };
             };
@@ -3595,6 +3600,11 @@ export interface paths {
                                     portfolio_url: string | null;
                                     /** Format: uri */
                                     linkedin_url: string | null;
+                                    specialization: string | null;
+                                    career_interests: string | null;
+                                    technical_skills: string | null;
+                                    extracurriculars: string | null;
+                                    about_me: string | null;
                                     id: string;
                                     enrolment_no: string;
                                     /** Format: date-time */
@@ -3910,6 +3920,11 @@ export interface paths {
                                     portfolio_url: string | null;
                                     /** Format: uri */
                                     linkedin_url: string | null;
+                                    specialization: string | null;
+                                    career_interests: string | null;
+                                    technical_skills: string | null;
+                                    extracurriculars: string | null;
+                                    about_me: string | null;
                                     id: string;
                                     enrolment_no: string;
                                     /** Format: date-time */
@@ -6237,6 +6252,11 @@ export interface paths {
                     min_cgpa?: number | null;
                     max_cgpa?: number | null;
                     placed?: boolean | string | null;
+                    genders?: ("female" | "male" | "other" | "unspecified")[];
+                    categories?: string[] | null;
+                    probation?: boolean | string | null;
+                    profile_complete?: boolean | string | null;
+                    account_claimed?: boolean | string | null;
                     q?: string;
                     status?: "pending_email_verify" | "pending_admin" | "active" | "rejected" | "alumni";
                 };
@@ -6364,6 +6384,11 @@ export interface paths {
                         portfolio_url?: string;
                         /** Format: uri */
                         linkedin_url?: string;
+                        specialization?: string;
+                        career_interests?: string;
+                        technical_skills?: string;
+                        extracurriculars?: string;
+                        about_me?: string;
                         enrolment_no?: string;
                     };
                 };
@@ -8087,6 +8112,8 @@ export interface paths {
                         max_cgpa?: number | null;
                         /** @default null */
                         placed?: boolean | string | null;
+                        /** @default [] */
+                        genders?: ("female" | "male" | "other" | "unspecified")[];
                         /** @enum {string} */
                         audience: "students" | "companies" | "all";
                         title: string;
@@ -8161,6 +8188,11 @@ export interface paths {
                     min_cgpa?: number | null;
                     max_cgpa?: number | null;
                     placed?: boolean | string | null;
+                    genders?: ("female" | "male" | "other" | "unspecified")[];
+                    categories?: string[] | null;
+                    probation?: boolean | string | null;
+                    profile_complete?: boolean | string | null;
+                    account_claimed?: boolean | string | null;
                 };
                 header?: never;
                 path?: never;
@@ -10065,6 +10097,11 @@ export interface components {
             portfolio_url: string | null;
             /** Format: uri */
             linkedin_url: string | null;
+            specialization: string | null;
+            career_interests: string | null;
+            technical_skills: string | null;
+            extracurriculars: string | null;
+            about_me: string | null;
             id: string;
             enrolment_no: string;
             /** Format: date-time */
@@ -10195,6 +10232,11 @@ export interface components {
             portfolio_url: string | null;
             /** Format: uri */
             linkedin_url: string | null;
+            specialization: string | null;
+            career_interests: string | null;
+            technical_skills: string | null;
+            extracurriculars: string | null;
+            about_me: string | null;
             id: string;
             enrolment_no: string;
             /** Format: date-time */
@@ -10209,6 +10251,7 @@ export interface components {
                 status: string;
             };
             user_id: string;
+            account_claimed: boolean;
         };
         Company: {
             id: string;
@@ -10263,6 +10306,7 @@ export interface components {
             min_cgpa: number | null;
             max_cgpa: number | null;
             placed: boolean | null;
+            genders: string[];
             file_id: string | null;
         };
     };

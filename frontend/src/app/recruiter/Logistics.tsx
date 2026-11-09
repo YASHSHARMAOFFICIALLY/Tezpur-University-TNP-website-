@@ -35,8 +35,8 @@ export function Logistics({ drive, reload }: { drive: Posting; reload: () => voi
         <div>
           <h3 className="font-display text-card font-semibold text-primary">Campus Logistics</h3>
           <p className="text-body text-muted">
-            Only students who applied to this posting see these details, on their applications page. Each time you save, applicants still in the
-            running get an email with the update.
+            Only students who applied to this posting see these details, on their applications page. Each time you save, applicants still in the running get an
+            email with the update.
           </p>
         </div>
       </div>

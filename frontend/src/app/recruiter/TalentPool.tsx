@@ -17,7 +17,7 @@ export function TalentPool({ onExplore }: { onExplore: (programmeId: string) => 
           <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
             <span className="min-w-0">
               <span className="flex items-center gap-1 text-caption font-semibold uppercase">
-                <Icon name="account_balance" /> Accreditation
+                <Icon name="account_balance" /> About the university
               </span>
               <span className="block truncate font-display text-title font-bold text-white">{u.name}</span>
               {u.ranking && <span className="block text-caption font-semibold">{u.ranking}</span>}
@@ -39,7 +39,7 @@ export function TalentPool({ onExplore }: { onExplore: (programmeId: string) => 
       <Card className="flex flex-col gap-4 p-5">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="font-display text-title font-semibold text-primary">Campus Talent Pool Drilldown</h2>
+            <h2 className="font-display text-title font-semibold text-primary">Students on campus</h2>
             <p className="text-body text-muted">Departmental clusters and batch strength from the university programme register.</p>
           </div>
         </div>

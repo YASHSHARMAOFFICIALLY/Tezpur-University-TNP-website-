@@ -102,7 +102,7 @@ export function Candidates({
       <span id="candidates" />
       <div className="flex flex-col justify-between gap-3 p-5 pb-3 md:flex-row md:items-start">
         <div>
-          <h2 className="font-display text-title font-semibold text-primary">Candidate Shortlisting Database</h2>
+          <h2 className="font-display text-title font-semibold text-primary">Candidates</h2>
           <p className="text-body text-muted">Applicants released by the T&amp;P cell, with academic filters.</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -196,7 +196,7 @@ export function Candidates({
                     <th className="px-2 py-3">Degree &amp; Program</th>
                     <th className="px-2 py-3">CGPA</th>
                     <th className="px-2 py-3">Technical Core</th>
-                    <th className="px-2 py-3">Resume Dossier</th>
+                    <th className="px-2 py-3">Resume</th>
                     <th className="px-2 py-3">Applied Date</th>
                     <th className="px-2 py-3">Drive Stage</th>
                     <th className="px-2 py-3 pr-4">Profile</th>

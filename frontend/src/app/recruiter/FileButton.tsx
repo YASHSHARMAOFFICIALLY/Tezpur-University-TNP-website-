@@ -5,7 +5,19 @@ import { Icon, cx } from "@/components/ui";
 import { openFile } from "@/lib/api";
 
 /** Opens an auth-protected file; a failed fetch shows its reason next to the button instead of an unhandled rejection. */
-export function FileButton({ id, icon = "picture_as_pdf", label, className, children }: { id: string; icon?: string; label?: string; className?: string; children: ReactNode }) {
+export function FileButton({
+  id,
+  icon = "picture_as_pdf",
+  label,
+  className,
+  children,
+}: {
+  id: string;
+  icon?: string;
+  label?: string;
+  className?: string;
+  children: ReactNode;
+}) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   async function open() {

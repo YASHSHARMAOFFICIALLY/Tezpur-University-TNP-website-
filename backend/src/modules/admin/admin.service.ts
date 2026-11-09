@@ -106,16 +106,15 @@ export const rosterWhere = (query: Omit<RosterQuery, keyof Page>): Prisma.Studen
   ],
 });
 
+const rosterUser = { select: { name: true, email: true, status: true, password_hash: true } } as const;
+/** The hash never leaves the server: the roster only learns whether the student has set a password. */
+const claimed = <S extends { user: { password_hash: string; name: string; email: string; status: string } }>(s: S) => {
+  const { password_hash, ...user } = s.user;
+  return { ...s, user, account_claimed: password_hash !== "" };
+};
+
 export const searchStudents = (query: RosterQuery) =>
-  paginate(
-    (a) =>
-      db.student.findMany({
-        ...a,
-        where: rosterWhere(query),
-        include: { user: { select: { name: true, email: true, status: true } } },
-      }),
-    query,
-  );
+  paginate(async (a) => (await db.student.findMany({ ...a, where: rosterWhere(query), include: { user: rosterUser } })).map(claimed), query);
 
 export const patchStudent = (id: string, body: z.infer<typeof AdminStudentPatch>, actor: Actor) =>
   inTx(async (tx) => {
@@ -123,7 +122,7 @@ export const patchStudent = (id: string, body: z.infer<typeof AdminStudentPatch>
     const s = await tx.student.update({ where: { id }, data: rest });
     if (name) await tx.user.update({ where: { id: s.user_id }, data: { name } });
     await audit(tx, actor, "student.edited_by_admin", "student", s.id, { fields: Object.keys(body) });
-    return tx.student.findUniqueOrThrow({ where: { id: s.id }, include: { user: { select: { name: true, email: true, status: true } } } });
+    return claimed(await tx.student.findUniqueOrThrow({ where: { id: s.id }, include: { user: rosterUser } }));
   });
 
 export const getJob = async (id: string) => (await db.job.findUnique({ where: { id } })) ?? fail("NOT_FOUND");

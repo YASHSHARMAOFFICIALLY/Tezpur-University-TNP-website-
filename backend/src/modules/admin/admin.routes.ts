@@ -15,7 +15,7 @@ const RosterQuery = PageQuery.extend(StudentFilter.shape).extend({
 });
 
 /** Admin-only: user_id lets the console call the /admin/users/:id repairs for a student row. */
-const AdminStudent = StudentProfile.extend({ user_id: z.string() }).meta({ id: "AdminStudent" });
+const AdminStudent = StudentProfile.extend({ user_id: z.string(), account_claimed: z.boolean() }).meta({ id: "AdminStudent" });
 
 export const adminModule: ModuleDef = {
   name: "admin",

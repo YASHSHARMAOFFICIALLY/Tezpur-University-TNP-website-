@@ -46,15 +46,17 @@ await step("admin replies in a company thread; recruiter sees it", async () => {
   await adm.getByLabel("Reply message").fill("Room 102 confirmed.");
   await adm.getByRole("button", { name: "Send Reply" }).click();
   await adm.getByText("Reply sent.").waitFor();
+  await rec.evaluate(() => (location.hash = "#messages")); // one sidebar section at a time
   await rec.reload();
   await rec.getByText(`Re: slots ${run}`).waitFor();
+  await rec.evaluate(() => (location.hash = "#overview"));
 });
 await step("admin sends a feedback form; recruiter submits; admin sees answers", async () => {
   await adm.getByLabel("Drive").selectOption({ index: 1 });
   await adm.getByRole("button", { name: "Send Feedback Form" }).click();
   await adm.getByText("Feedback form sent to the recruiter.").waitFor();
   await rec.reload();
-  await rec.getByRole("button", { name: "Submit Drive Feedback" }).click();
+  await rec.getByRole("button", { name: "Give drive feedback" }).click();
   const d = rec.getByRole("dialog");
   await d.getByLabel(/Overall experience/).selectOption("5");
   await d.getByLabel(/Candidate preparedness/).selectOption("4");
@@ -166,7 +168,7 @@ await step("admin changes a setting and resets it; health + audit render", async
 
 // ---------- recruiter self-service ----------
 await step("recruiter edits organisation profile and contacts", async () => {
-  await rec.getByRole("button", { name: "Edit Organisation Profile" }).click();
+  await rec.getByRole("button", { name: "Company profile" }).click();
   const d = rec.getByRole("dialog", { name: "Organisation Profile" });
   await d.getByLabel("Industry Sector").fill("IT Services & Consulting");
   await d.getByRole("button", { name: "Save Profile" }).click();
@@ -207,6 +209,7 @@ await step("posting returned by admin is edited and resubmitted; untouched field
   await row.getByRole("button", { name: "Send" }).click();
   await row.waitFor({ state: "detached" });
 
+  await rec.evaluate(() => (location.hash = "#drive"));
   await rec.reload();
   await rec.getByLabel("Choose drive").selectOption({ label: `${JOB2} (Returned for edits)` });
   await rec.getByText("Add the CTC breakdown").waitFor();

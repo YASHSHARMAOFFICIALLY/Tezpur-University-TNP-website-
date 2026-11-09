@@ -168,7 +168,12 @@ function OppCard({ o, app, locked, onApplied, onPlaced }: { o: Opp; app?: App; l
   }
 
   return (
-    <article className={cx("flex flex-col justify-between gap-3 rounded-sm p-3 shadow-card sm:flex-row sm:items-center", !eligible && !app ? "bg-surface-low" : "bg-white")}>
+    <article
+      className={cx(
+        "flex flex-col justify-between gap-3 rounded-sm p-3 shadow-card sm:flex-row sm:items-center",
+        !eligible && !app ? "bg-surface-low" : "bg-white",
+      )}
+    >
       <div className="flex min-w-0 gap-3">
         <span
           className={cx(
@@ -179,11 +184,13 @@ function OppCard({ o, app, locked, onApplied, onPlaced }: { o: Opp; app?: App; l
           {initialsOf(o.company.name)}
         </span>
         <div className="flex min-w-0 flex-col gap-1">
-          <h3 className="font-display text-title font-semibold text-primary">{o.company.name}</h3>
-          <p className="text-body text-muted">
+          <h3 className="font-display text-title font-semibold text-primary">
             {o.title}
-            {o.designation && ` • ${o.designation}`}
-            {o.location && ` • ${o.location}`}
+            {o.designation && o.designation !== o.title && <span className="font-normal text-muted"> · {o.designation}</span>}
+          </h3>
+          <p className="text-body text-muted">
+            {o.company.name}
+            {o.location && ` · ${o.location}`}
           </p>
           {o.ctc_benefits && <p className="text-label font-semibold text-ink">CTC: {o.ctc_benefits}</p>}
           <DriveFacts mode={o.drive_mode} from={o.hiring_from} to={o.hiring_to} />

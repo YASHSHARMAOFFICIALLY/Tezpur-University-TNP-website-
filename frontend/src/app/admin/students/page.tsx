@@ -80,6 +80,11 @@ const IMPORT_COLUMNS: [name: string, need: "Required" | "Optional", rule: string
   ["certifications", "Optional", "Text", ""],
   ["portfolio_url", "Optional", "Full URL", "https://example.dev"],
   ["linkedin_url", "Optional", "Full URL", "https://www.linkedin.com/in/example"],
+  ["specialization", "Optional", "Text", "Machine learning"],
+  ["technical_skills", "Optional", "Comma-separated", "Python, SQL, AWS"],
+  ["career_interests", "Optional", "Comma-separated roles", "Software engineer, R&D"],
+  ["extracurriculars", "Optional", "Text", "Placement committee member"],
+  ["about_me", "Optional", "A few lines about the student", ""],
 ];
 const IMPORT_TEMPLATE = [IMPORT_COLUMNS.map(([n]) => n), IMPORT_COLUMNS.map(([, , , ex]) => ex)];
 
@@ -133,6 +138,11 @@ function ImportCard() {
         <li>Only enrolment_no, name and email are required; include any other column you have. Blank cells leave the field unchanged.</li>
         <li>Re-uploading updates existing students (same enrolment number and email) with the file&apos;s values, so you can fill in profiles later.</li>
         <li>yes/no columns also accept true/false or 1/0. Dates are YYYY-MM-DD.</li>
+        <li>
+          The T&amp;P profile sheet can be uploaded as it is (Roll Number, Student Name, Programme, Project 1…). The university email is built from the roll
+          number, rows with no roll number are skipped and listed in the report, and projects and internships are added to the student&apos;s records. Create
+          the programmes first: a programme that does not exist skips that row.
+        </li>
         {!!progs.data?.length && <li>Programme codes in use: {progs.data.map((p) => p.code).join(", ")}.</li>}
       </ul>
 
@@ -319,7 +329,7 @@ function Roster() {
           <Icon name="expand_more" className="transition-transform group-open:rotate-180" />
         </summary>
         <div className="flex flex-col gap-2 pt-3">
-          <StudentFilterFields value={filter} onChange={(f) => (setFilter(f), reset())} />
+          <StudentFilterFields roster value={filter} onChange={(f) => (setFilter(f), reset())} />
           {isTargeted(filter) && (
             <Button size="sm" variant="ghost" icon="filter_alt_off" className="self-start" onClick={() => (setFilter(EMPTY_FILTER), reset())}>
               Clear filters
@@ -334,10 +344,10 @@ function Roster() {
               <Empty icon="person_search" text="No students match." />
             ) : (
               <>
-                <table className="w-full min-w-[760px] text-left text-body">
+                <table className="w-full min-w-[840px] text-left text-body">
                   <thead className="bg-surface-low text-caption font-semibold tracking-[0.55px] text-muted uppercase">
                     <tr>
-                      {["Enrolment", "Student", "Programme", "CGPA", "Batch", "Status", ""].map((h) => (
+                      {["Enrolment", "Student", "Programme", "CGPA", "Batch", "Portal", "Status", ""].map((h) => (
                         <th key={h} className="px-3 py-2">
                           {h}
                         </th>
@@ -362,6 +372,9 @@ function Roster() {
                         <td className="px-3 py-2.5 text-muted">{progs.data?.find((p) => p.id === s.programme_id)?.name ?? s.department ?? "—"}</td>
                         <td className="px-3 py-2.5 font-bold">{s.cgpa ?? "—"}</td>
                         <td className="px-3 py-2.5">{s.year_of_completion ?? "—"}</td>
+                        <td className="px-3 py-2.5">
+                          <Badge tone={s.account_claimed ? "info" : "muted"}>{s.account_claimed ? "Joined" : "Not joined"}</Badge>
+                        </td>
                         <td className="px-3 py-2.5">
                           <div className="flex flex-wrap gap-1">
                             <Badge tone={s.user.status === "active" ? "info" : s.user.status === "rejected" ? "error" : "muted"}>
@@ -397,8 +410,9 @@ function Roster() {
           {(q || status) && (
             <p role="note" className="flex items-start gap-2 rounded-xs bg-tertiary-fixed px-3 py-2 text-body text-on-accent">
               <Icon name="info" />
-              Notices target by department, programme, batch, CGPA and placement only. The {[q && "name search", status && "status filter"].filter(Boolean).join(" and ")} you set
-              on the roster can&apos;t be applied, so this notice reaches every active student matching the other filters.
+              Notices target by department, programme, batch, CGPA and placement only. The{" "}
+              {[q && "name search", status && "status filter"].filter(Boolean).join(" and ")} you set on the roster can&apos;t be applied, so this notice
+              reaches every active student matching the other filters.
             </p>
           )}
           <NoticeComposer initial={filter} />
@@ -632,7 +646,12 @@ function StudentRecords({ id }: { id: string }) {
                   </div>
                   <span className="flex shrink-0 gap-2">
                     {r.url && (
-                      <a href={r.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-xs px-2 py-1 text-caption font-semibold text-primary underline">
+                      <a
+                        href={r.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 rounded-xs px-2 py-1 text-caption font-semibold text-primary underline"
+                      >
                         <Icon name="link" /> Link
                       </a>
                     )}

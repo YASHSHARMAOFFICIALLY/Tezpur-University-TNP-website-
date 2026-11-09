@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
 import { Button, Field, Icon, Input, Notice, Select, Textarea, useRun } from "@/components/ui";
 import { api, call, fileBody } from "@/lib/api";
-import { EMPTY_FILTER, StudentFilterFields, filterQuery, isTargeted, type StudentFilter } from "./StudentFilterFields";
+import { EMPTY_FILTER, StudentFilterFields, filterQuery, isTargeted, noticeTarget, type StudentFilter } from "./StudentFilterFields";
 
 type Audience = "students" | "companies" | "all";
 
@@ -45,7 +45,7 @@ export function NoticeComposer({ initial = EMPTY_FILTER, onPosted }: { initial?:
                   title: String(fd.get("title")),
                   body: String(fd.get("body")),
                   email: fd.has("email"),
-                  ...(audience === "students" ? filter : EMPTY_FILTER),
+                  ...noticeTarget(audience === "students" ? filter : EMPTY_FILTER),
                 },
               }),
             );
@@ -91,7 +91,11 @@ export function NoticeComposer({ initial = EMPTY_FILTER, onPosted }: { initial?:
       {audience === "students" && (
         <p role="status" aria-live="polite" className="flex items-center gap-1 text-body font-semibold text-primary" data-testid="reach">
           <Icon name="groups" />
-          {reach.error ? "Couldn't count the audience." : reach.data ? `Reaches ${reach.data.students} active student${reach.data.students === 1 ? "" : "s"}` : "Counting…"}
+          {reach.error
+            ? "Couldn't count the audience."
+            : reach.data
+              ? `Reaches ${reach.data.students} active student${reach.data.students === 1 ? "" : "s"}`
+              : "Counting…"}
         </p>
       )}
       <Field label="PDF attachment (optional)" hint="Up to 10 MB.">

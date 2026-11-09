@@ -50,10 +50,10 @@ export function Messages() {
       />
       <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
         <form onSubmit={submit} className="flex flex-col gap-3" aria-label="New message">
-          <Field label="SUBJECT HEADER">
+          <Field label="Subject">
             <Input name="subject" required maxLength={200} className="bg-surface-low" placeholder="Interview slots for the technical round" />
           </Field>
-          <Field label="DISPATCH CONTENT">
+          <Field label="Your message">
             <Textarea name="body" required rows={5} maxLength={20000} className="bg-surface-low" placeholder="Dear Placement Cell, …" />
           </Field>
           <Field label="ATTACHMENT (PDF, OPTIONAL)">
@@ -67,7 +67,7 @@ export function Messages() {
           <Notice msg={send.msg} />
           <div className="flex justify-end">
             <Button type="submit" busy={send.busy === "send"} icon="send">
-              Transmit Announcement
+              Send message
             </Button>
           </div>
         </form>

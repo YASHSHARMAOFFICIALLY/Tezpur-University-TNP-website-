@@ -31,11 +31,11 @@ const rec = await newPage();
 await step("recruiter signs in to /recruiter", async () => {
   await login(rec, RECRUITER, PW);
   await rec.waitForURL(/\/recruiter$/);
-  for (const n of ["Overview", "Postings", "Drive Desk", "Candidates", "Messages", "Talent Pool"]) await rec.getByRole("link", { name: n, exact: true }).first().waitFor();
+  for (const n of ["Overview", "Postings", "Drive Desk", "Messages", "Talent Pool"]) await rec.getByRole("link", { name: n, exact: true }).first().waitFor();
 });
 
 await step("studio creates a hybrid posting, hiring Jan-Mar next year, with a JD PDF and venue", async () => {
-  await rec.getByRole("button", { name: "Create New Job Opening" }).click();
+  await rec.getByRole("button", { name: "New posting" }).click();
   const d = rec.getByRole("dialog", { name: "Job & Internship Posting Studio" });
   await d.getByLabel("ROLE PROFILE / JOB TITLE *").fill(JOB);
   await d.getByLabel("TENTATIVE WORK LOCATION *").fill("Guwahati");
@@ -88,6 +88,8 @@ await step("a student applies (setup via API: register, OTP, profile, record wit
   assert.equal(released, 1);
 });
 
+// The sidebar shows one section at a time; the URL hash picks it.
+const view = (h) => rec.evaluate((x) => (location.hash = x), h);
 await step("recruiter saves campus logistics on the live posting", async () => {
   await rec.reload();
   await rec.getByLabel("Choose drive").selectOption({ label: `${JOB} (Live to students)` });
@@ -97,6 +99,7 @@ await step("recruiter saves campus logistics on the live posting", async () => {
   await form.getByLabel("Logistics notes").fill("Report at 9:00 AM with your ID card.");
   await form.getByRole("button", { name: "Save Logistics" }).click();
   await form.getByText(/Logistics saved/).waitFor();
+  await view("#postings");
   await rec.getByRole("listitem").filter({ has: rec.getByRole("heading", { name: JOB }) }).getByText(VENUE).waitFor();
 });
 
@@ -109,6 +112,7 @@ await step("the applicant sees the venue on /applications/mine and gets the logi
 });
 
 await step("candidate profile shows the released applicant's records with a file button", async () => {
+  await view("#drive");
   await rec.getByRole("button", { name: `View profile of ${NAME}` }).click();
   const d = rec.getByRole("dialog", { name: NAME });
   await d.getByText(RECORD).waitFor();
@@ -119,10 +123,11 @@ await step("candidate profile shows the released applicant's records with a file
 });
 
 await step("recruiter sends a message with a PDF and sees the attachment button", async () => {
-  await rec.getByLabel("SUBJECT HEADER").fill(SUBJECT);
-  await rec.getByLabel("DISPATCH CONTENT").fill("Room plan for the drive attached.");
+  await view("#messages");
+  await rec.getByLabel("Subject").fill(SUBJECT);
+  await rec.getByLabel("Your message").fill("Room plan for the drive attached.");
   await rec.getByLabel("ATTACHMENT (PDF, OPTIONAL)").setInputFiles(pdfFile("rooms.pdf"));
-  await rec.getByRole("button", { name: /Transmit Announcement/ }).click();
+  await rec.getByRole("button", { name: /Send message/ }).click();
   await rec.getByText("Sent to the T&P cell with the PDF attached.").waitFor();
   const item = rec.getByRole("listitem").filter({ hasText: SUBJECT });
   const [popup] = await Promise.all([rec.waitForEvent("popup"), item.getByRole("button", { name: `Attachment: ${SUBJECT}` }).click()]);

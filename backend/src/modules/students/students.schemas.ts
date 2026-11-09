@@ -33,6 +33,11 @@ export const Editable = z.object({
   certifications: s(2000),
   portfolio_url: z.url(),
   linkedin_url: z.url(),
+  specialization: s(200),
+  career_interests: s(2000),
+  technical_skills: s(2000),
+  extracurriculars: s(2000),
+  about_me: s(5000),
 });
 
 export const nullable = <T extends z.ZodRawShape>(o: z.ZodObject<T>) =>
@@ -80,15 +85,6 @@ const importCells = Object.fromEntries(IMPORT_FIELDS.map((k) => [k, csv(Editable
   [K in (typeof IMPORT_FIELDS)[number]]: z.ZodOptional<(typeof Editable.shape)[K]>;
 };
 
-/** Field rules come from Editable, so an imported row always fits the StudentProfile response. */
-export const ImportRow = z.object({
-  enrolment_no: z.string().trim().toUpperCase().regex(/^[A-Z]{3}\d{5,6}$/),
-  name: Editable.shape.name.trim().min(2),
-  email: z.email().trim().toLowerCase(),
-  programme_code: cell(z.string().trim()),
-  ...importCells,
-});
-export type ImportRow = z.infer<typeof ImportRow>;
 export const ImportReport = z.object({ created: z.number(), updated: z.number(), skipped: z.array(z.object({ enrolment_no: z.string(), reason: z.string() })) });
 
 // ---------- records, feedback, placement ----------
@@ -128,3 +124,15 @@ export const Placement = z.object({
 export const AppealBody = z.object({ reason: z.string().trim().min(10).max(2000) });
 export const AppealDecision = z.object({ grant: z.boolean(), note: z.string().trim().max(1000).optional() });
 export const Appeal = z.object({ student_id: z.string(), name: z.string(), enrolment_no: z.string(), reason: z.string(), at: Ts, selections: z.array(Selection) });
+
+/** Field rules come from Editable, so an imported row always fits the StudentProfile response. */
+export const ImportRow = z.object({
+  enrolment_no: z.string().trim().toUpperCase().regex(/^[A-Z]{3}\d{5,6}$/),
+  name: Editable.shape.name.trim().min(2),
+  email: z.email().trim().toLowerCase(),
+  programme_code: cell(z.string().trim()),
+  ...importCells,
+  /** Projects and internships from the profile sheet; created with the student. */
+  records: z.array(RecordBody).optional(),
+});
+export type ImportRow = z.infer<typeof ImportRow>;

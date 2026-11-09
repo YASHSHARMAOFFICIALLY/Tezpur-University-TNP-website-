@@ -142,6 +142,80 @@ describe("roster CSV", () => {
   });
 });
 
+describe("roster filters: who they are", () => {
+  /** password "" = imported, never signed in. */
+  const make = (enrolment: string, f: Record<string, unknown>, password = "") =>
+    inTx(async (tx) =>
+      userMachine.create(
+        tx,
+        { role: "student", email: `${enrolment.toLowerCase()}@tezu.ac.in`, name: enrolment, password_hash: password && (await hashPassword(password)), student: { create: { enrolment_no: enrolment, academic_standing: "good", ...f } } },
+        SYSTEM,
+        { state: "active" },
+      ),
+    );
+  const q = (s: string) => admin.get(`/admin/students?${s}&q=WHO`).then((r) => r.body.data.map((x: { enrolment_no: string }) => x.enrolment_no).sort());
+
+  it("filters by gender (any spelling, blank counts as unspecified), category, probation, profile and account", async () => {
+    await make("WHO26001", { gender: "F", category: "OBC", dob: new Date("2003-01-01") }, "pw-pw-pw-pw");
+    await make("WHO26002", { gender: "Male", category: "general" });
+    await make("WHO26003", { gender: "Non-binary", academic_standing: "probation" });
+    await make("WHO26004", {});
+    expect(await q("genders=female")).toEqual(["WHO26001"]);
+    expect(await q("genders=male")).toEqual(["WHO26002"]);
+    expect(await q("genders=other")).toEqual(["WHO26003"]);
+    expect(await q("genders=unspecified")).toEqual(["WHO26004"]);
+    expect(await q("genders=female&genders=male")).toEqual(["WHO26001", "WHO26002"]);
+    expect(await q("categories=obc")).toEqual(["WHO26001"]);
+    expect(await q("categories=general&categories=unspecified")).toEqual(["WHO26002", "WHO26003", "WHO26004"]);
+    expect(await q("probation=true")).toEqual(["WHO26003"]);
+    expect(await q("account_claimed=true")).toEqual(["WHO26001"]);
+    expect(await q("account_claimed=false")).toEqual(["WHO26002", "WHO26003", "WHO26004"]);
+    expect(await q("profile_complete=true")).toEqual([]);
+    expect(await q("profile_complete=false")).toEqual(["WHO26001", "WHO26002", "WHO26003", "WHO26004"]);
+    const row = (await admin.get("/admin/students?q=WHO26001")).body.data[0];
+    expect([row.account_claimed, "password_hash" in row.user], "claimed flag out, hash never").toEqual([true, false]);
+  });
+
+  it("a notice can target by gender, and only the matching students see it", async () => {
+    const n = await admin.post("/admin/notices", { audience: "students", title: "For women", body: "x", genders: ["female"] }).expect(201);
+    expect(n.body.genders).toEqual(["female"]);
+    expect((await admin.get("/admin/notices/reach?genders=female")).body.students, "reach counts active female students").toBeGreaterThanOrEqual(1);
+    const titles = async (email: string, pw: string) => (await as(await login(email, pw)).get("/noticeboard")).body.data.map((x: { title: string }) => x.title);
+    expect(await titles("who26001@tezu.ac.in", "pw-pw-pw-pw"), "female student sees it").toContain("For women");
+    await db.user.update({ where: { email: "who26002@tezu.ac.in" }, data: { password_hash: await hashPassword("pw-pw-pw-pw") } });
+    expect(await titles("who26002@tezu.ac.in", "pw-pw-pw-pw"), "male student does not").not.toContain("For women");
+    expect(code(await admin.post("/admin/notices", { audience: "all", title: "Bad", body: "x", genders: ["male"] }))).toBe("VALIDATION_FAILED");
+  });
+});
+
+describe("profile sheet upload", () => {
+  const head = "Submission ID,Status,Student Name,Programme,Specialization,Graduation Year,CGPA,Technical Skills,Project 1,Project 2,Internship 1,Achievements,LinkedIn,GitHub / Portfolio,About Me,Email for Profile Updates,Roll Number\n";
+  const q = (o: object) => `"${JSON.stringify(o).replaceAll('"', '""')}"`;
+  const sheet =
+    head +
+    `S-1,Approved,Sheet One,B.Tech CSE,Systems,2027,8.5,"C, Go",${q({ title: "Kernel toy", description: "A tiny kernel", tools: "C", role: "", link: "", imageUrl: "" })},,${q({ organization: "Acme Labs", role: "Summer Intern", duration: "June 2026", area: "Infra", description: "", link: "" })},"[{""title"":""Won hackathon"",""year"":""2026"",""detail"":""""}]",www.linkedin.com/in/sheet-one,,Likes systems.,personal@gmail.com,csb26060\n` +
+    `S-2,Approved,No Roll,B.Tech CSE,,2027,7.0,Python,${q({ title: "x", description: "", tools: "", role: "", link: "", imageUrl: "" })},,,,,,Hi.,,\n`;
+
+  it("uploads the sheet as-is: derives the university email, stores the detail, skips rows with no roll number", async () => {
+    const r = await admin.upload("/admin/students/import", Buffer.from(sheet), "sheet.csv");
+    expect(r.status, JSON.stringify(r.body)).toBe(202);
+    await drainJobs();
+    const job = await db.job.findUniqueOrThrow({ where: { id: r.body.job_id } });
+    expect(job.result).toMatchObject({ created: 1, skipped: [{ enrolment_no: "No Roll" }] });
+    const u = await db.user.findUniqueOrThrow({ where: { email: "csb26060@tezu.ac.in" }, include: { student: { include: { records: true } } } });
+    expect(u.student).toMatchObject({ cgpa: 8.5, programme_id: cse, year_of_completion: 2027, specialization: "Systems", technical_skills: "C, Go", about_me: "Likes systems.", linkedin_url: "https://www.linkedin.com/in/sheet-one", certifications: "Won hackathon (2026)" });
+    expect(u.student!.records.map((x) => [x.kind, x.title]).sort()).toEqual([["internship", "Summer Intern"], ["project", "Kernel toy"]]);
+    expect(await db.user.count({ where: { email: "personal@gmail.com" } }), "the personal address is not used as the login").toBe(0);
+  });
+
+  it("re-uploading the sheet does not duplicate the records", async () => {
+    const r = await admin.upload("/admin/students/import", Buffer.from(sheet), "sheet.csv").expect(202);
+    await drainJobs();
+    expect((await db.job.findUniqueOrThrow({ where: { id: r.body.job_id } })).result).toMatchObject({ created: 0, updated: 1 });
+    expect(await db.studentRecord.count({ where: { student: { enrolment_no: "CSB26060" } } })).toBe(2);
+  });
+});
+
 describe("recruiter drive details", () => {
   it("drive mode and hiring period are stored; logistics reach applicants only", async () => {
     const r = await recruiter("hr@drive.example");

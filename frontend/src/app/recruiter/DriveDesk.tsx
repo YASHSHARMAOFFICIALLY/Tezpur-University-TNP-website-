@@ -62,7 +62,7 @@ function Timeline({
   const a = applicants ?? [];
   const n = (f: (x: Applicant) => boolean) => a.filter(f).length;
   const steps: [string, number][] = [
-    ["Released by T&P", a.length],
+    ["Sent by T&P", a.length],
     ["Shortlisted", n((x) => x.status === "shortlisted" || x.status === "selected")],
     ["Interview scheduled", n((x) => x.interviews.length > 0)],
     ["Selected", n((x) => x.status === "selected")],
@@ -74,9 +74,7 @@ function Timeline({
   const move = (to: "submit" | "close") =>
     act.run(to, async () => {
       const opts = { params: { path: { id: drive.id } } };
-      await call(
-        to === "submit" ? api.POST("/api/v1/company/opportunities/{id}/submit", opts) : api.POST("/api/v1/company/opportunities/{id}/close", opts),
-      );
+      await call(to === "submit" ? api.POST("/api/v1/company/opportunities/{id}/submit", opts) : api.POST("/api/v1/company/opportunities/{id}/close", opts));
       reload();
     });
   const uploadJd = (f?: File) =>
@@ -127,7 +125,7 @@ function Timeline({
           <dd className="text-body font-semibold text-ink">{drive.drive_mode ? DRIVE_MODE[drive.drive_mode] : "Not set"}</dd>
         </div>
         <div>
-          <dt className="text-caption font-semibold text-muted uppercase">Probable hiring period</dt>
+          <dt className="text-caption font-semibold text-muted uppercase">Likely hiring period</dt>
           <dd className="text-body font-semibold text-ink">{period ?? "Not set"}</dd>
         </div>
         <div>

@@ -94,7 +94,7 @@ await step("recruiter login lands on /recruiter", async () => {
   await rec.getByText("Cognizant Technology Solutions").first().waitFor();
 });
 await step("recruiter creates + submits posting via Posting Studio (retry after a failed submit)", async () => {
-  await rec.getByRole("button", { name: "Create New Job Opening" }).click();
+  await rec.getByRole("button", { name: "New posting" }).click();
   const d = rec.getByRole("dialog", { name: "Job & Internship Posting Studio" });
   await d.getByLabel("ROLE PROFILE / JOB TITLE *").fill(JOB);
   await d.getByLabel("TENTATIVE WORK LOCATION *").fill("Pune");
@@ -206,9 +206,12 @@ await step("a failed event transition (Complete) shows the error to the admin", 
 
 // ---------- students ----------
 const stuNew = await newPage();
+// The sidebar shows one section at a time; the URL hash picks it.
+const sv = (page, h) => page.evaluate((x) => (location.hash = x), h);
 await step("OTP-verified new student logs in; posting shows ineligible (no CGPA yet)", async () => {
   await login(stuNew, NEW_STUDENT, NEW_PW);
   await stuNew.waitForURL(/\/student$/);
+  await sv(stuNew, "#drives");
   const card = stuNew.locator("article").filter({ hasText: JOB });
   await card.getByText(/Ineligible: Cutoff CGPA/).waitFor();
   await card.getByRole("button", { name: /Apply Now/ }).waitFor({ state: "detached" });
@@ -219,7 +222,8 @@ await step("new student completes profile (photo + resume upload) and applies wi
     pdf,
     "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj 3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n",
   );
-  await stuNew.getByRole("button", { name: /Edit Profile/ }).click();
+  await sv(stuNew, "#profile");
+  await stuNew.getByRole("button", { name: /Edit profile/ }).first().click();
   const d = stuNew.getByRole("dialog", { name: "Edit profile" });
   await d.getByLabel(/Coloured Photo/).setInputFiles(resolve(here, "public/img/emblem.jpg"));
   await d.getByLabel(/Resume \(PDF/).setInputFiles(pdf);
@@ -228,11 +232,13 @@ await step("new student completes profile (photo + resume upload) and applies wi
   await d.getByLabel("Year of Completion *").fill("2028");
   await d.getByRole("button", { name: "Save Profile" }).click();
   await d.waitFor({ state: "detached" });
+  await sv(stuNew, "#drives");
   const card = stuNew.locator("article").filter({ hasText: JOB });
   await card.getByRole("button", { name: /Apply Now/ }).click();
   await card.getByText(/Applied • Awaiting T&P Release/).waitFor();
 });
 await step("new student registers for the event", async () => {
+  await sv(stuNew, "#training");
   const card = stuNew.locator("article").filter({ hasText: `E2E Resume Clinic ${run}` });
   await card.getByRole("button", { name: "Register" }).click();
   await card.getByRole("button", { name: "Cancel Registration" }).waitFor();
@@ -250,6 +256,7 @@ await step("seeded student applies to new posting (one-click)", async () => {
   }
   await login(stu, SEED_STUDENT, PW);
   await stu.waitForURL(/\/student$/);
+  await sv(stu, "#drives");
   const card = stu.locator("article").filter({ hasText: JOB });
   await card.getByRole("button", { name: /Apply Now/ }).click();
   await card.getByText(/Applied • Awaiting T&P Release/).waitFor();
@@ -264,6 +271,7 @@ await step("admin releases applicants to recruiter (counts span every page)", as
   await adm.getByText("Applicants released to the recruiter.").waitFor();
 });
 await step("recruiter sees every released applicant by default (all pages, CGPA below 6 included)", async () => {
+  await sv(rec, "#drive");
   await rec.route(/\/api\/v1\/company\/opportunities\/[^/]+\/applicants/, onePerPage);
   await rec.reload();
   await rec.getByLabel("Choose drive").selectOption({ label: `${JOB} (Live to students)` });
@@ -327,15 +335,17 @@ await step("recruiter closes the drive; admin still publishes results", async ()
   await adm.getByText("Results published").waitFor();
 });
 await step("student sees selection on their card", async () => {
+  await sv(stu, "#applications");
   await stu.reload();
   // A published result closes the drive, so it moves from the drive cards to "My applications".
   const app = stu.getByRole("listitem", { name: new RegExp(`Application: .*${JOB}`) });
   await app.locator("[class*=badge], span").filter({ hasText: /^Selected/ }).first().waitFor();
 });
 await step("recruiter sends liaison message", async () => {
-  await rec.getByLabel("SUBJECT HEADER").fill(`E2E slot ${run}`);
-  await rec.getByLabel("DISPATCH CONTENT").fill("Please confirm room 102.");
-  await rec.getByRole("button", { name: /Transmit Announcement/ }).click();
+  await sv(rec, "#messages");
+  await rec.getByLabel("Subject").fill(`E2E slot ${run}`);
+  await rec.getByLabel("Your message").fill("Please confirm room 102.");
+  await rec.getByRole("button", { name: /Send message/ }).click();
   await rec.getByText(`E2E slot ${run}`).waitFor();
 });
 await step("logout returns to login", async () => {

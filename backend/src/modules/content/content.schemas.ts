@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { json, Ts } from "../../http/route.js";
-import { isTargeted, StudentFilter } from "../students/students.filter.js";
+import { isTargeted, NoticeTarget, StudentFilter } from "../students/students.filter.js";
 
 export const Category = z.enum(["private", "mnc", "govt", "ngo", "psu", "startup", "other"]);
 export const Contact = z.object({ name: z.string().min(2).max(200), designation: z.string().max(100).optional(), phone: z.string().max(20).optional(), mobile: z.string().max(20).optional(), email: z.email().optional() });
@@ -57,13 +57,13 @@ export const Audience = z.enum(["students", "companies", "all"]);
 export const Notice = z
   .object({
     id: z.string(), audience: Audience, title: z.string(), body: z.string(), published_at: Ts,
-    departments: z.array(z.string()), programme_ids: z.array(z.string()), batches: z.array(z.number()), min_cgpa: z.number().nullable(), max_cgpa: z.number().nullable(), placed: z.boolean().nullable(), file_id: z.string().nullable(),
+    departments: z.array(z.string()), programme_ids: z.array(z.string()), batches: z.array(z.number()), min_cgpa: z.number().nullable(), max_cgpa: z.number().nullable(), placed: z.boolean().nullable(), genders: z.array(z.string()), file_id: z.string().nullable(),
   })
   .meta({ id: "Notice" });
 /** Targeting (StudentFilter) narrows the student audience; it only makes sense for audience=students. */
-export const NoticeCreate = StudentFilter.extend({ audience: Audience, title: z.string().min(3).max(200), body: z.string().min(1).max(20000), email: z.boolean().default(false) }).refine(
+export const NoticeCreate = NoticeTarget.extend({ audience: Audience, title: z.string().min(3).max(200), body: z.string().min(1).max(20000), email: z.boolean().default(false) }).refine(
   (n) => n.audience === "students" || !isTargeted(n),
-  { message: "department/programme/batch/CGPA/placed targeting needs audience = students", path: ["audience"] },
+  { message: "department/programme/batch/CGPA/placed/gender targeting needs audience = students", path: ["audience"] },
 );
 export const NoticeQuery = StudentFilter.pick({ departments: true, programme_ids: true, batches: true });
 export const Reach = z.object({ students: z.number() });

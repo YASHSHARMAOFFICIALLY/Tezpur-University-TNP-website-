@@ -65,7 +65,8 @@ export function PostingStudio({ onClose, onDone, initial }: { onClose: () => voi
       };
       // On edit an emptied drive detail is sent as null, which clears it; undefined would keep the old value.
       const cleared = Object.fromEntries((["drive_mode", "hiring_from", "hiring_to", "venue", "logistics"] as const).map((k) => [k, body[k] ?? null]));
-      if (draft.current) await call(api.PATCH("/api/v1/company/opportunities/{id}", { params: { path: { id: draft.current } }, body: { ...body, ...cleared } }));
+      if (draft.current)
+        await call(api.PATCH("/api/v1/company/opportunities/{id}", { params: { path: { id: draft.current } }, body: { ...body, ...cleared } }));
       else draft.current = (await call(api.POST("/api/v1/company/opportunities", { body }))).id;
       if (jdFile) await call(api.POST("/api/v1/company/opportunities/{id}/jd", { params: { path: { id: draft.current } }, ...fileBody(jdFile) }));
       await call(api.POST("/api/v1/company/opportunities/{id}/submit", { params: { path: { id: draft.current } } }));
@@ -96,7 +97,12 @@ export function PostingStudio({ onClose, onDone, initial }: { onClose: () => voi
               <p className="text-caption font-semibold text-surface-high">The T&amp;P cell reviews every posting before students see it.</p>
             </div>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close" className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-xs focus-visible:outline-2 focus-visible:outline-accent">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-xs focus-visible:outline-2 focus-visible:outline-accent"
+          >
             <Icon name="close" className="text-[20px]" />
           </button>
         </div>
@@ -210,7 +216,12 @@ export function PostingStudio({ onClose, onDone, initial }: { onClose: () => voi
             <div className="grid grid-cols-2 gap-2">
               {ROUNDS.map((k) => (
                 <label key={k} className="flex items-center gap-2 text-body text-ink">
-                  <input type="checkbox" name={k} defaultChecked={initial ? initial.selection_process[k] : DEFAULT_ROUNDS.has(k)} className="size-4 accent-primary" />{" "}
+                  <input
+                    type="checkbox"
+                    name={k}
+                    defaultChecked={initial ? initial.selection_process[k] : DEFAULT_ROUNDS.has(k)}
+                    className="size-4 accent-primary"
+                  />{" "}
                   {ROUND_LABEL[k]}
                 </label>
               ))}
@@ -238,7 +249,9 @@ export function PostingStudio({ onClose, onDone, initial }: { onClose: () => voi
 
           <fieldset className={box}>
             <p className="text-label font-bold text-ink uppercase">Campus Logistics</p>
-            <p className="text-caption text-muted">Only students who apply to this posting see these. You can change them later from the Drive Desk; applicants get an email then.</p>
+            <p className="text-caption text-muted">
+              Only students who apply to this posting see these. You can change them later from the Drive Desk; applicants get an email then.
+            </p>
             <Field label="Venue">
               <Input name="venue" maxLength={300} defaultValue={initial?.venue ?? ""} placeholder="Computer Centre Lab 2" />
             </Field>

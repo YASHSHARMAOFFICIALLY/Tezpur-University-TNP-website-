@@ -86,26 +86,81 @@ export async function uploadFile(userId: string, kind: "resume" | "photo", file:
 
 // ---------- CSV import ----------
 
-/** Parses and validates the whole file up front so a bad file is rejected before anything is queued. */
-export function parseImportCsv(csv: string, domain: string): ImportRow[] {
-  let records: unknown[];
+/** The T&P profile sheet's own headers, accepted as-is so the sheet uploads without editing. */
+const SHEET_HEADERS: Record<string, string> = {
+  "roll number": "enrolment_no", "student name": "name", programme: "programme_code", "graduation year": "year_of_completion",
+  specialization: "specialization", "professional interests": "professional_interests", "career interests / preferred roles": "career_interests",
+  "technical skills": "technical_skills", "extracurricular activities": "extracurriculars", linkedin: "linkedin_url",
+  "github / portfolio": "portfolio_url", "about me": "about_me",
+  "project 1": "project_1", "project 2": "project_2", "internship 1": "internship_1", "internship 2": "internship_2",
+};
+type Cells = Record<string, string | undefined>;
+const text = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) || undefined : undefined);
+/** "www.x.com/y" gets https://; anything still not a URL is dropped rather than failing the file. */
+const url = (v: unknown) => {
+  const t = text(v, 500);
+  const u = t && (/^https?:\/\//i.test(t) ? t : "https://" + t);
+  return u && URL.canParse(u) ? u : undefined;
+};
+
+/** Sheet cells that hold JSON become records (project, internship) or certification lines (achievements). */
+function sheetExtras(r: Cells, issues: string[]) {
+  const json = (k: string) => {
+    if (!r[k]?.trim()) return [];
+    try {
+      const j = JSON.parse(r[k]!);
+      return Array.isArray(j) ? j : [j];
+    } catch {
+      issues.push(`${k}: not valid JSON`);
+      return [];
+    }
+  };
+  const records: z.input<typeof RecordBody>[] = [];
+  for (const k of ["project_1", "project_2"])
+    for (const p of json(k)) {
+      const title = text(p.title, 200);
+      if (title && title.length > 1)
+        records.push({ kind: "project", title, description: text([p.description, p.tools && `Tools: ${p.tools}`, p.role && `Role: ${p.role}`].filter(Boolean).join("\n"), 2000), url: url(p.link) });
+    }
+  for (const k of ["internship_1", "internship_2"])
+    for (const p of json(k)) {
+      const organisation = text(p.organization, 200);
+      if (organisation) records.push({ kind: "internship", title: text(p.role, 200) ?? "Internship", organisation, description: text([p.duration, p.area, p.description].filter(Boolean).join(" | "), 2000), url: url(p.link) });
+    }
+  const achievements = json("achievements").map((a) => [text(a.title, 200), a.year && `(${a.year})`, text(a.detail, 300) && `- ${text(a.detail, 300)}`].filter(Boolean).join(" ")).filter(Boolean);
+  return { records, certifications: achievements.length ? achievements.join("\n").slice(0, 2000) : undefined };
+}
+
+/**
+ * Parses and validates the whole file up front so a bad file is rejected before anything is queued.
+ * Accepts the snake_case template or the profile sheet's own headers. Email defaults to <enrolment_no>@<domain>.
+ * A row with no enrolment number cannot become a student: it is skipped and reported, not a file error.
+ */
+export function parseImportCsv(csv: string, domain: string) {
+  let records: Cells[];
   try {
-    records = parse(csv, { columns: (h: string[]) => h.map((c) => c.trim().toLowerCase()), skip_empty_lines: true, bom: true });
+    records = parse(csv, { columns: (h: string[]) => h.map((c) => c.trim().toLowerCase()).map((c) => SHEET_HEADERS[c] ?? c), skip_empty_lines: true, bom: true });
   } catch (e) {
     if (e instanceof CsvError) fail("VALIDATION_FAILED", { csv_errors: [{ line: e.lines, issues: [e.message] }], error_count: 1 });
     throw e;
   }
   const errors: { line: number; issues: string[] }[] = [];
   const rows: ImportRow[] = [];
+  const skipped: { enrolment_no: string; reason: string }[] = [];
   records.forEach((r, i) => {
-    const p = ImportRow.safeParse(r);
-    if (!p.success) errors.push({ line: i + 2, issues: p.error.issues.map((x) => `${x.path.join(".")}: ${x.message}`) });
-    else if (!p.data.email.endsWith("@" + domain)) errors.push({ line: i + 2, issues: ["email: not a university address"] });
-    else rows.push(p.data);
+    const issues: string[] = [];
+    if (!r.enrolment_no?.trim()) return void skipped.push({ enrolment_no: r.name?.trim() || `line ${i + 2}`, reason: "no roll number in the file" }); // keyed by name: there is no enrolment number
+    const { records: recs, certifications } = sheetExtras(r, issues);
+    const row = { ...r, email: r.email?.trim() || `${r.enrolment_no.trim().toLowerCase()}@${domain}`, linkedin_url: url(r.linkedin_url), portfolio_url: url(r.portfolio_url), records: recs, certifications: r.certifications?.trim() || certifications };
+    const p = ImportRow.safeParse(row);
+    if (!p.success) issues.push(...p.error.issues.map((x) => `${x.path.join(".")}: ${x.message}`));
+    else if (!p.data.email.endsWith("@" + domain)) issues.push("email: not a university address");
+    if (issues.length) errors.push({ line: i + 2, issues });
+    else if (p.success) rows.push(p.data);
   });
   if (errors.length) fail("VALIDATION_FAILED", { csv_errors: errors.slice(0, 100), error_count: errors.length });
   if (rows.length > 10_000) fail("VALIDATION_FAILED", { reason: "max 10,000 rows per file" });
-  return rows;
+  return { rows, skipped };
 }
 
 /**
@@ -115,22 +170,24 @@ export function parseImportCsv(csv: string, domain: string): ImportRow[] {
  */
 export const importStudentsJob = defineJob({
   type: "students.import",
-  payload: z.object({ rows: z.array(ImportRow), by: z.string() }),
+  payload: z.object({ rows: z.array(ImportRow), by: z.string(), skipped: z.array(z.object({ enrolment_no: z.string(), reason: z.string() })).optional() }),
   maxAttempts: 3,
-  run: async ({ rows, by }) => {
-    const programmes = new Map((await db.programme.findMany({ select: { id: true, code: true } })).map((p) => [p.code, p.id]));
-    const report = { created: 0, updated: 0, skipped: [] as { enrolment_no: string; reason: string }[] };
+  run: async ({ rows, by, skipped }) => {
+    // Matched by code, or by name so the sheet's "B.Tech Mechanical Engineering" works.
+    const programmes = new Map((await db.programme.findMany({ select: { id: true, code: true, name: true } })).flatMap((p) => [[p.code, p.id], [p.name.toLowerCase(), p.id]] as const));
+    const report = { created: 0, updated: 0, skipped: [...(skipped ?? [])] };
     const actor: Actor = { kind: "user", userId: by, role: "admin" };
     for (const r of rows) {
       const fields = Object.fromEntries(IMPORT_FIELDS.filter((k) => r[k] !== undefined).map((k) => [k, r[k]]));
       if (r.programme_code) {
-        if (!programmes.has(r.programme_code)) {
-          report.skipped.push({ enrolment_no: r.enrolment_no, reason: `unknown programme_code ${r.programme_code}` });
+        const pid = programmes.get(r.programme_code) ?? programmes.get(r.programme_code.toLowerCase());
+        if (!pid) {
+          report.skipped.push({ enrolment_no: r.enrolment_no, reason: `unknown programme ${r.programme_code}` });
           continue;
         }
-        fields.programme_id = programmes.get(r.programme_code);
+        fields.programme_id = pid;
       }
-      const exists = await db.user.findFirst({ where: { OR: [{ email: r.email }, { student: { enrolment_no: r.enrolment_no } }] }, include: { student: { select: { enrolment_no: true } } } });
+      const exists = await db.user.findFirst({ where: { OR: [{ email: r.email }, { student: { enrolment_no: r.enrolment_no } }] }, include: { student: { select: { id: true, enrolment_no: true } } } });
       if (exists) {
         // Re-importing the roster fills in / corrects profile fields of the same student. A clash is reported, never merged.
         if (exists.email !== r.email || exists.student?.enrolment_no !== r.enrolment_no) {
@@ -140,6 +197,9 @@ export const importStudentsJob = defineJob({
         await inTx(async (tx) => {
           await tx.user.update({ where: { id: exists.id }, data: { name: r.name } });
           await tx.student.update({ where: { user_id: exists.id }, data: fields });
+          // Records only fill an empty profile: re-importing must not duplicate or overwrite what the student added.
+          if (r.records?.length && !(await tx.studentRecord.count({ where: { student: { user_id: exists.id } } })))
+            await tx.studentRecord.createMany({ data: r.records.map((x) => ({ ...x, student_id: exists.student!.id })) });
           await audit(tx, actor, "student.updated_by_import", "student", exists.id, { fields: Object.keys(fields) });
         });
         report.updated++;
@@ -154,7 +214,7 @@ export const importStudentsJob = defineJob({
             name: r.name,
             password_hash: "",
             student: {
-              create: { ...fields, enrolment_no: r.enrolment_no, academic_standing: "good" },
+              create: { ...fields, enrolment_no: r.enrolment_no, academic_standing: "good", records: r.records?.length ? { create: r.records } : undefined },
             },
           },
           actor,
@@ -167,9 +227,9 @@ export const importStudentsJob = defineJob({
   },
 });
 
-export async function queueImport(rows: ImportRow[], adminId: string) {
+export async function queueImport({ rows, skipped }: ReturnType<typeof parseImportCsv>, adminId: string) {
   return inTx(async (tx) => {
-    const job = await enqueue(tx, importStudentsJob, { rows, by: adminId }, { priority: 7 });
+    const job = await enqueue(tx, importStudentsJob, { rows, by: adminId, skipped }, { priority: 7 });
     return { job_id: job.id, rows: rows.length };
   });
 }

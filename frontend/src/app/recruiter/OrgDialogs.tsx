@@ -144,7 +144,6 @@ export function CompanyProfile({ c, onClose }: { c: Company; onClose: () => void
   );
 }
 
-
 export function FeedbackDialog({ forms, onClose }: { forms: FeedbackForm[]; onClose: () => void }) {
   const form = forms[0];
   const [err, setErr] = useState("");

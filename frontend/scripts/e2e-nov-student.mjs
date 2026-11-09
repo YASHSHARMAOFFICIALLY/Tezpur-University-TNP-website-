@@ -70,7 +70,10 @@ await apiCall("POST", "/students/me/resume", { token: stu, file: { bytes: readFi
 await apiCall("PATCH", "/students/me", { token: stu, body: { dob: "2004-03-01", cgpa: 8.1, year_of_completion: 2027 } });
 const opp1 = await approvedPosting(JOB1, { drive_mode: "hybrid", hiring_from: "2027-01", hiring_to: "2027-03" });
 
+// The sidebar shows one section at a time; the URL hash picks it, and a reload keeps it.
+const view = (h) => page.goto(`${WEB}/student${h}`);
 await step("drive card shows the drive mode and the hiring period; Apply works", async () => {
+  await view("#drives");
   await page.reload();
   const c = card(JOB1);
   await c.getByText("Hybrid drive").waitFor();
@@ -80,6 +83,7 @@ await step("drive card shows the drive mode and the hiring period; Apply works",
 });
 
 await step("venue and logistics set by the recruiter show on the application", async () => {
+  await view("#applications");
   const a = appCard(JOB1);
   await a.getByText("Venue & logistics (shared only with applicants)").waitFor();
   await a.getByText("hasn't shared the venue").waitFor();
@@ -114,6 +118,7 @@ for (const [tab, kind] of [
   ["Projects", "project"],
 ]) {
   await step(`student adds ${kind === "internship" ? "an" : "a"} ${kind} with an attachment and sees it listed`, async () => {
+    await view("#records");
     const sec = page.locator("#records").locator("..");
     await sec.getByRole("tab", { name: new RegExp(tab) }).click();
     await sec.getByRole("button", { name: `Add ${kind}` }).click();
@@ -149,6 +154,7 @@ await apiCall("POST", `/admin/opportunities/${opp1}/results/publish`, { token: a
 await approvedPosting(JOB2);
 
 await step("placed student sees Apply disabled with the reason", async () => {
+  await view("#drives");
   await page.reload();
   await page.getByText(/You are placed at Cognizant Technology Solutions\. Applying to new drives is closed\./).waitFor();
   const c = card(JOB2);
