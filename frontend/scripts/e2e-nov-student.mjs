@@ -155,13 +155,14 @@ await apiCall("POST", `/company/opportunities/${opp1}/results`, { token: rec, bo
 await apiCall("POST", `/admin/opportunities/${opp1}/results/publish`, { token: adm });
 await approvedPosting(JOB2);
 
-await step("placed student sees Apply disabled with the reason", async () => {
+await step("placed student sees Apply disabled; the reason is in the banner and the button tooltip", async () => {
   await view("#drives");
   await page.reload();
   await page.getByText(/You are placed at Cognizant Technology Solutions\. Applying to new drives is closed\./).waitFor();
   const c = card(JOB2);
-  assert.ok(await c.getByRole("button", { name: "Apply Now" }).isDisabled(), "Apply must be disabled while placed");
-  await c.getByText("You are placed at Cognizant Technology Solutions").waitFor();
+  assert.ok(await c.getByRole("button", { name: "Applying closed" }).isDisabled(), "Apply must be disabled while placed");
+  assert.equal(await c.getByRole("button", { name: "Applying closed" }).getAttribute("title"), "You are placed at Cognizant Technology Solutions");
+  assert.equal(await c.getByText("You are placed at Cognizant Technology Solutions").count(), 0, "the reason is said once in the banner, not on every card");
 });
 
 await step("placed student files an appeal and sees it pending", async () => {

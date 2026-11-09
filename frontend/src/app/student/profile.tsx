@@ -109,6 +109,7 @@ export function ProfileCard({ onEdit }: { onEdit?: () => void } = {}) {
           const facts: [string, string | number | null | undefined][] = [
             ["CGPA", s.cgpa != null ? `${s.cgpa.toFixed(2)} / 10` : null],
             ["Batch", s.year_of_completion],
+            ["Backlogs", s.active_backlogs != null || s.cleared_backlogs != null ? `${s.active_backlogs ?? "—"} active • ${s.cleared_backlogs ?? "—"} cleared` : null],
             ["Specialization", s.specialization],
             ["JEE rank", s.jee_rank?.toLocaleString("en-IN")],
             ["Class X / XII", s.marks_10 != null || s.marks_12 != null ? `${s.marks_10 ?? "—"}% / ${s.marks_12 ?? "—"}%` : null],
@@ -237,6 +238,8 @@ function EditProfile({ s, programmes, onClose }: { s: Profile; programmes: Progr
             year_of_admission: num("year_of_admission"),
             year_of_completion: num("year_of_completion"),
             cgpa: num("cgpa"),
+            active_backlogs: num("active_backlogs"),
+            cleared_backlogs: num("cleared_backlogs"),
             category: g("category") || undefined,
             regional_diversity: g("regional_diversity") || undefined,
             jee_rank: num("jee_rank"),
@@ -314,6 +317,12 @@ function EditProfile({ s, programmes, onClose }: { s: Profile; programmes: Progr
           </Field>
           <Field label="Mobile">
             <Input name="mobile" type="tel" pattern="\+?\d{10,13}" defaultValue={s.mobile ?? ""} className={f} />
+          </Field>
+          <Field label="Active backlogs" hint="Papers not yet cleared. Enter 0 if none.">
+            <Input name="active_backlogs" type="number" min="0" max="99" defaultValue={s.active_backlogs ?? ""} className={f} />
+          </Field>
+          <Field label="Cleared backlogs" hint="Backlogs you have since cleared. Enter 0 if none.">
+            <Input name="cleared_backlogs" type="number" min="0" max="99" defaultValue={s.cleared_backlogs ?? ""} className={f} />
           </Field>
           <Field label="Social category">
             <Input name="category" defaultValue={s.category ?? ""} className={f} />

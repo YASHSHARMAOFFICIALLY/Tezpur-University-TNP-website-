@@ -251,6 +251,22 @@
             "minimum": 0,
             "maximum": 10
           },
+          "active_backlogs": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 99
+          },
+          "cleared_backlogs": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 99
+          },
           "current_address": {
             "type": [
               "string",
@@ -457,6 +473,8 @@
           "year_of_admission",
           "year_of_completion",
           "cgpa",
+          "active_backlogs",
+          "cleared_backlogs",
           "current_address",
           "permanent_address",
           "marks_10",
@@ -965,6 +983,22 @@
             "minimum": 0,
             "maximum": 10
           },
+          "active_backlogs": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 99
+          },
+          "cleared_backlogs": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 99
+          },
           "current_address": {
             "type": [
               "string",
@@ -1177,6 +1211,8 @@
           "year_of_admission",
           "year_of_completion",
           "cgpa",
+          "active_backlogs",
+          "cleared_backlogs",
           "current_address",
           "permanent_address",
           "marks_10",
@@ -2739,6 +2775,16 @@
                     "type": "number",
                     "minimum": 0,
                     "maximum": 10
+                  },
+                  "active_backlogs": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 99
+                  },
+                  "cleared_backlogs": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 99
                   },
                   "current_address": {
                     "type": "string",
@@ -6684,6 +6730,22 @@
                                 "minimum": 0,
                                 "maximum": 10
                               },
+                              "active_backlogs": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "minimum": 0,
+                                "maximum": 99
+                              },
+                              "cleared_backlogs": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "minimum": 0,
+                                "maximum": 99
+                              },
                               "current_address": {
                                 "type": [
                                   "string",
@@ -6896,6 +6958,8 @@
                               "year_of_admission",
                               "year_of_completion",
                               "cgpa",
+                              "active_backlogs",
+                              "cleared_backlogs",
                               "current_address",
                               "permanent_address",
                               "marks_10",
@@ -7412,6 +7476,22 @@
                                 "minimum": 0,
                                 "maximum": 10
                               },
+                              "active_backlogs": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "minimum": 0,
+                                "maximum": 99
+                              },
+                              "cleared_backlogs": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "minimum": 0,
+                                "maximum": 99
+                              },
                               "current_address": {
                                 "type": [
                                   "string",
@@ -7617,6 +7697,8 @@
                               "year_of_admission",
                               "year_of_completion",
                               "cgpa",
+                              "active_backlogs",
+                              "cleared_backlogs",
                               "current_address",
                               "permanent_address",
                               "marks_10",
@@ -11418,6 +11500,16 @@
                     "type": "number",
                     "minimum": 0,
                     "maximum": 10
+                  },
+                  "active_backlogs": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 99
+                  },
+                  "cleared_backlogs": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 99
                   },
                   "current_address": {
                     "type": "string",

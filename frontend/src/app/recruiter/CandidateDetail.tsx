@@ -19,6 +19,7 @@ export function CandidateDetail({ a, programme, onClose }: { a: Applicant; progr
     ["Enrolment", s.enrolment_no],
     ["Programme", programme],
     ["CGPA", s.cgpa?.toFixed(2) ?? null],
+    ["Backlogs", s.active_backlogs == null && s.cleared_backlogs == null ? null : `${s.active_backlogs ?? "—"} active • ${s.cleared_backlogs ?? "—"} cleared`],
     ["Batch", s.year_of_completion],
     ["Mobile", s.mobile],
     ["Applied", fmtDate(a.created_at)],
@@ -32,7 +33,7 @@ export function CandidateDetail({ a, programme, onClose }: { a: Applicant; progr
       <dl className="grid grid-cols-2 gap-2 rounded-xs bg-surface-low p-3 sm:grid-cols-3">
         {facts.map(([k, v]) => (
           <div key={k} className="min-w-0">
-            <dt className="text-caption font-semibold text-muted uppercase">{k}</dt>
+            <dt className="text-caption font-semibold text-muted">{k}</dt>
             <dd className="truncate text-body font-semibold text-ink">{v ?? "—"}</dd>
           </div>
         ))}
@@ -44,7 +45,7 @@ export function CandidateDetail({ a, programme, onClose }: { a: Applicant; progr
       </div>
       {s.professional_interests && (
         <p className="text-body text-ink">
-          <b className="text-caption font-semibold text-muted uppercase">Interests</b> {s.professional_interests}
+          <b className="text-caption font-semibold text-muted">Interests</b> {s.professional_interests}
         </p>
       )}
       {s.records.length ? (
@@ -53,7 +54,7 @@ export function CandidateDetail({ a, programme, onClose }: { a: Applicant; progr
           return (
             rows.length > 0 && (
               <section key={kind} className="flex flex-col gap-2">
-                <h3 className="flex items-center gap-1 text-label font-bold text-ink uppercase">
+                <h3 className="flex items-center gap-1 text-label font-bold text-ink">
                   <Icon name={icon} className="text-primary" /> {title} ({rows.length})
                 </h3>
                 <ul className="flex flex-col gap-2">

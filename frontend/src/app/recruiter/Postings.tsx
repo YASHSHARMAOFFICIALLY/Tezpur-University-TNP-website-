@@ -64,7 +64,7 @@ function PostingCard({ p, active, onOpen }: { p: Posting; active: boolean; onOpe
     <li className={cx("flex min-w-0 flex-col gap-2 rounded-xs bg-surface-low p-3", active && "outline-2 outline-primary")}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="text-caption font-bold text-muted uppercase">
+          <p className="text-caption font-bold text-muted">
             {p.type}
             {p.location && ` • ${p.location}`}
           </p>
@@ -75,10 +75,11 @@ function PostingCard({ p, active, onOpen }: { p: Posting; active: boolean; onOpe
         </Badge>
       </div>
       <dl className="grid grid-cols-2 gap-x-3 gap-y-1 text-body">
-        <Meta icon="hub" label="Drive mode" value={p.drive_mode ? DRIVE_MODE[p.drive_mode] : "Not set"} muted={!p.drive_mode} />
-        <Meta icon="date_range" label="Hiring period" value={period ?? "Not set"} muted={!period} />
+        {/* details the recruiter hasn't filled in are left out instead of repeating "Not set" on every card */}
         <Meta icon="event" label="Apply by" value={fmtDate(p.apply_deadline)} />
-        <Meta icon="location_on" label="Campus venue" value={p.venue ?? "Not set"} muted={!p.venue} />
+        {p.drive_mode && <Meta icon="hub" label="Drive mode" value={DRIVE_MODE[p.drive_mode]} />}
+        {period && <Meta icon="date_range" label="Hiring period" value={period} />}
+        {p.venue && <Meta icon="location_on" label="Campus venue" value={p.venue} />}
       </dl>
       <div className="mt-auto flex flex-wrap items-center gap-2 pt-1">
         <Button size="sm" variant={active ? "primary" : "soft"} icon="timeline" onClick={onOpen} aria-pressed={active} className="min-h-7">

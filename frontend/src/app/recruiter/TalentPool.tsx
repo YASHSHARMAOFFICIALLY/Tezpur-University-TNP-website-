@@ -16,7 +16,7 @@ export function TalentPool({ onExplore }: { onExplore: (programmeId: string) => 
         <details className="group rounded-lg bg-primary text-surface-high shadow-pop">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
             <span className="min-w-0">
-              <span className="flex items-center gap-1 text-caption font-semibold uppercase">
+              <span className="flex items-center gap-1 text-caption font-semibold">
                 <Icon name="account_balance" /> About the university
               </span>
               <span className="block truncate font-display text-title font-bold text-white">{u.name}</span>
@@ -47,7 +47,7 @@ export function TalentPool({ onExplore }: { onExplore: (programmeId: string) => 
           {(ps) => {
             const card = (p: (typeof ps)[number]) => (
               <div key={p.id} className="flex flex-col gap-2 rounded-xs bg-surface-low p-3">
-                <p className="text-caption font-bold text-muted uppercase">{p.department}</p>
+                <p className="text-caption font-bold text-muted">{p.department}</p>
                 <p className="font-display text-title font-bold text-primary">{p.name}</p>
                 <p className="text-body text-muted">
                   <b className="font-display text-title text-ink">{p.student_count ?? "—"}</b> Students in batch

@@ -216,6 +216,30 @@ describe("profile sheet upload", () => {
   });
 });
 
+describe("backlog status", () => {
+  it("the profile sheet's Active/Cleared Backlogs columns are stored; a blank stays unset", async () => {
+    const csv =
+      "Student Name,Programme,Graduation Year,Roll Number,Active Backlogs,Cleared Backlogs\n" +
+      "Backlog Two,B.Tech CSE,2027,csb26061,2,3\n" +
+      "Backlog None,B.Tech CSE,2027,csb26062,,\n";
+    const r = await admin.upload("/admin/students/import", Buffer.from(csv), "backlogs.csv").expect(202);
+    await drainJobs();
+    expect((await db.job.findUniqueOrThrow({ where: { id: r.body.job_id } })).result).toMatchObject({ created: 2 });
+    const get = (e: string) => db.student.findUniqueOrThrow({ where: { enrolment_no: e } });
+    expect(await get("CSB26061")).toMatchObject({ active_backlogs: 2, cleared_backlogs: 3 });
+    expect(await get("CSB26062")).toMatchObject({ active_backlogs: null, cleared_backlogs: null });
+    expect(code(await admin.upload("/admin/students/import", Buffer.from(csv.replace(",2,3", ",-1,3")), "bad.csv"))).toBe("VALIDATION_FAILED");
+  });
+
+  it("a student sets their own counts, zero is allowed, negatives are refused", async () => {
+    const s = await student("CSB26063", { programme_id: cse, year_of_completion: 2027, cgpa: 8 });
+    const ok = await s.patch("/students/me", { active_backlogs: 0, cleared_backlogs: 4 });
+    expect(ok.body).toMatchObject({ active_backlogs: 0, cleared_backlogs: 4 });
+    expect((await s.get("/students/me")).body).toMatchObject({ active_backlogs: 0, cleared_backlogs: 4 });
+    expect(code(await s.patch("/students/me", { active_backlogs: -1 }))).toBe("VALIDATION_FAILED");
+  });
+});
+
 describe("recruiter drive details", () => {
   it("drive mode and hiring period are stored; logistics reach applicants only", async () => {
     const r = await recruiter("hr@drive.example");

@@ -56,6 +56,8 @@ const IMPORT_COLUMNS: [name: string, need: "Required" | "Optional", rule: string
   ["minority", "Optional", YES_NO, "no"],
   ["specially_abled", "Optional", YES_NO, "no"],
   ["regional_diversity", "Optional", "Text", "North East"],
+  ["active_backlogs", "Optional", "Whole number, 0 or more", 0],
+  ["cleared_backlogs", "Optional", "Whole number, 0 or more", 2],
   ["jee_rank", "Optional", "Whole number", 15234],
   ["jee_score", "Optional", "Number", 182],
   ["jee_percentile", "Optional", "0–100", 97.5],
@@ -511,7 +513,7 @@ function ManageStudent({ s, programmes, onClose }: { s: Row; programmes: Program
       <StudentRecords id={s.id} />
 
       <div className="flex flex-col gap-2 rounded-xs bg-surface-low p-3">
-        <p className="text-label font-bold text-ink uppercase">Academic probation</p>
+        <p className="text-label font-bold text-ink">Academic probation</p>
         <p className="text-body text-muted">Probation blocks applying to drives and registering for events.</p>
         <div className="flex flex-wrap items-center gap-2">
           {!probation && (
@@ -544,7 +546,7 @@ function ManageStudent({ s, programmes, onClose }: { s: Row; programmes: Program
       </div>
 
       <div className="flex flex-col gap-2 rounded-xs bg-surface-low p-3">
-        <p className="text-label font-bold text-ink uppercase">Account repairs</p>
+        <p className="text-label font-bold text-ink">Account repairs</p>
         <div className="flex flex-wrap gap-2">
           <Button
             size="sm"
@@ -625,7 +627,7 @@ function StudentRecords({ id }: { id: string }) {
   const recs = useSWR(["admin/student-records", id], () => call(api.GET("/api/v1/admin/students/{id}/records", { params: { path: { id } } })));
   return (
     <div className="flex flex-col gap-2 rounded-xs bg-surface-low p-3">
-      <p className="text-label font-bold text-ink uppercase">Certificates, internships &amp; projects</p>
+      <p className="text-label font-bold text-ink">Certificates, internships &amp; projects</p>
       <State data={recs.data} error={recs.error} retry={() => recs.mutate()} rows={2}>
         {(rows) =>
           !rows.length ? (

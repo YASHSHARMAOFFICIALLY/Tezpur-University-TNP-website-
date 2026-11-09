@@ -220,10 +220,10 @@ function OppCard({ o, app, locked, onApplied, onPlaced }: { o: Opp; app?: App; l
           </Badge>
         ) : (
           <>
-            <Button variant="tertiary" busy={busy} disabled={closes === "closed" || !!locked} onClick={apply}>
-              {closes === "closed" ? "Applications Closed" : "Apply Now"}
+            {/* the placed banner above says why once; the card only needs to show applying is off */}
+            <Button variant="tertiary" busy={busy} disabled={closes === "closed" || !!locked} title={locked ?? undefined} onClick={apply}>
+              {closes === "closed" ? "Applications Closed" : locked ? "Applying closed" : "Apply Now"}
             </Button>
-            {locked && <span className="max-w-[220px] text-caption font-semibold text-tertiary sm:text-right">{locked}</span>}
           </>
         )}
         {o.jd_file_id && (

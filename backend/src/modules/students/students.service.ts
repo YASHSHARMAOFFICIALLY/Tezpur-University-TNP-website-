@@ -90,7 +90,7 @@ export async function uploadFile(userId: string, kind: "resume" | "photo", file:
 const SHEET_HEADERS: Record<string, string> = {
   "roll number": "enrolment_no", "student name": "name", programme: "programme_code", "graduation year": "year_of_completion",
   specialization: "specialization", "professional interests": "professional_interests", "career interests / preferred roles": "career_interests",
-  "technical skills": "technical_skills", "extracurricular activities": "extracurriculars", linkedin: "linkedin_url",
+  "technical skills": "technical_skills", "active backlogs": "active_backlogs", "cleared backlogs": "cleared_backlogs", "extracurricular activities": "extracurriculars", linkedin: "linkedin_url",
   "github / portfolio": "portfolio_url", "about me": "about_me",
   "project 1": "project_1", "project 2": "project_2", "internship 1": "internship_1", "internship 2": "internship_2",
 };

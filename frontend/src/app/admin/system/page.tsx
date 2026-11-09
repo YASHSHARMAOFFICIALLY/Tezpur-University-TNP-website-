@@ -88,7 +88,7 @@ function Health() {
                 <div key={String(label)} className="flex gap-2 rounded-xs bg-surface-low p-3">
                   <Icon name={String(icon)} className={cx("text-[18px]", ok ? "text-primary" : "text-error")} />
                   <div>
-                    <p className="text-caption font-semibold text-muted uppercase">{label}</p>
+                    <p className="text-caption font-semibold text-muted">{label}</p>
                     <p className="text-body font-semibold text-ink">{value}</p>
                   </div>
                 </div>

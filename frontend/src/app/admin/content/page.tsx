@@ -193,7 +193,7 @@ function LandingForm({ u, departments, onSaved }: { u: Uni; departments: string[
       <fieldset className="flex flex-col gap-2 rounded-xs bg-surface-low p-3">
         <legend className="sr-only">Directorate contacts</legend>
         <div className="flex items-center justify-between gap-2">
-          <p className="text-label font-bold text-ink uppercase">Directorate contacts</p>
+          <p className="text-label font-bold text-ink">Directorate contacts</p>
           <Button
             type="button"
             size="sm"
@@ -226,7 +226,7 @@ function LandingForm({ u, departments, onSaved }: { u: Uni; departments: string[
 
       <fieldset className="flex flex-col gap-2 rounded-xs bg-surface-low p-3">
         <legend className="sr-only">School cards</legend>
-        <p className="text-label font-bold text-ink uppercase">School cards</p>
+        <p className="text-label font-bold text-ink">School cards</p>
         {!schoolDepts.length && <p className="text-caption text-muted">Add programmes below; each school gets a card.</p>}
         {schoolDepts.map((d, i) => {
           const own = site.schools?.find((s) => s.department === d);
@@ -313,7 +313,7 @@ function Programmes() {
     <Card className="flex flex-col gap-3 p-5">
       <SectionTitle icon="school" title="Programmes" sub="Drives eligibility, the public “Schools & Disciplines” cards and the recruiter talent pool." />
       <div className="rounded-xs bg-surface-low p-3">
-        <p className="pb-2 text-label font-bold text-ink uppercase">Add programme</p>
+        <p className="pb-2 text-label font-bold text-ink">Add programme</p>
         <ProgrammeForm onDone={() => progs.mutate()} />
       </div>
       <State data={progs.data} error={progs.error} retry={() => progs.mutate()} empty={(d) => !d.length}>
@@ -385,7 +385,7 @@ function RecordForm({ r, onDone, onCancel }: { r?: PlacementRecord; onDone: () =
         );
       }}
     >
-      <p className="text-label font-bold text-ink uppercase sm:col-span-3">{r ? `Edit ${r.year}` : "Add a year"}</p>
+      <p className="text-label font-bold text-ink sm:col-span-3">{r ? `Edit ${r.year}` : "Add a year"}</p>
       <Field label="Year *">
         <Input name="year" type="number" required min="2000" max="2100" defaultValue={r?.year} />
       </Field>

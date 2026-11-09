@@ -25,6 +25,7 @@ export function Candidates({
   const [sel, setSel] = useState<Set<string>>(new Set());
   const [minCgpa, setMinCgpa] = useState(0);
   const [kw, setKw] = useState("");
+  const [noBacklogs, setNoBacklogs] = useState(false);
   const [page, setPage] = useState(0);
   const [busy, setBusy] = useState("");
   const [msg, setMsg] = useState<{ tone: "ok" | "err"; text: string } | null>(null);
@@ -38,9 +39,9 @@ export function Candidates({
       (q.data?.data ?? []).filter((a) => {
         const s = a.student;
         const hay = `${(s.user as { name?: string }).name ?? ""} ${s.enrolment_no} ${s.professional_interests ?? ""}`.toLowerCase();
-        return (!prog || s.programme_id === prog) && (!minCgpa || (s.cgpa ?? 0) >= minCgpa) && (!kw || hay.includes(kw.toLowerCase()));
+        return (!prog || s.programme_id === prog) && (!minCgpa || (s.cgpa ?? 0) >= minCgpa) && (!noBacklogs || s.active_backlogs === 0) && (!kw || hay.includes(kw.toLowerCase()));
       }),
-    [q.data, prog, minCgpa, kw],
+    [q.data, prog, minCgpa, kw, noBacklogs],
   );
   const pages = Math.max(1, Math.ceil(rows.length / PER));
   const shown = rows.slice(page * PER, page * PER + PER);
@@ -89,10 +90,10 @@ export function Candidates({
   }
 
   function exportCsv() {
-    const head = ["Name", "Email", "Enrolment", "Programme", "CGPA", "Applied", "Stage"];
+    const head = ["Name", "Email", "Enrolment", "Programme", "CGPA", "Active backlogs", "Cleared backlogs", "Applied", "Stage"];
     const lines = rows.map((a) => {
       const u = a.student.user as { name?: string; email?: string };
-      return [u.name, u.email, a.student.enrolment_no, progName(a.student.programme_id), a.student.cgpa, a.created_at.slice(0, 10), STAGE_LABEL[a.status]];
+      return [u.name, u.email, a.student.enrolment_no, progName(a.student.programme_id), a.student.cgpa, a.student.active_backlogs, a.student.cleared_backlogs, a.created_at.slice(0, 10), STAGE_LABEL[a.status]];
     });
     downloadCsv(`${drive.title}-candidates.csv`, [head, ...lines]);
   }
@@ -147,6 +148,10 @@ export function Candidates({
             <span>9.5</span>
           </span>
         </label>
+        <label className="flex cursor-pointer items-center gap-2 text-label font-semibold text-ink">
+          <input type="checkbox" checked={noBacklogs} onChange={(e) => (setNoBacklogs(e.target.checked), setPage(0))} className="size-4 accent-primary" />
+          Only students who confirmed no active backlogs
+        </label>
         <Field label="SKILL KEYWORDS">
           <Input value={kw} onChange={(e) => (setKw(e.target.value), setPage(0))} placeholder="Filter: name, enrolment, skills…" />
         </Field>
@@ -195,6 +200,7 @@ export function Candidates({
                     <th className="px-2 py-3">Enrolment ID</th>
                     <th className="px-2 py-3">Degree &amp; Program</th>
                     <th className="px-2 py-3">CGPA</th>
+                    <th className="px-2 py-3">Backlogs</th>
                     <th className="px-2 py-3">Technical Core</th>
                     <th className="px-2 py-3">Resume</th>
                     <th className="px-2 py-3">Applied Date</th>
@@ -235,6 +241,7 @@ export function Candidates({
                         <td className="px-2 py-3">{s.enrolment_no}</td>
                         <td className="max-w-[140px] px-2 py-3">{progName(s.programme_id)}</td>
                         <td className="px-2 py-3 font-bold">{s.cgpa?.toFixed(2) ?? "—"}</td>
+                        <td className="px-2 py-3 whitespace-nowrap">{s.active_backlogs == null && s.cleared_backlogs == null ? "—" : `${s.active_backlogs ?? "—"} active • ${s.cleared_backlogs ?? "—"} cleared`}</td>
                         <td className="px-2 py-3">
                           <div className="flex max-w-[120px] flex-wrap gap-1">
                             {skills.length ? (

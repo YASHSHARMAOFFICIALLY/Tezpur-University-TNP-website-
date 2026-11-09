@@ -83,7 +83,7 @@ export function Card({ className, children }: { className?: string; children: Re
 /** Small uppercase overline used above most headings in the design. */
 export function Eyebrow({ children, dot, className }: { children: ReactNode; dot?: boolean; className?: string }) {
   return (
-    <p className={cx("flex items-center gap-1.5 text-caption font-bold uppercase text-tertiary", className)}>
+    <p className={cx("flex items-center gap-1.5 text-caption font-bold text-tertiary", className)}>
       {dot && <span className="size-1.5 rounded-full bg-accent" />}
       {children}
     </p>
@@ -284,7 +284,7 @@ export function PageHead({ eyebrow, title, sub, children }: { eyebrow: string; t
   return (
     <div className="flex flex-col justify-between gap-3 pb-1 md:flex-row md:items-end">
       <div>
-        <p className="flex items-center gap-1 text-body-lg tracking-[0.8px] text-muted uppercase">
+        <p className="flex items-center gap-2 text-body font-semibold text-muted">
           <span className="size-2 rounded-xl bg-accent" /> {eyebrow}
         </p>
         <h1 className="pt-1 font-display text-headline font-bold text-primary">{title}</h1>
