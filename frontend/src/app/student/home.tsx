@@ -31,7 +31,7 @@ export function Home() {
       >
         {({ p, apps, pl, opps }) => {
           const missing = REQUIRED.filter((r) => p[r.key] == null);
-          const open = opps
+          const open = (pl.placed ? [] : opps) // a placed student can't apply, so no deadlines to chase
             .filter((o) => o.my_eligibility.eligible && +new Date(o.apply_deadline) > now && !apps.some((a) => a.opportunity.id === o.id))
             .sort((a, b) => +new Date(a.apply_deadline) - +new Date(b.apply_deadline));
           const interview = apps
@@ -57,7 +57,7 @@ export function Home() {
                 inFlight={apps.some((a) => a.status === "applied" || a.status === "released_to_recruiter" || a.status === "shortlisted")}
               />
               <div className="grid gap-5 lg:grid-cols-3">
-                <Deadlines open={open} />
+                <Deadlines open={open} placed={pl.placed} />
                 <LatestNotices />
                 <Stats />
               </div>
@@ -73,10 +73,10 @@ function Journey({ steps, current }: { steps: { label: string; done: boolean; no
   return (
     <Card className="p-5">
       <h2 className="pb-3 font-display text-title font-semibold text-primary">Your placement journey</h2>
-      <ol className="grid grid-cols-5 gap-2">
+      <ol className="grid gap-2.5 sm:grid-cols-5 sm:gap-2">
         {steps.map((s, i) => (
-          <li key={s.label} aria-current={i === current ? "step" : undefined} className="flex flex-col gap-1.5">
-            <span className={cx("h-2 rounded-xl", s.done ? "bg-primary" : i === current ? "bg-accent" : "bg-surface-highest")} />
+          <li key={s.label} aria-current={i === current ? "step" : undefined} className="flex items-center gap-2 sm:flex-col sm:items-stretch sm:gap-1.5">
+            <span className={cx("h-2 w-8 shrink-0 rounded-xl sm:w-auto", s.done ? "bg-primary" : i === current ? "bg-accent" : "bg-surface-highest")} />
             <span className={cx("flex items-center gap-1 text-body", i === current ? "font-bold text-ink" : s.done ? "font-semibold text-primary" : "text-muted")}>
               {s.done && <Icon name="check_circle" filled className="text-[16px]" />}
               <span className="truncate">{s.label}</span>
@@ -142,7 +142,7 @@ function NextStep({ placed, missing, interview, open, inFlight }: { placed: stri
 
 function Panel({ title, icon, href, linkLabel, children }: { title: string; icon: string; href: string; linkLabel: string; children: ReactNode }) {
   return (
-    <Card className="flex flex-col gap-3 p-5">
+    <Card className="flex min-w-0 flex-col gap-3 p-5">
       <h2 className="flex items-center gap-2 font-display text-card font-semibold text-primary">
         <Icon name={icon} className="text-[20px]" />
         {title}
@@ -155,14 +155,17 @@ function Panel({ title, icon, href, linkLabel, children }: { title: string; icon
   );
 }
 
-function Deadlines({ open }: { open: Opp[] }) {
+function Deadlines({ open, placed }: { open: Opp[]; placed: boolean }) {
   return (
     <Panel title="Apply before" icon="alarm" href="#drives" linkLabel="All open drives">
       {open.length ? (
         <ul className="flex flex-col gap-2">
           {open.slice(0, 4).map((o) => (
-            <li key={o.id} className="flex items-baseline justify-between gap-3">
-              <span className="min-w-0 truncate text-body font-semibold text-ink">{o.company.name}</span>
+            <li key={o.id} className="flex items-center justify-between gap-3">
+              <span className="min-w-0">
+                <span className="block truncate text-body font-semibold text-ink">{o.company.name}</span>
+                <span className="block truncate text-caption text-muted">{o.title}</span>
+              </span>
               <Badge tone="warn" className="shrink-0">
                 {timeLeft(o.apply_deadline)}
               </Badge>
@@ -170,7 +173,7 @@ function Deadlines({ open }: { open: Opp[] }) {
           ))}
         </ul>
       ) : (
-        <Empty icon="event_available" text="No open deadlines for you." />
+        <Empty icon="event_available" text={placed ? "Applying is closed while you are placed." : "No open deadlines for you."} />
       )}
     </Panel>
   );
