@@ -42,6 +42,7 @@ export function PublicShell({ active = "/", children }: { active?: string; child
               <Link
                 key={p.href}
                 href={p.href}
+                prefetch={false}
                 className={cx(
                   "rounded-xs px-2 py-0.5 text-caption font-semibold",
                   p.href === "/" ? "text-white" : "text-on-primary-container hover:text-white",
@@ -65,6 +66,7 @@ export function PublicShell({ active = "/", children }: { active?: string; child
               <Link
                 key={n.label}
                 href={n.href}
+                prefetch={false}
                 className={cx(
                   "rounded-xs px-2 py-1 text-body-lg whitespace-nowrap",
                   n.href === active ? "bg-primary-container text-white" : "font-semibold text-muted hover:text-ink",
@@ -155,7 +157,7 @@ function FooterCol({ title, items }: { title: string; items: [string, string][] 
       <ul className="flex flex-col gap-1 text-body">
         {items.map(([label, href]) => (
           <li key={label}>
-            <Link href={href} className="inline-block py-1.5 hover:text-white">
+            <Link href={href} prefetch={false} className="inline-block py-1.5 hover:text-white">
               {label}
             </Link>
           </li>
