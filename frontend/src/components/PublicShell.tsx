@@ -154,7 +154,7 @@ function FooterCol({ title, items }: { title: string; items: [string, string][] 
       <ul className="flex flex-col gap-1 text-body">
         {items.map(([label, href]) => (
           <li key={label}>
-            <Link href={href} className="hover:text-white">
+            <Link href={href} className="inline-block py-1.5 hover:text-white">
               {label}
             </Link>
           </li>

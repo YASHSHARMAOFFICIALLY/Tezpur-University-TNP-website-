@@ -293,7 +293,7 @@ export function Candidates({
         <span>
           Showing <b className="text-ink">{shown.length}</b> of {rows.length} released candidates
         </span>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button size="sm" variant="ghost" icon="close" busy={busy === "reject"} disabled={!ids.length} onClick={() => bulk("reject")}>
             Reject Selected
           </Button>
@@ -301,7 +301,7 @@ export function Candidates({
             Submit as Final Selections
           </Button>
           <span className="mx-2 h-5 w-px bg-surface-highest" />
-          <button disabled={page === 0} onClick={() => setPage(page - 1)} className="text-caption font-semibold disabled:opacity-40 cursor-pointer">
+          <button disabled={page === 0} onClick={() => setPage(page - 1)} className="text-caption font-semibold disabled:opacity-40 cursor-pointer max-sm:min-h-9 max-sm:px-2">
             Previous
           </button>
           {Array.from({ length: pages }, (_, i) => (
@@ -310,7 +310,7 @@ export function Candidates({
               onClick={() => setPage(i)}
               aria-current={i === page}
               className={cx(
-                "grid size-6 place-items-center rounded-xs text-caption font-semibold cursor-pointer",
+                "grid size-6 max-sm:size-9 place-items-center rounded-xs text-caption font-semibold cursor-pointer",
                 i === page ? "bg-primary text-white" : "text-ink",
               )}
             >
@@ -320,7 +320,7 @@ export function Candidates({
           <button
             disabled={page >= pages - 1}
             onClick={() => setPage(page + 1)}
-            className="text-caption font-semibold text-ink disabled:opacity-40 cursor-pointer"
+            className="text-caption font-semibold text-ink disabled:opacity-40 cursor-pointer max-sm:min-h-9 max-sm:px-2"
           >
             Next
           </button>

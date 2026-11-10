@@ -120,14 +120,18 @@ function Timeline({
       </div>
 
       <dl className="grid gap-2 rounded-xs bg-surface-low p-3 sm:grid-cols-3">
-        <div>
-          <dt className="text-caption font-semibold text-muted">Drive mode</dt>
-          <dd className="text-body font-semibold text-ink">{drive.drive_mode ? DRIVE_MODE[drive.drive_mode] : "Not set"}</dd>
-        </div>
-        <div>
-          <dt className="text-caption font-semibold text-muted">Likely hiring period</dt>
-          <dd className="text-body font-semibold text-ink">{period ?? "Not set"}</dd>
-        </div>
+        {drive.drive_mode && (
+          <div>
+            <dt className="text-caption font-semibold text-muted">Drive mode</dt>
+            <dd className="text-body font-semibold text-ink">{DRIVE_MODE[drive.drive_mode]}</dd>
+          </div>
+        )}
+        {period && (
+          <div>
+            <dt className="text-caption font-semibold text-muted">Likely hiring period</dt>
+            <dd className="text-body font-semibold text-ink">{period}</dd>
+          </div>
+        )}
         <div>
           <dt className="text-caption font-semibold text-muted">Selection rounds</dt>
           <dd className="flex flex-wrap gap-1 pt-0.5">

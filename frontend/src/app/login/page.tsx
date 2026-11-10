@@ -220,7 +220,7 @@ export default function LoginPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex gap-4 text-label font-semibold text-tertiary">
               {mode === "login" ? (
-                <button type="button" className="cursor-pointer hover:underline" onClick={() => (setMode("forgot"), setMsg(null))}>
+                <button type="button" className="cursor-pointer py-2 hover:underline" onClick={() => (setMode("forgot"), setMsg(null))}>
                   Forgot password / first login?
                 </button>
               ) : (
@@ -242,7 +242,7 @@ export default function LoginPage() {
 
           <p className="border-t border-surface pt-4 text-body text-muted">
             New here?{" "}
-            <Link href="/#register" className="font-semibold text-primary hover:underline">
+            <Link href="/#register" className="inline-block py-2 font-semibold text-primary hover:underline">
               Register as a student or recruiter
             </Link>
           </p>
