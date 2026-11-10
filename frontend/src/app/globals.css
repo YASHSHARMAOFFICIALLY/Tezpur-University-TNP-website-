@@ -66,6 +66,12 @@
     background: var(--color-bg);
     color: var(--color-ink);
   }
+  @media (max-width: 640px) {
+    input[type="checkbox"] {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
   /* in base layer so Tailwind text-* utilities can resize icons */
   .icon {
     font-family: "Material Symbols Outlined";

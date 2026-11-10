@@ -46,13 +46,13 @@ function Header() {
         <p className="text-[14px] leading-5 text-muted">Recruiter and posting approvals, appeals, sessions, results and student feedback.</p>
       </div>
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap md:max-w-[370px] md:justify-end">
-        <Link href="/admin/content" className="flex items-center justify-center gap-1 rounded-xs bg-surface-high px-3 py-1 text-label font-semibold text-ink">
+        <Link href="/admin/content" className="flex items-center justify-center gap-1 rounded-xs bg-surface-high px-3 py-1 max-sm:py-2.5 text-label font-semibold text-ink">
           <Icon name="tune" /> Edit Landing Page &amp; Records
         </Link>
-        <a href="#events" className="flex items-center justify-center gap-1 rounded-xs bg-surface-high px-3 py-1 text-label font-semibold text-ink">
+        <a href="#events" className="flex items-center justify-center gap-1 rounded-xs bg-surface-high px-3 py-1 max-sm:py-2.5 text-label font-semibold text-ink">
           <Icon name="event_available" /> Host New Session
         </a>
-        <a href="#results" className="flex items-center justify-center gap-1 rounded-xs bg-primary px-3 py-1 text-label font-semibold text-white shadow-pop">
+        <a href="#results" className="flex items-center justify-center gap-1 rounded-xs bg-primary px-3 py-1 max-sm:py-2.5 text-label font-semibold text-white shadow-pop">
           <Icon name="campaign" /> Publish Select List
         </a>
       </div>
@@ -268,7 +268,7 @@ function Queue() {
       </div>
 
       <div className="flex flex-col gap-3 p-5">
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-col items-start gap-3 sm:flex-row sm:justify-between">
           <div>
             <h2 className="font-display text-title font-bold text-primary">
               {

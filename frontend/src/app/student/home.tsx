@@ -42,7 +42,7 @@ export function Home() {
             { label: "Profile", done: REQUIRED.filter((r) => r.key !== "resume_file_id").every((r) => p[r.key] != null) },
             { label: "Resume", done: p.resume_file_id != null },
             { label: "Applied", done: apps.length > 0, note: apps.length ? String(apps.length) : undefined },
-            { label: "Interview", done: apps.some((a) => a.interviews.length > 0 || a.status === "shortlisted" || a.status === "selected") },
+            { label: "Interview", done: apps.some((a) => a.interviews.length > 0 || a.status === "selected") },
             { label: "Offer", done: pl.placed || apps.some((a) => a.status === "selected") },
           ];
           const current = steps.findIndex((s) => !s.done);
@@ -148,7 +148,7 @@ function Panel({ title, icon, href, linkLabel, children }: { title: string; icon
         {title}
       </h2>
       <div className="flex-1">{children}</div>
-      <Link href={href} className="w-fit text-label font-semibold text-primary underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-accent">
+      <Link href={href} className="w-fit py-2 text-label font-semibold text-primary underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-accent">
         {linkLabel}
       </Link>
     </Card>

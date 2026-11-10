@@ -23,7 +23,7 @@ const VARIANT = {
   danger: "bg-error-container text-on-error-container hover:brightness-95",
   white: "bg-white text-ink shadow-card hover:bg-surface-low",
 };
-const SIZE = { sm: "px-2 py-1 text-caption", md: "px-3 py-2 text-label", lg: "px-5 py-3 text-body-lg font-semibold" };
+const SIZE = { sm: "px-2 py-1 text-caption max-sm:min-h-9", md: "px-3 py-2 text-label", lg: "px-5 py-3 text-body-lg font-semibold" };
 
 export function Button({
   variant = "primary",

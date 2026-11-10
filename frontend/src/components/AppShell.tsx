@@ -82,7 +82,7 @@ export function AppShell({ role, nav, active, children }: { role: Role; nav: Nav
 
       <header className="sticky top-0 z-20 flex h-20 items-center justify-between gap-4 bg-white/95 px-6 shadow-bar">
         <div className="min-w-0">
-          <p className="truncate text-card font-bold tracking-[-0.4px] text-primary">Tezpur University T&amp;P System</p>
+          <p className="truncate text-card font-bold tracking-[-0.4px] text-primary">Tezpur University <span className="hidden sm:inline">T&amp;P System</span><span className="sm:hidden">T&amp;P</span></p>
           <p className="text-caption font-semibold text-muted">{academicYear()}</p>
         </div>
         <div className="flex items-center gap-3">
@@ -106,7 +106,7 @@ export function AppShell({ role, nav, active, children }: { role: Role; nav: Nav
                 {role === "admin" ? "T&P Admin" : role === "company" ? "Recruiter" : user.status === "alumni" ? "Alumnus" : "Student"}
               </p>
             </div>
-            <button onClick={logout} aria-label="Log out" className="grid size-7 place-items-center text-muted hover:text-ink cursor-pointer">
+            <button onClick={logout} aria-label="Log out" className="grid size-9 place-items-center text-muted hover:text-ink cursor-pointer">
               <Icon name="logout" />
             </button>
           </div>
@@ -119,7 +119,7 @@ export function AppShell({ role, nav, active, children }: { role: Role; nav: Nav
           <NavLink
             key={n.href}
             href={n.href}
-            className={cx("shrink-0 rounded-xs px-3 py-1 text-body", active === n.href ? "bg-primary-container text-white" : "text-muted")}
+            className={cx("shrink-0 rounded-xs px-3 py-2 text-body", active === n.href ? "bg-primary-container text-white" : "text-muted")}
           >
             {n.label}
           </NavLink>
@@ -137,10 +137,10 @@ function NoticeBell({ role }: { role: Role }) {
   const { data } = useSWR("noticeboard", () => call(api.GET("/api/v1/noticeboard", { params: { query: { limit: 100 } } })));
   const n = data?.data.length ?? 0;
   return (
-    <NavLink href={NOTICES_HREF[role]} aria-label={`${n} notices`} className="relative px-1 pt-1 pb-2.5 text-muted">
+    <NavLink href={NOTICES_HREF[role]} aria-label={`${n} notices`} className="relative grid size-9 place-items-center text-muted">
       <Icon name="notifications" className="text-[18px]" />
       {n > 0 && (
-        <span className="absolute top-0 -right-1 grid size-4 place-items-center rounded-xl bg-tertiary text-[10px] leading-none font-bold text-white">
+        <span className="absolute top-0.5 right-0 grid size-4 place-items-center rounded-xl bg-tertiary text-[10px] leading-none font-bold text-white">
           {n > 9 ? "9+" : n}
         </span>
       )}

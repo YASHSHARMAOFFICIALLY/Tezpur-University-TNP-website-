@@ -52,7 +52,7 @@ export function TalentPool({ onExplore }: { onExplore: (programmeId: string) => 
                 <p className="text-body text-muted">
                   <b className="font-display text-title text-ink">{p.student_count ?? "—"}</b> Students in batch
                 </p>
-                <a href="#candidates" onClick={() => onExplore(p.id)} className="flex items-center justify-between text-label font-semibold text-tertiary">
+                <a href="#candidates" onClick={() => onExplore(p.id)} className="flex items-center justify-between py-2 text-label font-semibold text-tertiary">
                   Show these candidates <Icon name="arrow_forward" />
                 </a>
               </div>
