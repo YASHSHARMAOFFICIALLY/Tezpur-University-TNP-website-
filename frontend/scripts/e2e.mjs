@@ -134,7 +134,7 @@ await step("admin dashboard counts only active students and active recruiters", 
     const r = await apiCall("GET", `${path}?limit=100&status=active`, { token: access_token });
     return `${r.data.length}${r.page.has_more ? "+" : ""}`;
   };
-  const big = (label) => adm.getByText(label, { exact: true }).locator("..").locator("span.font-display");
+  const big = (label) => adm.locator("section").filter({ has: adm.getByText(label, { exact: true }) }).locator("span.font-display").first();
   // Stats load independently and other suites share the database, so poll, reloading now and then, before calling it wrong.
   for (let i = 0; ; i++) {
     await big("Registered Candidates").filter({ hasNotText: "…" }).waitFor();
@@ -230,8 +230,11 @@ await step("new student completes profile (photo + resume upload) and applies wi
   await d.getByLabel("Date of Birth *").fill("2004-02-10");
   await d.getByLabel("Cumulative CGPA *").fill("5.5");
   await d.getByLabel("Year of Completion *").fill("2028");
+  await d.getByLabel("Active backlogs").fill("0"); // zero is a real answer, not "blank"
+  await d.getByLabel("Cleared backlogs").fill("2");
   await d.getByRole("button", { name: "Save Profile" }).click();
   await d.waitFor({ state: "detached" });
+  await stuNew.getByText("0 active • 2 cleared").first().waitFor();
   await sv(stuNew, "#drives");
   const card = stuNew.locator("article").filter({ hasText: JOB });
   await card.getByRole("button", { name: /Apply Now/ }).click();

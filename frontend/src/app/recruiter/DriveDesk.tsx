@@ -92,7 +92,7 @@ function Timeline({
     <div className="flex flex-col gap-3">
       <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
         <div className="min-w-0">
-          <p className="flex items-center gap-1 text-caption font-semibold tracking-[0.55px] text-muted uppercase">
+          <p className="flex items-center gap-1 text-caption font-semibold text-muted">
             <Icon name="timeline" /> Drive Desk
           </p>
           <h2 className="font-display text-title font-semibold break-words text-primary">{drive.title}</h2>
@@ -121,15 +121,15 @@ function Timeline({
 
       <dl className="grid gap-2 rounded-xs bg-surface-low p-3 sm:grid-cols-3">
         <div>
-          <dt className="text-caption font-semibold text-muted uppercase">Drive mode</dt>
+          <dt className="text-caption font-semibold text-muted">Drive mode</dt>
           <dd className="text-body font-semibold text-ink">{drive.drive_mode ? DRIVE_MODE[drive.drive_mode] : "Not set"}</dd>
         </div>
         <div>
-          <dt className="text-caption font-semibold text-muted uppercase">Likely hiring period</dt>
+          <dt className="text-caption font-semibold text-muted">Likely hiring period</dt>
           <dd className="text-body font-semibold text-ink">{period ?? "Not set"}</dd>
         </div>
         <div>
-          <dt className="text-caption font-semibold text-muted uppercase">Selection rounds</dt>
+          <dt className="text-caption font-semibold text-muted">Selection rounds</dt>
           <dd className="flex flex-wrap gap-1 pt-0.5">
             {rounds.length ? (
               rounds.map((k) => (

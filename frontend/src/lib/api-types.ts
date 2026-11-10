@@ -1005,6 +1005,8 @@ export interface paths {
                         year_of_admission?: number;
                         year_of_completion?: number;
                         cgpa?: number;
+                        active_backlogs?: number;
+                        cleared_backlogs?: number;
                         current_address?: string;
                         permanent_address?: string;
                         marks_10?: number;
@@ -3583,6 +3585,8 @@ export interface paths {
                                     year_of_admission: number | null;
                                     year_of_completion: number | null;
                                     cgpa: number | null;
+                                    active_backlogs: number | null;
+                                    cleared_backlogs: number | null;
                                     current_address: string | null;
                                     permanent_address: string | null;
                                     marks_10: number | null;
@@ -3903,6 +3907,8 @@ export interface paths {
                                     year_of_admission: number | null;
                                     year_of_completion: number | null;
                                     cgpa: number | null;
+                                    active_backlogs: number | null;
+                                    cleared_backlogs: number | null;
                                     current_address: string | null;
                                     permanent_address: string | null;
                                     marks_10: number | null;
@@ -6367,6 +6373,8 @@ export interface paths {
                         year_of_admission?: number;
                         year_of_completion?: number;
                         cgpa?: number;
+                        active_backlogs?: number;
+                        cleared_backlogs?: number;
                         current_address?: string;
                         permanent_address?: string;
                         marks_10?: number;
@@ -6644,6 +6652,8 @@ export interface paths {
                                 metadata?: unknown;
                                 /** Format: date-time */
                                 created_at: string;
+                                actor_name: string | null;
+                                entity_name: string | null;
                             }[];
                             page: {
                                 cursor: string | null;
@@ -10080,6 +10090,8 @@ export interface components {
             year_of_admission: number | null;
             year_of_completion: number | null;
             cgpa: number | null;
+            active_backlogs: number | null;
+            cleared_backlogs: number | null;
             current_address: string | null;
             permanent_address: string | null;
             marks_10: number | null;
@@ -10178,6 +10190,7 @@ export interface components {
             programmes?: string[];
             completion_years?: number[];
             max_age?: number;
+            max_active_backlogs?: number;
         };
         Event: {
             id: string;
@@ -10215,6 +10228,8 @@ export interface components {
             year_of_admission: number | null;
             year_of_completion: number | null;
             cgpa: number | null;
+            active_backlogs: number | null;
+            cleared_backlogs: number | null;
             current_address: string | null;
             permanent_address: string | null;
             marks_10: number | null;

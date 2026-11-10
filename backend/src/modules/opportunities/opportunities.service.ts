@@ -34,7 +34,8 @@ export type EligibilityReason =
   | { rule: "min_cgpa"; required: number; actual: number | null }
   | { rule: "programmes"; actual: string | null }
   | { rule: "completion_years"; required: number[]; actual: number | null }
-  | { rule: "max_age"; required: number; actual: number | null };
+  | { rule: "max_age"; required: number; actual: number | null }
+  | { rule: "max_active_backlogs"; required: number; actual: number | null };
 
 export type EligibilityResult = { eligible: boolean; reasons: EligibilityReason[]; checked_at: string };
 
@@ -62,6 +63,8 @@ export function checkEligibility(f: EligibilityFacts, rule: EligibilityRule, now
     const age = f.dob ? ageOn(f.dob, now) : null;
     if (age === null || age > rule.max_age) reasons.push({ rule: "max_age", required: rule.max_age, actual: age });
   }
+  if (rule.max_active_backlogs !== undefined && (f.active_backlogs === null || f.active_backlogs > rule.max_active_backlogs))
+    reasons.push({ rule: "max_active_backlogs", required: rule.max_active_backlogs, actual: f.active_backlogs });
   return { eligible: reasons.length === 0, reasons, checked_at: now.toISOString() };
 }
 

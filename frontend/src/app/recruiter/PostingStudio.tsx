@@ -53,6 +53,7 @@ export function PostingStudio({ onClose, onDone, initial }: { onClose: () => voi
         eligibility: {
           ...initial?.eligibility,
           min_cgpa: Number(g("min_cgpa") || 0),
+          max_active_backlogs: g("max_backlogs") === "" ? undefined : Number(g("max_backlogs")), // blank = no rule; 0 = none allowed
           programmes,
           completion_years: g("batch").split(",").map(Number),
         },
@@ -77,7 +78,7 @@ export function PostingStudio({ onClose, onDone, initial }: { onClose: () => voi
     }
   }
 
-  const label = "text-caption font-semibold tracking-[0.55px] text-muted uppercase";
+  const label = "text-caption font-semibold text-muted";
   const box = "flex flex-col gap-3 rounded-xs bg-surface-low p-3";
   const flat = "bg-surface-low shadow-none";
   return (
@@ -145,7 +146,7 @@ export function PostingStudio({ onClose, onDone, initial }: { onClose: () => voi
 
           <fieldset className={box}>
             <legend className="sr-only">Compensation</legend>
-            <p className="text-label font-bold text-ink uppercase">Compensation &amp; Benefits</p>
+            <p className="text-label font-bold text-ink">Compensation &amp; Benefits</p>
             {initial ? (
               <Field label="CTC & Benefits">
                 <Input name="ctc_text" defaultValue={initial.ctc_benefits ?? ""} />
@@ -176,7 +177,7 @@ export function PostingStudio({ onClose, onDone, initial }: { onClose: () => voi
           </div>
 
           <fieldset className={box}>
-            <p className="text-label font-bold text-ink uppercase">Academic Eligibility</p>
+            <p className="text-label font-bold text-ink">Academic Eligibility</p>
             <p className={label}>Degrees Permitted to Apply *</p>
             <div className="flex flex-wrap gap-2">
               {progs.data?.map((p) => (
@@ -196,6 +197,9 @@ export function PostingStudio({ onClose, onDone, initial }: { onClose: () => voi
               <Field label="Minimum Cutoff CGPA">
                 <Input name="min_cgpa" type="number" step="0.1" min="0" max="10" defaultValue={initial?.eligibility.min_cgpa ?? 7.5} />
               </Field>
+              <Field label="Maximum active backlogs" hint="Leave blank for no rule. 0 means none allowed.">
+                <Input name="max_backlogs" type="number" min="0" max="20" defaultValue={initial?.eligibility.max_active_backlogs ?? ""} />
+              </Field>
               <Field label="Passing-out Batch *">
                 <Select name="batch" defaultValue={batches ?? year}>
                   {[...new Set([batches, year, year + 1, year + 2].filter(Boolean).map(String))].map((y) => (
@@ -212,7 +216,7 @@ export function PostingStudio({ onClose, onDone, initial }: { onClose: () => voi
           </fieldset>
 
           <fieldset className={box}>
-            <p className="text-label font-bold text-ink uppercase">Recruitment Rounds &amp; Timing</p>
+            <p className="text-label font-bold text-ink">Recruitment Rounds &amp; Timing</p>
             <div className="grid grid-cols-2 gap-2">
               {ROUNDS.map((k) => (
                 <label key={k} className="flex items-center gap-2 text-body text-ink">
@@ -248,7 +252,7 @@ export function PostingStudio({ onClose, onDone, initial }: { onClose: () => voi
           </fieldset>
 
           <fieldset className={box}>
-            <p className="text-label font-bold text-ink uppercase">Campus Logistics</p>
+            <p className="text-label font-bold text-ink">Campus Logistics</p>
             <p className="text-caption text-muted">
               Only students who apply to this posting see these. You can change them later from the Drive Desk; applicants get an email then.
             </p>

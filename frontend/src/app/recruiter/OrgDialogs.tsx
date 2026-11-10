@@ -68,7 +68,7 @@ export function CompanyProfile({ c, onClose }: { c: Company; onClose: () => void
       </form>
 
       <div className="flex flex-col gap-2 rounded-xs bg-surface-low p-3">
-        <p className="text-label font-bold text-ink uppercase">Contact persons</p>
+        <p className="text-label font-bold text-ink">Contact persons</p>
         {list.length ? (
           list.map((p) => (
             <div key={p.id} className="flex items-center justify-between gap-2 rounded-xs bg-white p-2 text-body">

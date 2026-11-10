@@ -42,9 +42,9 @@ function AppCard({ a, given }: { a: App; given?: Feedback | null }) {
     <li aria-label={`Application: ${o.company.name}, ${o.title}`} className="flex flex-col gap-3 rounded-sm bg-surface-low p-4">
       <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
         <div className="min-w-0">
-          <h3 className="font-display text-title font-semibold text-primary">{o.company.name}</h3>
+          <h3 className="font-display text-title font-semibold text-primary">{o.title}</h3>
           <p className="text-body text-muted">
-            {o.title} • <span className="capitalize">{o.type}</span> • applied {fmtDate(a.created_at)}
+            {o.company.name} • <span className="capitalize">{o.type}</span> • applied {fmtDate(a.created_at)}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -71,7 +71,7 @@ function AppCard({ a, given }: { a: App; given?: Feedback | null }) {
       <DriveFacts mode={o.drive_mode} from={o.hiring_from} to={o.hiring_to} />
 
       <div className="flex flex-col gap-1 rounded-xs bg-white p-3">
-        <p className="text-caption font-semibold text-muted uppercase">Venue &amp; logistics (shared only with applicants)</p>
+        <p className="text-caption font-semibold text-muted">Venue &amp; logistics (shared only with applicants)</p>
         {o.venue || o.logistics ? (
           <>
             {o.venue && (

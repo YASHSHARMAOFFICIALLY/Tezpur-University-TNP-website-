@@ -72,7 +72,7 @@ export function Messages() {
           </div>
         </form>
         <div className="flex min-w-0 flex-col gap-2">
-          <p className="text-caption font-semibold text-muted uppercase">Recent thread</p>
+          <p className="text-caption font-semibold text-muted">Recent thread</p>
           <State data={thread.data} error={thread.error} retry={() => thread.mutate()} rows={3}>
             {({ data }) =>
               data.length ? (

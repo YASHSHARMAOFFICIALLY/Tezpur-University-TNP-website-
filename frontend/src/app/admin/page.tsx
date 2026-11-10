@@ -42,10 +42,7 @@ function Header() {
   return (
     <div id="console" className="flex scroll-mt-24 flex-col justify-between gap-3 pb-1 md:flex-row md:items-end">
       <div>
-        <p className="flex items-center gap-1 text-body-lg tracking-[0.8px] text-muted uppercase">
-          <span className="size-2 rounded-xl bg-accent" /> Executive Operations Node • Confidential Authority
-        </p>
-        <h1 className="pt-1 font-display text-headline font-bold text-primary">TPO Administrative Control Center</h1>
+        <h1 className="font-display text-headline font-bold text-primary">TPO Administrative Control Center</h1>
         <p className="text-[14px] leading-5 text-muted">Recruiter and posting approvals, appeals, sessions, results and student feedback.</p>
       </div>
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap md:max-w-[370px] md:justify-end">
@@ -65,15 +62,19 @@ function Header() {
 
 function StatCard({ label, icon, children }: { label: string; icon: string; children: React.ReactNode }) {
   return (
-    <Card className="relative flex min-h-[190px] flex-col gap-1 overflow-hidden px-5 pt-[27px] pb-5">
-      <Icon name={icon} className="absolute top-3 right-3 text-[64px] text-surface-high" />
-      <p className="relative text-caption font-semibold tracking-[0.55px] text-muted uppercase">{label}</p>
+    <Card className="flex min-h-[168px] flex-col gap-1.5 p-5">
+      <div className="flex items-center gap-2">
+        <span className="grid size-7 place-items-center rounded-xs bg-surface text-primary">
+          <Icon name={icon} className="text-[18px]" />
+        </span>
+        <p className="text-label font-semibold text-muted">{label}</p>
+      </div>
       {children}
     </Card>
   );
 }
 const Big = ({ v, unit, tone = "text-primary" }: { v: string | number; unit: string; tone?: string }) => (
-  <p className="relative flex items-baseline gap-1">
+  <p className="flex items-baseline gap-1">
     <span className={cx("font-display text-display font-bold tracking-[-0.8px]", tone)}>{v}</span>
     <span className="text-body text-muted">{unit}</span>
   </p>
@@ -97,25 +98,25 @@ function Stats() {
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <StatCard label="Live Recruitment Drives" icon="corporate_fare">
         <Big v={live.length} unit="Ongoing" />
-        <div className="relative flex gap-1">
+        <div className="flex gap-1">
           <Badge tone="info">{pending.data?.opportunities.length ?? 0} Awaiting Approval</Badge>
         </div>
       </StatCard>
       <StatCard label="Registered Candidates" icon="badge">
         <Big v={nStudents} unit="Active" />
-        <p className="relative text-caption text-muted">Students activate themselves by verifying the emailed code.</p>
+        <p className="text-caption text-muted">Students activate themselves by verifying the emailed code.</p>
         {!!pending.data?.students.length && (
-          <Badge tone="warn" icon="pending" className="relative w-fit">
+          <Badge tone="warn" icon="pending" className="w-fit">
             {pending.data.students.length} older sign-up{pending.data.students.length === 1 ? "" : "s"} to approve
           </Badge>
         )}
       </StatCard>
       <StatCard label="Approved Recruiters" icon="handshake">
         <Big v={cos.length} unit="Active Partners" />
-        <Badge tone="info" icon="domain" className="relative w-fit">
+        <Badge tone="info" icon="domain" className="w-fit">
           {pending.data?.recruiters.length ?? 0} Awaiting Approval
         </Badge>
-        <p className="relative mt-auto flex justify-between text-caption text-muted">
+        <p className="mt-auto flex justify-between text-caption text-muted">
           <span>MNC: {share(["mnc"])}%</span>
           <span>PSU: {share(["psu", "govt"])}%</span>
           <span>Startups: {share(["startup"])}%</span>
@@ -123,11 +124,10 @@ function Stats() {
       </StatCard>
       <StatCard label="Batch Offers" icon="verified">
         <Big v={offers} unit="Placed" tone="text-tertiary" />
-        <div className="relative grid grid-cols-2 gap-1 text-caption font-semibold text-ink">
-          <span className="rounded-xs bg-surface-high px-2 py-1">Applications: {applied}</span>
-          <span className="rounded-xs bg-surface-high px-2 py-1">Rate: {applied ? Math.round((offers / applied) * 100) : 0}%</span>
-        </div>
-        <span className="relative mt-auto h-1.5 rounded-xl bg-surface-high">
+        <p className="text-caption text-muted tabular-nums">
+          {applied} applications • {applied ? Math.round((offers / applied) * 100) : 0}% placed
+        </p>
+        <span className="mt-auto h-1.5 rounded-xl bg-surface-high">
           <span className="block h-1.5 rounded-xl bg-accent" style={{ width: `${applied ? (offers / applied) * 100 : 0}%` }} />
         </span>
       </StatCard>
@@ -490,9 +490,6 @@ function EventCreator() {
       <details className="group flex flex-col gap-4">
         <summary className="flex cursor-pointer list-none items-start justify-between gap-2 rounded-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
           <div>
-            <p className="flex items-center gap-1 text-body-lg tracking-[0.8px] text-muted uppercase">
-              <Icon name="lightbulb" className="text-tertiary" /> Capacity Enhancement
-            </p>
             <h2 className="font-display text-title font-bold text-primary">Event &amp; Training Creator Studio</h2>
             <p className="text-body text-muted">Design and broadcast soft-skill cohorts, mock drives, and corporate masterclasses.</p>
           </div>
@@ -584,7 +581,7 @@ function EventCreator() {
         </form>
       </details>
       <div className="flex flex-col gap-2 border-t border-surface pt-3">
-        <p className="text-caption font-semibold text-muted uppercase">Scheduled sessions</p>
+        <p className="text-caption font-semibold text-muted">Scheduled sessions</p>
         <State data={events.data} error={events.error} retry={() => events.mutate()} rows={2}>
           {({ data }) =>
             data.length ? (
@@ -768,9 +765,6 @@ function PublishResults() {
     <Card className="flex scroll-mt-24 flex-col gap-3 p-8">
       <span id="results" />
       <div>
-        <p className="flex items-center gap-1 text-body-lg tracking-[0.8px] text-muted uppercase">
-          <Icon name="settings_suggest" /> Select List Trigger
-        </p>
         <h2 className="font-display text-title font-bold text-primary">Publish Drive Results</h2>
         <p className="text-body text-muted">Release applicants to recruiters, then publish their confirmed selections and update placement records.</p>
       </div>

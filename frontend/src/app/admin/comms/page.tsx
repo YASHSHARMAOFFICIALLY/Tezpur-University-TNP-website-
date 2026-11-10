@@ -108,7 +108,7 @@ function Inbox() {
   return (
     <Card className="grid overflow-hidden lg:grid-cols-[280px_1fr]">
       <div className="flex flex-col gap-1 bg-surface-low p-3">
-        <p className="px-2 pb-1 text-caption font-semibold text-muted uppercase">Company threads</p>
+        <p className="px-2 pb-1 text-caption font-semibold text-muted">Company threads</p>
         <State data={companies.data} error={companies.error} retry={() => companies.mutate()} empty={(d) => !d.data.length}>
           {() =>
             list.map((c) => (

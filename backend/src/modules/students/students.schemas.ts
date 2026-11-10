@@ -22,6 +22,8 @@ export const Editable = z.object({
   year_of_admission: z.number().int().min(1990).max(2100),
   year_of_completion: z.number().int().min(1990).max(2100),
   cgpa: z.number().min(0).max(10),
+  active_backlogs: z.number().int().min(0).max(99),
+  cleared_backlogs: z.number().int().min(0).max(99),
   current_address: s(500),
   permanent_address: s(500),
   marks_10: z.number().min(0).max(100), yop_10: z.number().int(),

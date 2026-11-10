@@ -53,7 +53,7 @@ export function AppShell({ role, nav, active, children }: { role: Role; nav: Nav
         </div>
         <div className="px-3 pb-3">
           <div className="rounded-xs bg-surface px-2 py-1">
-            <p className="text-caption font-bold uppercase text-muted">Active Console</p>
+            <p className="text-caption font-bold text-muted">Active Console</p>
             <p className="text-body font-semibold text-primary">{CONSOLE[role]}</p>
           </div>
         </div>
@@ -173,7 +173,7 @@ function ChangePassword() {
   return (
     <form onSubmit={submit} className="mx-auto mt-10 flex max-w-md flex-col gap-4 rounded-lg bg-white p-6 shadow-card">
       <div>
-        <p className="text-caption font-bold uppercase text-tertiary">Security step</p>
+        <p className="text-caption font-bold text-tertiary">Security step</p>
         <h1 className="font-display text-title font-bold text-primary">Set a new password</h1>
         <p className="text-body text-muted">Your account uses a one-time password. Choose your own before continuing.</p>
       </div>

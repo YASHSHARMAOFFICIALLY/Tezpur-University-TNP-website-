@@ -32,7 +32,7 @@ export type Participant = {
   studentId: string;
   facts: EligibilityFacts;
 };
-export type EligibilityFacts = { cgpa: number | null; programme_id: string | null; year_of_completion: number | null; dob: Date | null };
+export type EligibilityFacts = { cgpa: number | null; programme_id: string | null; year_of_completion: number | null; dob: Date | null; active_backlogs: number | null };
 
 /** Order is contract: ON_PROBATION first, then PLACED and PROFILE_INCOMPLETE (apply only). */
 export async function loadParticipant(tx: Tx, userId: string, purpose: "apply" | "event"): Promise<Participant> {
@@ -53,6 +53,7 @@ export const factsOf = (s: EligibilityFacts): EligibilityFacts => ({
   programme_id: s.programme_id,
   year_of_completion: s.year_of_completion,
   dob: s.dob,
+  active_backlogs: s.active_backlogs,
 });
 
 /** Required before applying. The coloured photo and resume are mandated by the T&P cell. */
@@ -90,7 +91,7 @@ export async function uploadFile(userId: string, kind: "resume" | "photo", file:
 const SHEET_HEADERS: Record<string, string> = {
   "roll number": "enrolment_no", "student name": "name", programme: "programme_code", "graduation year": "year_of_completion",
   specialization: "specialization", "professional interests": "professional_interests", "career interests / preferred roles": "career_interests",
-  "technical skills": "technical_skills", "extracurricular activities": "extracurriculars", linkedin: "linkedin_url",
+  "technical skills": "technical_skills", "active backlogs": "active_backlogs", "cleared backlogs": "cleared_backlogs", "extracurricular activities": "extracurriculars", linkedin: "linkedin_url",
   "github / portfolio": "portfolio_url", "about me": "about_me",
   "project 1": "project_1", "project 2": "project_2", "internship 1": "internship_1", "internship 2": "internship_2",
 };

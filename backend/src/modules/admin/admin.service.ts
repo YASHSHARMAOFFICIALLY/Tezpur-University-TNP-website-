@@ -137,8 +137,13 @@ export async function emailQueue() {
   return { queued, sent_24h, failed };
 }
 
-export const auditLog = (query: Page & { entity?: string; entity_id?: string; actor_user_id?: string }) =>
-  paginate((a) => db.auditLog.findMany({ ...a, where: { entity: query.entity, entity_id: query.entity_id, actor_user_id: query.actor_user_id } }), query);
+/** The log stores ids only; the page adds the actor's and a user entity's name so a row reads "Aditya Saraswat did X", not "01a1c262 did X". */
+export async function auditLog(query: Page & { entity?: string; entity_id?: string; actor_user_id?: string }) {
+  const page = await paginate((a) => db.auditLog.findMany({ ...a, where: { entity: query.entity, entity_id: query.entity_id, actor_user_id: query.actor_user_id } }), query);
+  const ids = [...new Set(page.data.flatMap((a) => [a.actor_user_id, a.entity === "user" ? a.entity_id : null]).filter((x): x is string => !!x))];
+  const names = new Map((await db.user.findMany({ where: { id: { in: ids } }, select: { id: true, name: true } })).map((u) => [u.id, u.name]));
+  return { ...page, data: page.data.map((a) => ({ ...a, actor_name: (a.actor_user_id && names.get(a.actor_user_id)) || null, entity_name: (a.entity === "user" && names.get(a.entity_id)) || null })) };
+}
 
 export const placementReport = () =>
   db.$queryRaw<{ year: number | null; students: number; applied: number; selected: number }[]>`

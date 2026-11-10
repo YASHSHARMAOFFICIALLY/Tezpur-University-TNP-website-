@@ -9,6 +9,8 @@ export const EligibilityRule = z
     /** Graduating batch (year_of_completion). */
     completion_years: z.array(z.number().int()).min(1).optional(),
     max_age: z.number().int().min(15).max(60).optional(),
+    /** 0 = no active backlogs. A student who has not entered their backlogs does not pass. */
+    max_active_backlogs: z.number().int().min(0).max(20).optional(),
   })
   .meta({ id: "EligibilityRule" });
 export type EligibilityRule = z.infer<typeof EligibilityRule>;

@@ -20,7 +20,7 @@ async function drainJobs() {
 }
 
 /** An active student with a complete profile. */
-async function student(enrolment: string, f: { programme_id: string; year_of_completion: number; cgpa: number }) {
+async function student(enrolment: string, f: { programme_id: string; year_of_completion: number; cgpa: number; active_backlogs?: number }) {
   const email = `${enrolment.toLowerCase()}@tezu.ac.in`;
   await inTx(async (tx) =>
     userMachine.create(
@@ -213,6 +213,56 @@ describe("profile sheet upload", () => {
     await drainJobs();
     expect((await db.job.findUniqueOrThrow({ where: { id: r.body.job_id } })).result).toMatchObject({ created: 0, updated: 1 });
     expect(await db.studentRecord.count({ where: { student: { enrolment_no: "CSB26060" } } })).toBe(2);
+  });
+});
+
+describe("backlog status", () => {
+  it("the profile sheet's Active/Cleared Backlogs columns are stored; a blank stays unset", async () => {
+    const csv =
+      "Student Name,Programme,Graduation Year,Roll Number,Active Backlogs,Cleared Backlogs\n" +
+      "Backlog Two,B.Tech CSE,2027,csb26061,2,3\n" +
+      "Backlog None,B.Tech CSE,2027,csb26062,,\n";
+    const r = await admin.upload("/admin/students/import", Buffer.from(csv), "backlogs.csv").expect(202);
+    await drainJobs();
+    expect((await db.job.findUniqueOrThrow({ where: { id: r.body.job_id } })).result).toMatchObject({ created: 2 });
+    const get = (e: string) => db.student.findUniqueOrThrow({ where: { enrolment_no: e } });
+    expect(await get("CSB26061")).toMatchObject({ active_backlogs: 2, cleared_backlogs: 3 });
+    expect(await get("CSB26062")).toMatchObject({ active_backlogs: null, cleared_backlogs: null });
+    expect(code(await admin.upload("/admin/students/import", Buffer.from(csv.replace(",2,3", ",-1,3")), "bad.csv"))).toBe("VALIDATION_FAILED");
+  });
+
+  it("a student sets their own counts, zero is allowed, negatives are refused", async () => {
+    const s = await student("CSB26063", { programme_id: cse, year_of_completion: 2027, cgpa: 8 });
+    const ok = await s.patch("/students/me", { active_backlogs: 0, cleared_backlogs: 4 });
+    expect(ok.body).toMatchObject({ active_backlogs: 0, cleared_backlogs: 4 });
+    expect((await s.get("/students/me")).body).toMatchObject({ active_backlogs: 0, cleared_backlogs: 4 });
+    expect(code(await s.patch("/students/me", { active_backlogs: -1 }))).toBe("VALIDATION_FAILED");
+  });
+});
+
+describe("backlog eligibility", () => {
+  it("a drive can require no active backlogs: zero passes, some or unknown fail, applying is refused", async () => {
+    const r = await recruiter("hr@backlog.example");
+    const id = await approvedPosting(r, { eligibility: { max_active_backlogs: 0 } });
+    const base = { programme_id: cse, year_of_completion: 2026, cgpa: 8 };
+    const clean = await student("CSB26080", { ...base, active_backlogs: 0 });
+    const dirty = await student("CSB26081", { ...base, active_backlogs: 2 });
+    const unknown = await student("CSB26082", base);
+    const elig = async (a: typeof clean) => (await a.get(`/opportunities/${id}`)).body.my_eligibility;
+    expect(await elig(clean)).toMatchObject({ eligible: true });
+    expect(await elig(dirty)).toMatchObject({ eligible: false, reasons: [{ rule: "max_active_backlogs", required: 0, actual: 2 }] });
+    expect(await elig(unknown), "not entering backlogs does not pass").toMatchObject({ eligible: false, reasons: [{ rule: "max_active_backlogs", actual: null }] });
+    expect(code(await dirty.post(`/opportunities/${id}/apply`))).toBe("NOT_ELIGIBLE");
+    expect((await clean.post(`/opportunities/${id}/apply`)).status).toBe(201);
+    expect(code(await r.post("/company/opportunities", { type: "job", title: "Bad", description: "Negative backlog rule.", apply_deadline: new Date(Date.now() + 86_400_000).toISOString(), eligibility: { max_active_backlogs: -1 }, selection_process: {} }))).toBe("VALIDATION_FAILED");
+  });
+});
+
+describe("audit log names", () => {
+  it("rows carry the actor's and a user entity's name, not just ids", async () => {
+    const rows = (await admin.get("/admin/audit-log?limit=100").expect(200)).body.data as { actor_user_id: string | null; actor_name: string | null; entity: string; entity_name: string | null }[];
+    expect(rows.filter((a) => a.actor_user_id).every((a) => typeof a.actor_name === "string"), "every row with an actor has a name").toBe(true);
+    expect(rows.some((a) => a.entity === "user" && a.entity_name), "a user entity shows the person's name").toBe(true);
   });
 });
 

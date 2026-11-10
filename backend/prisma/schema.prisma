@@ -184,6 +184,8 @@ model Student {
   year_of_admission      Int?
   year_of_completion     Int?
   cgpa                   Float?
+  active_backlogs        Int?
+  cleared_backlogs       Int?
   current_address        String?
   permanent_address      String?
   marks_10               Float?
