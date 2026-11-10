@@ -25,4 +25,9 @@ subprocess.run(
      "--layout-features=rlig,rclt", "--no-layout-closure", "--flavor=woff2", f"--output-file={OUT}"],
     check=True,
 )
+# The UI only uses weight 400 at one size, so pin those axes; FILL stays variable (filled icons). 178KB -> ~25KB.
+from fontTools.varLib import instancer
+small = instancer.instantiateVariableFont(TTFont(OUT), {"wght": 400, "opsz": 24, "GRAD": 0})
+small.flavor = "woff2"
+small.save(OUT)
 print(f"{len(glyphs)} icons -> {OUT}")

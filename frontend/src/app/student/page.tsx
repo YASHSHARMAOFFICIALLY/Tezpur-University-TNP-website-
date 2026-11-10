@@ -4,33 +4,37 @@ import { useSyncExternalStore } from "react";
 import { AppShell, type NavItem } from "@/components/AppShell";
 import { Applications } from "./applications";
 import { Drives } from "./drives";
-import { NoticeBanner, ProfileCard } from "./profile";
+import { Home } from "./home";
+import { Notices } from "./notices";
+import { PlacementStats } from "./placement";
+import { ProfileCard } from "./profile";
 import { Records } from "./records";
 import { Training } from "./training";
 
 const NAV: NavItem[] = [
-  { label: "Profile", icon: "person", href: "#profile" },
-  { label: "My applications", icon: "conversion_path", href: "#applications" },
+  { label: "Home", icon: "home", href: "#home" },
+  { label: "Notices", icon: "campaign", href: "#notices" },
   { label: "Open drives", icon: "work", href: "#drives" },
-  { label: "Training & workshops", icon: "lightbulb", href: "#training" },
+  { label: "My applications", icon: "conversion_path", href: "#applications" },
+  { label: "Events", icon: "lightbulb", href: "#training" },
   { label: "Certificates & projects", icon: "folder_shared", href: "#records" },
+  { label: "Placement stats", icon: "monitoring", href: "#placement" },
+  { label: "Profile", icon: "person", href: "#profile" },
 ];
 
 /** The sidebar picks one focused screen instead of scrolling past every section. The URL hash is the state. */
 const subscribe = (cb: () => void) => (addEventListener("hashchange", cb), () => removeEventListener("hashchange", cb));
-const currentHash = () => (NAV.some((n) => n.href === location.hash) ? location.hash : "#profile");
+const currentHash = () => (NAV.some((n) => n.href === location.hash) ? location.hash : "#home");
 
 export default function StudentPage() {
-  const view = useSyncExternalStore(subscribe, currentHash, () => "#profile");
+  const view = useSyncExternalStore(subscribe, currentHash, () => "#home");
   return (
     <AppShell role="student" nav={NAV} active={view}>
       <div className="mx-auto flex max-w-[976px] flex-col gap-5">
-        {view === "#profile" && (
-          <>
-            <NoticeBanner />
-            <ProfileCard />
-          </>
-        )}
+        {view === "#home" && <Home />}
+        {view === "#notices" && <Notices />}
+        {view === "#profile" && <ProfileCard />}
+        {view === "#placement" && <PlacementStats />}
         {view === "#applications" && <Applications />}
         {view === "#drives" && <Drives />}
         {view === "#training" && <Training />}

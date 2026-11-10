@@ -38,7 +38,8 @@ await step("admin posts a student notice; student sees it", async () => {
   await adm.getByRole("button", { name: "Publish Notice" }).click();
   await adm.getByText("Notice published.").waitFor();
   await stu.reload();
-  await stu.getByText(`${NOTICE}:`).waitFor();
+  await stu.getByRole("link", { name: "Notices", exact: true }).first().click();
+  await stu.getByRole("heading", { name: NOTICE }).waitFor();
 });
 await step("admin replies in a company thread; recruiter sees it", async () => {
   await adm.getByRole("button", { name: /Cognizant Technology Solutions/ }).click();

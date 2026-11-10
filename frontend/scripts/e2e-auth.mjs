@@ -145,7 +145,7 @@ await step("refresh failing upstream (503 / connection reset) keeps the session 
     await p.unroute("**/api/v1/auth/refresh");
   }
   await p.reload();
-  await p.getByRole("heading", { name: `Auth Flow ${run}` }).waitFor();
+  await p.getByRole("heading", { name: "Welcome back, Auth" }).waitFor(); // /student lands on Home
   await p.waitForLoadState("networkidle");
   if (await p.getByRole("alert").filter({ hasText: "The server isn't responding" }).count()) throw new Error("error still shown after refresh recovered");
   const tok = await p.evaluate(() => JSON.parse(localStorage.getItem("tnp.session")).access_token);
@@ -177,7 +177,7 @@ await step("logout revokes tokens server-side (old refresh token rejected)", asy
 await step("next user in the same tab never sees the previous user's cached data", async () => {
   const s = await newPage();
   await login(s, SEED_STUDENT, PW);
-  await s.getByRole("heading", { name: "Priyanshu Sharma" }).waitFor();
+  await s.getByRole("heading", { name: "Welcome back, Priyanshu" }).waitFor(); // Home greets by first name
   await s.getByRole("button", { name: "Log out" }).click();
   await s.waitForURL(/\/login$/);
   await s.route("**/api/v1/students/me", async (r) => {
@@ -190,11 +190,11 @@ await step("next user in the same tab never sees the previous user's cached data
   await s.getByRole("button", { name: "Sign in" }).click();
   await s.waitForURL(/\/student$/);
   for (let i = 0; i < 8; i++) {
-    if ((await s.locator("body").innerText()).includes("Priyanshu Sharma")) throw new Error("previous student's profile shown to the next user");
+    if ((await s.locator("body").innerText()).includes("Priyanshu")) throw new Error("previous student's data shown to the next user");
     await new Promise((w) => setTimeout(w, 250));
   }
   await s.unroute("**/api/v1/students/me");
-  await s.getByRole("heading", { name: `Auth Flow ${run}` }).waitFor();
+  await s.getByRole("heading", { name: "Welcome back, Auth" }).waitFor();
 });
 
 await browser.close();
