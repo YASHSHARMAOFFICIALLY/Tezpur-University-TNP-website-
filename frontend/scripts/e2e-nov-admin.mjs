@@ -2,7 +2,7 @@
 // Setup that is not under test (accounts, postings, a placed student) goes through the API.
 // usage: WEB=http://localhost:3001 DEMO_PASSWORD=... SEED_ADMIN_EMAIL=... node scripts/e2e-nov-admin.mjs [--headed]
 import assert from "node:assert/strict";
-import { ADMIN, DOMAIN, PW, RECRUITER, WEB, apiCall, browser, newPage, otpFor, run, step, summary } from "./e2e-lib.mjs";
+import { ADMIN, DOMAIN, PW, RECRUITER, WEB, apiCall, apiList, browser, newPage, otpFor, run, step, summary } from "./e2e-lib.mjs";
 
 const PDF = { name: "e2e.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4\n%e2e\n") };
 const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0]);
@@ -239,6 +239,26 @@ await step("feedback panel shows the recruiter rating and comment", async () => 
   await row.getByText(/rating/).click();
   await row.getByText(`E2E comment ${run}`).waitFor();
   await row.getByText("4/5", { exact: false }).waitFor();
+});
+
+await step("drives: closing an approved drive from the console removes it from students' open drives", async () => {
+  const deadline = new Date(Date.now() + 7 * 864e5).toISOString();
+  const { id } = await apiCall("POST", "/company/opportunities", {
+    token: R,
+    body: { type: "job", title: `E2E Close Drive ${run}`, description: "Drive that the T&P cell closes early.", apply_deadline: deadline, eligibility: {}, selection_process: {} },
+  });
+  await apiCall("POST", `/company/opportunities/${id}/submit`, { token: R });
+  await apiCall("POST", `/admin/opportunities/${id}/decision`, { token: A, body: { decision: "approve" } });
+  assert.ok((await apiList("/opportunities", S)).some((o) => o.id === id), "approved drive is open to students");
+  await adm.goto(`${WEB}/admin`);
+  await adm.getByLabel("Select Concluded Drive").selectOption(id);
+  await adm.getByRole("button", { name: "Close drive to new applicants" }).click();
+  await adm.getByRole("button", { name: "Keep open" }).click(); // backing out changes nothing
+  assert.ok((await apiList("/opportunities", S)).some((o) => o.id === id), "keeping it open leaves the drive open");
+  await adm.getByRole("button", { name: "Close drive to new applicants" }).click();
+  await adm.getByRole("button", { name: "Close drive", exact: true }).click();
+  await adm.getByText("Drive closed.").waitFor();
+  assert.ok(!(await apiList("/opportunities", S)).some((o) => o.id === id), "closed drive is gone from students' open drives");
 });
 
 await browser.close();
