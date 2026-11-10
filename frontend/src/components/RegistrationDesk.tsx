@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import useSWR from "swr";
 import { api, call } from "@/lib/api";
+import { siteText } from "@/app/site-defaults";
 import { Button, Eyebrow, Field, Icon, Input, Select, cx } from "./ui";
 
 type Tab = "recruiter" | "student";
@@ -27,17 +28,18 @@ const STEPS = [
 /** "Institutional Dual Registration Desk" from the public Figma frame, wired to /auth/register/* + /auth/verify-otp. */
 export function RegistrationDesk() {
   const [tab, setTab] = useState<Tab>("recruiter");
+  const site = useSWR("university", () => call(api.GET("/api/v1/university"))).data?.site;
   return (
     <section id="register" className="mx-auto flex max-w-[1280px] scroll-mt-28 flex-col items-center gap-5 px-4 py-8 sm:px-8">
       <div className="flex w-full flex-col justify-between gap-4 md:flex-row md:items-end">
         <div className="flex flex-col gap-1">
           <Eyebrow dot className="text-label tracking-[0.6px]">
-            Centralized Gateway
+            {siteText(site, "register_eyebrow")}
           </Eyebrow>
-          <h2 className="font-display text-headline font-bold text-primary">Institutional Dual Registration Desk</h2>
+          <h2 className="font-display text-headline font-bold text-primary">{siteText(site, "register_title")}</h2>
         </div>
         <p className="max-w-[512px] text-[14px] leading-5 text-muted">
-          Select your designated profile type below. All credentials undergo mandatory TPO verification before account provisioning and drive participation.
+          {siteText(site, "register_text")}
         </p>
       </div>
 

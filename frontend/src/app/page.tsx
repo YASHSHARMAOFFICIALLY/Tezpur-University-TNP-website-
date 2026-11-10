@@ -7,7 +7,7 @@ import { PublicShell } from "@/components/PublicShell";
 import { RegistrationDesk } from "@/components/RegistrationDesk";
 import { Empty, Eyebrow, Icon, State } from "@/components/ui";
 import { api, call, openFile, useSession } from "@/lib/api";
-import { SCHOOL_DEFAULTS, SITE_DEFAULTS, defaultContacts, type Site } from "./site-defaults";
+import { SCHOOL_DEFAULTS, SITE_DEFAULTS, defaultContacts, siteText, type Site } from "./site-defaults";
 
 type Metrics = { placement_rate?: number; corporate_partners?: number; highest_ctc_lpa?: number; summer_internships?: number; cohort?: string };
 
@@ -18,17 +18,17 @@ export default function Home() {
   const uni = useSWR("university", fetchUniversity);
   const site: Site = uni.data?.site ?? {};
   // Empty keys fall back to the built-in copy; the badge first tries the university's own ranking.
-  const t = (k: keyof typeof SITE_DEFAULTS) => site[k]?.trim() || SITE_DEFAULTS[k];
+  const t = (k: keyof typeof SITE_DEFAULTS) => siteText(site, k);
   const badge = site.hero_badge?.trim() || uni.data?.ranking?.trim() || SITE_DEFAULTS.hero_badge;
   const brochureLabel = site.brochure_label?.trim() || (latest ? `Placement Brochure ${latest.year}–${String(latest.year + 1).slice(-2)}` : SITE_DEFAULTS.brochure_label);
 
   return (
     <PublicShell active="/">
-      <Hero m={m} brochureId={latest?.brochure_file_id ?? null} badge={badge} title={t("hero_title")} text={t("hero_text")} brochureLabel={brochureLabel} />
+      <Hero m={m} brochureId={latest?.brochure_file_id ?? null} badge={badge} title={t("hero_title")} text={t("hero_text")} brochureLabel={brochureLabel} cohortSub={site.hero_stat_placement_sub?.trim() || m.cohort || SITE_DEFAULTS.hero_stat_placement_sub} t={t} />
       <RegistrationDesk />
-      <Schools title={t("schools_title")} text={t("schools_text")} copy={site.schools ?? []} />
+      <Schools title={t("schools_title")} text={t("schools_text")} eyebrow={t("schools_eyebrow")} copy={site.schools ?? []} />
       <section id="brochure" className="mx-auto grid max-w-[1280px] scroll-mt-28 gap-6 px-4 py-8 sm:px-8 lg:grid-cols-[1.4fr_1fr]">
-        <BrochureCard brochureId={latest?.brochure_file_id ?? null} year={latest?.year} title={t("brochure_title")} text={t("brochure_text")} />
+        <BrochureCard brochureId={latest?.brochure_file_id ?? null} year={latest?.year} title={t("brochure_title")} text={t("brochure_text")} t={t} />
         <Directorate uni={uni} site={site} title={t("directorate_title")} text={t("directorate_text")} />
       </section>
     </PublicShell>
@@ -63,6 +63,8 @@ function Hero({
   title,
   text,
   brochureLabel,
+  cohortSub,
+  t,
 }: {
   m: Metrics;
   brochureId: string | null;
@@ -70,12 +72,14 @@ function Hero({
   title: string;
   text: string;
   brochureLabel: string;
+  cohortSub: string;
+  t: (k: keyof typeof SITE_DEFAULTS) => string;
 }) {
   const stats = [
-    ["Placement Rate", m.placement_rate ?? "—", "%", m.cohort ?? "Academic Cohort 2023-24"],
-    ["Corporate Partners", m.corporate_partners ?? "—", "+", "Recruiters on Campus"],
-    ["Highest Compensation", m.highest_ctc_lpa ?? "—", "LPA", "International/Domestic Peak"],
-    ["Summer Internships", m.summer_internships ?? "—", "+", "Pre-Placement Offers Linked"],
+    ["Placement Rate", m.placement_rate ?? "—", "%", cohortSub],
+    ["Corporate Partners", m.corporate_partners ?? "—", "+", t("hero_stat_partners_sub")],
+    ["Highest Compensation", m.highest_ctc_lpa ?? "—", "LPA", t("hero_stat_ctc_sub")],
+    ["Summer Internships", m.summer_internships ?? "—", "+", t("hero_stat_interns_sub")],
   ] as const;
   return (
     <section id="profile" className="relative scroll-mt-28 overflow-hidden bg-primary">
@@ -97,7 +101,7 @@ function Hero({
               href="#register"
               className="flex h-[46px] items-center justify-center gap-2 rounded-xs bg-accent text-card font-semibold text-white shadow-pop hover:brightness-95"
             >
-              Begin Registration <Icon name="arrow_downward" />
+              {t("hero_cta_label")} <Icon name="arrow_downward" />
             </a>
             <BrochureButton
               brochureId={brochureId}
@@ -131,14 +135,14 @@ function Hero({
   );
 }
 
-function Schools({ title, text, copy }: { title: string; text: string; copy: NonNullable<Site["schools"]> }) {
+function Schools({ title, text, eyebrow, copy }: { title: string; text: string; eyebrow: string; copy: NonNullable<Site["schools"]> }) {
   const programmes = useSWR("programmes", () => call(api.GET("/api/v1/programmes")));
   return (
     <section id="schools" className="scroll-mt-28 bg-surface-low/60">
       <div className="mx-auto flex max-w-[1280px] flex-col gap-5 px-4 py-8 sm:px-8">
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div className="flex flex-col gap-1">
-            <Eyebrow className="text-label tracking-[0.6px]">Academic Spectrum</Eyebrow>
+            <Eyebrow className="text-label tracking-[0.6px]">{eyebrow}</Eyebrow>
             <h2 className="font-display text-headline font-bold text-primary">{title}</h2>
           </div>
           <p className="max-w-[439px] text-[14px] leading-5 whitespace-pre-line text-muted">{text}</p>
@@ -188,13 +192,13 @@ function Schools({ title, text, copy }: { title: string; text: string; copy: Non
   );
 }
 
-function BrochureCard({ brochureId, year, title, text }: { brochureId: string | null; year?: number; title: string; text: string }) {
+function BrochureCard({ brochureId, year, title, text, t }: { brochureId: string | null; year?: number; title: string; text: string; t: (k: keyof typeof SITE_DEFAULTS) => string }) {
   return (
     <div className="relative flex flex-col justify-between overflow-hidden rounded-lg bg-primary p-8 shadow-pop">
       <div className="absolute -right-16 -bottom-16 size-64 rounded-xl bg-primary-container/60 blur-2xl" />
       <div className="relative flex flex-col gap-2 pb-5">
         <p className="flex w-fit items-center gap-2 rounded-xs bg-white/15 px-2 py-1 text-caption font-semibold text-surface-high uppercase">
-          <Icon name="menu_book" /> Comprehensive Recruitment Prospectus
+          <Icon name="menu_book" /> {t("brochure_eyebrow")}
         </p>
         <h2 className="pt-1 font-display text-headline font-bold text-white">
           {title}
@@ -208,10 +212,10 @@ function BrochureCard({ brochureId, year, title, text }: { brochureId: string | 
           brochureId={brochureId}
           className="flex h-[46px] items-center gap-2 rounded-xs bg-accent px-5 text-card font-semibold text-white shadow-pop hover:brightness-95 cursor-pointer disabled:opacity-60"
         >
-          <Icon name="download" /> Download Brochure PDF
+          <Icon name="download" /> {t("brochure_button")}
         </BrochureButton>
         <span className="flex items-center gap-1 text-caption font-semibold text-surface-high">
-          <Icon name="check_circle" /> Includes INF / JNF Fillable Appendices
+          <Icon name="check_circle" /> {t("brochure_note")}
         </span>
       </div>
     </div>
