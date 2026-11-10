@@ -10296,6 +10296,19 @@ export interface components {
             brochure_text?: string;
             directorate_title?: string;
             directorate_text?: string;
+            topbar_text?: string;
+            hero_cta_label?: string;
+            hero_stat_placement_sub?: string;
+            hero_stat_partners_sub?: string;
+            hero_stat_ctc_sub?: string;
+            hero_stat_interns_sub?: string;
+            schools_eyebrow?: string;
+            brochure_eyebrow?: string;
+            brochure_button?: string;
+            brochure_note?: string;
+            register_eyebrow?: string;
+            register_title?: string;
+            register_text?: string;
             contacts?: {
                 name: string;
                 role: string;

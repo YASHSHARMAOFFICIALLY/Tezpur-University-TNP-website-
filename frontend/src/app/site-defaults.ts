@@ -18,7 +18,24 @@ export const SITE_DEFAULTS: Record<TextKey, string> = {
     "Gain complete clarity into graduating batches, department-wise student demographics, course curricula, cutting-edge laboratory infrastructure, past compensation curves, and logistical travel guidelines to Napaam campus.",
   directorate_title: "Training & Placement Directorate",
   directorate_text: "Direct institutional channels for company registrations, pre-placement talks, and hospitality arrangements.",
+  topbar_text: "A Central University established by an Act of Parliament (1994)",
+  hero_cta_label: "Begin Registration",
+  hero_stat_placement_sub: "Latest placement cohort",
+  hero_stat_partners_sub: "Recruiters on Campus",
+  hero_stat_ctc_sub: "International/Domestic Peak",
+  hero_stat_interns_sub: "Pre-Placement Offers Linked",
+  schools_eyebrow: "Academic Spectrum",
+  brochure_eyebrow: "Comprehensive Recruitment Prospectus",
+  brochure_button: "Download Brochure PDF",
+  brochure_note: "Includes INF / JNF Fillable Appendices",
+  register_eyebrow: "Centralized Gateway",
+  register_title: "Institutional Dual Registration Desk",
+  register_text:
+    "Select your designated profile type below. All credentials undergo mandatory TPO verification before account provisioning and drive participation.",
 };
+
+/** The landing text for `key`: the admin's own wording, else the built-in copy. */
+export const siteText = (site: Site | undefined, key: keyof typeof SITE_DEFAULTS) => site?.[key]?.trim() || SITE_DEFAULTS[key];
 
 export const TEXT_FIELDS: { key: TextKey; label: string; long?: boolean; hint?: string }[] = [
   { key: "hero_badge", label: "Hero badge", hint: "Blank uses the university ranking, then the built-in text." },
@@ -31,6 +48,19 @@ export const TEXT_FIELDS: { key: TextKey; label: string; long?: boolean; hint?: 
   { key: "brochure_text", label: "Brochure card text", long: true },
   { key: "directorate_title", label: "Directorate card title" },
   { key: "directorate_text", label: "Directorate card text", long: true },
+  { key: "topbar_text", label: "Top bar line (above the header)" },
+  { key: "hero_cta_label", label: "Hero registration button label" },
+  { key: "hero_stat_placement_sub", label: "Hero stat caption: placement rate", hint: "Blank shows the latest placement record's cohort." },
+  { key: "hero_stat_partners_sub", label: "Hero stat caption: corporate partners" },
+  { key: "hero_stat_ctc_sub", label: "Hero stat caption: highest compensation" },
+  { key: "hero_stat_interns_sub", label: "Hero stat caption: summer internships" },
+  { key: "schools_eyebrow", label: "Schools section eyebrow" },
+  { key: "brochure_eyebrow", label: "Brochure card eyebrow" },
+  { key: "brochure_button", label: "Brochure card button label" },
+  { key: "brochure_note", label: "Brochure card note" },
+  { key: "register_eyebrow", label: "Registration section eyebrow" },
+  { key: "register_title", label: "Registration section title" },
+  { key: "register_text", label: "Registration section intro", long: true },
 ];
 
 /** Per-school card copy from the Figma frame; departments not listed get a generic card. */

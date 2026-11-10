@@ -78,6 +78,29 @@ await step("landing: clearing the fields restores the built-in text", async () =
   await guest.getByRole("heading", { level: 1, name: /Empowering Aspirations/ }).waitFor();
 });
 
+await step("landing: every claim line (top bar, stat captions, brochure note, registration copy) is admin-editable and resets", async () => {
+  const wanted = {
+    "Top bar line (above the header)": `E2E top ${run}`,
+    "Hero registration button label": `E2E cta ${run}`,
+    "Hero stat caption: highest compensation": `E2E peak ${run}`,
+    "Brochure card note": `E2E note ${run}`,
+    "Registration section title": `E2E register ${run}`,
+  };
+  await adm.goto(`${WEB}/admin/content`);
+  for (const [label, v] of Object.entries(wanted)) await adm.getByLabel(label).fill(v);
+  await adm.getByRole("button", { name: "Save Landing Text" }).click();
+  await adm.getByText("Landing page text saved").waitFor();
+  await guest.goto(WEB);
+  for (const v of Object.values(wanted)) await guest.getByText(v).first().waitFor();
+  await adm.reload();
+  for (const label of Object.keys(wanted)) await adm.getByLabel(label).fill("");
+  await adm.getByRole("button", { name: "Save Landing Text" }).click();
+  await adm.getByText("Landing page text saved").waitFor();
+  await guest.reload();
+  await guest.getByText("International/Domestic Peak").waitFor();
+  await guest.getByText("Institutional Dual Registration Desk").waitFor();
+});
+
 await step("content: placement record edit and delete", async () => {
   const year = 2090 + (Number(run) % 9);
   await apiCall("POST", "/admin/placement-records", { token: A, body: { year, data: { placement_rate: 50 } } }).catch(() => {});

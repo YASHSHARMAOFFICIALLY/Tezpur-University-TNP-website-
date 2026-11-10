@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import useSWR from "swr";
 import { api, call, homeFor, useSession } from "@/lib/api";
+import { siteText } from "@/app/site-defaults";
 import { Icon, cx, initials } from "./ui";
 
 const PORTALS = [
@@ -34,7 +35,7 @@ export function PublicShell({ active = "/", children }: { active?: string; child
       <header className="sticky top-0 z-30 bg-white/95 shadow-bar">
         <div className="flex items-center justify-between gap-4 bg-primary px-4 py-1 sm:px-8">
           <p className="truncate text-caption font-semibold tracking-[0.55px] text-surface-high uppercase">
-            A Central University established by an Act of Parliament (1994)
+            {siteText(uni?.site, "topbar_text")}
           </p>
           <nav aria-label="Portals" className="hidden shrink-0 items-center rounded-xs bg-primary-container p-0.5 md:flex">
             {PORTALS.map((p) => (
