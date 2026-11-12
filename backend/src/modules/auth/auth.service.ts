@@ -5,6 +5,7 @@ import { mail } from "../../infrastructure/mailer.js";
 import { DUMMY_HASH, hashPassword, newOtp, otpHash, verifyPassword } from "../../infrastructure/password.js";
 import { signTokens, verifyToken, type AuthUser } from "../../middleware/auth.js";
 import { getSetting } from "../settings/settings.service.js";
+import { env } from "../../config/env.js";
 
 /**
  * Account lifecycle. Self-registered users start at pending_email_verify; admin-created teachers
@@ -48,6 +49,17 @@ export async function issueOtp(tx: Tx, user: Pick<User, "id" | "email">, purpose
   await mail(tx, { to: user.email, subject: `T&P portal code: ${code}`, text: `Your code to ${what} is ${code}. It expires in ${minutes} minutes.` }, { priority: 0 });
 }
 
+/** Sends the sign-up code, or with SKIP_EMAIL_OTP marks the email verified at once (student active, recruiter to admin queue). */
+async function startEmailVerify(tx: Tx, user: Pick<User, "id" | "email">, role: "student" | "company") {
+  if (!env.SKIP_EMAIL_OTP) {
+    await issueOtp(tx, user, "verify_email");
+    return "pending_email_verify" as const;
+  }
+  const to = role === "student" ? ("active" as const) : ("pending_admin" as const);
+  await userMachine.move(tx, user.id, to, SYSTEM, { extra: { email_verified_at: new Date() }, meta: { via: "otp_skipped" } });
+  return to;
+}
+
 /** Single use, expires per otp_expiry_minutes, 5 attempts on the latest code. Wrong attempts are committed even though the call fails. */
 async function consumeOtp(userId: string, purpose: OtpPurpose, code: string) {
   const otp = await db.otpCode.findFirst({ where: { user_id: userId, purpose, consumed_at: null }, orderBy: { created_at: "desc" } });
@@ -81,8 +93,7 @@ export async function registerStudent(input: { email: string; password: string; 
         },
         SYSTEM,
       );
-      await issueOtp(tx, { id, email }, "verify_email");
-      return { id, status: "pending_email_verify" as const };
+      return { id, status: await startEmailVerify(tx, { id, email }, "student") };
     });
   } catch (e) {
     if (isUniqueViolation(e)) {
@@ -105,8 +116,7 @@ export async function registerRecruiter(input: { email: string; password: string
         data: { ...input.company, contacts: { create: { name: input.name, email, ...input.contact } } },
       });
       const { id } = await userMachine.create(tx, { role: "company", email, name: input.name, password_hash, company_id: company.id }, SYSTEM);
-      await issueOtp(tx, { id, email }, "verify_email");
-      return { id, status: "pending_email_verify" as const };
+      return { id, status: await startEmailVerify(tx, { id, email }, "company") };
     });
   } catch (e) {
     if (isUniqueViolation(e)) fail("EMAIL_TAKEN");
