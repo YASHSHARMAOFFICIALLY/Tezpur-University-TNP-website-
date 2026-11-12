@@ -22,6 +22,8 @@ export const env = z
     SMTP_PER_DAY: optInt,
     SMTP_PER_MINUTE: optInt,
     WORKER: z.enum(["on", "off"]).default("on"),
+    // Pre-launch testing only: sign-up skips the email code. Set back to false before go-live.
+    SKIP_EMAIL_OTP: z.enum(["true", "false"]).default("false").transform((v) => v === "true"),
   })
   .superRefine((e, ctx) => {
     if (e.NODE_ENV !== "production") return;

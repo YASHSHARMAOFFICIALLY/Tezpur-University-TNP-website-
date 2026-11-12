@@ -149,6 +149,7 @@ type Recruiter = {
 
 function RecruiterFlow() {
   const [step, setStep] = useState(0);
+  const [status, setStatus] = useState<Status>("pending_email_verify");
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const [d, setD] = useState<Recruiter>({
@@ -174,7 +175,7 @@ function RecruiterFlow() {
     setBusy(true);
     try {
       const { company } = d;
-      await call(
+      const { status } = await call(
         api.POST("/api/v1/auth/register/recruiter", {
           body: {
             email: d.email,
@@ -191,6 +192,7 @@ function RecruiterFlow() {
           },
         }),
       );
+      setStatus(status);
       setStep(3);
     } catch (e) {
       setErr((e as Error).message);
@@ -210,7 +212,7 @@ function RecruiterFlow() {
         steps={STEPS}
       />
       {step === 3 ? (
-        <VerifyOtp email={d.email} />
+        <VerifyOtp email={d.email} status={status} />
       ) : (
         <form onSubmit={next} className="h-full">
           <FormCard title={[`Step 1: Organisation Information`, `Step 2: Sector & Domain`, `Step 3: Contact Authority`][step]} stage={`Stage ${step + 1} of 4`}>
@@ -294,6 +296,7 @@ function RecruiterFlow() {
 function StudentFlow() {
   const { data: programmes } = useSWR("programmes", () => call(api.GET("/api/v1/programmes")));
   const [email, setEmail] = useState<string | null>(null);
+  const [status, setStatus] = useState<Status>("pending_email_verify");
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -303,7 +306,7 @@ function StudentFlow() {
     setErr("");
     setBusy(true);
     try {
-      await call(
+      const { status } = await call(
         api.POST("/api/v1/auth/register/student", {
           body: {
             name: f.name,
@@ -315,6 +318,7 @@ function StudentFlow() {
           },
         }),
       );
+      setStatus(status);
       setEmail(f.email);
     } catch (e) {
       setErr((e as Error).message);
@@ -338,7 +342,7 @@ function StudentFlow() {
         ]}
       />
       {email ? (
-        <VerifyOtp email={email} />
+        <VerifyOtp email={email} status={status} />
       ) : (
         <form onSubmit={submit} className="h-full">
           <FormCard title="Step 1: Academic Identity" stage="Stage 1 of 3">
@@ -382,8 +386,11 @@ function StudentFlow() {
   );
 }
 
-function VerifyOtp({ email }: { email: string }) {
-  const [done, setDone] = useState<"active" | "pending_admin" | "pending_email_verify" | null>(null);
+type Status = "active" | "pending_admin" | "pending_email_verify";
+
+/** `status` is the register response: anything but pending_email_verify means the server skipped the code (SKIP_EMAIL_OTP). */
+function VerifyOtp({ email, status }: { email: string; status: Status }) {
+  const [done, setDone] = useState<Status | null>(status === "pending_email_verify" ? null : status);
   const [msg, setMsg] = useState({ tone: "", text: "" });
   const [busy, setBusy] = useState(false);
 
