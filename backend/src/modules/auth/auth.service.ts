@@ -6,6 +6,7 @@ import { DUMMY_HASH, hashPassword, newOtp, otpHash, verifyPassword } from "../..
 import { signTokens, verifyToken, type AuthUser } from "../../middleware/auth.js";
 import { getSetting } from "../settings/settings.service.js";
 import { env } from "../../config/env.js";
+import { fromEnrolment } from "../students/enrolment.js";
 
 /**
  * Account lifecycle. Self-registered users start at pending_email_verify; admin-created teachers
@@ -80,6 +81,8 @@ export async function registerStudent(input: { email: string; password: string; 
   const password_hash = await hashPassword(input.password);
   try {
     return await inTx(async (tx) => {
+      // The enrolment number wins over the form's programme pick when its code is a known programme.
+      const { programme_id, ...batch } = await fromEnrolment(tx, input.enrolment_no);
       const { id } = await userMachine.create(
         tx,
         {
@@ -88,7 +91,7 @@ export async function registerStudent(input: { email: string; password: string; 
           name: input.name,
           password_hash,
           student: {
-            create: { enrolment_no: input.enrolment_no.toUpperCase(), mobile: input.mobile, programme_id: input.programme_id, academic_standing: "good" },
+            create: { enrolment_no: input.enrolment_no.toUpperCase(), mobile: input.mobile, programme_id: programme_id ?? input.programme_id, ...batch, academic_standing: "good" },
           },
         },
         SYSTEM,
