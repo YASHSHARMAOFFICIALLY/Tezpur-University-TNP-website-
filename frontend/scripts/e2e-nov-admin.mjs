@@ -203,6 +203,16 @@ await step("roster: Manage shows the student's records with a file button", asyn
   await d.getByRole("button", { name: "Close" }).click();
 });
 
+await step("roster: clearing the last filter chip keeps the filter panel open", async () => {
+  await adm.goto(`${WEB}/admin/students`);
+  await adm.getByText("Department, programme, batch, CGPA").click();
+  const chip = adm.getByRole("button", { name: String(BATCH), exact: true });
+  await chip.click();
+  await chip.click();
+  assert.equal(await adm.locator("details").first().getAttribute("open"), "");
+  await adm.getByRole("button", { name: "Female", exact: true }).click({ timeout: 3000 });
+});
+
 await step("CSV import with profile columns: first upload adds, second updates", async () => {
   const enrol = `ZZC${run}`;
   const csv = (cgpa) =>
