@@ -8,6 +8,7 @@ import type { AuthUser } from "../../middleware/auth.js";
 import type { UploadedFile } from "../../middleware/upload.js";
 import { recruiterCanSeeStudent, recruiterScope } from "../applications/applications.repository.js";
 import { factsForNotices, noticeWhereFor, studentWhere, type StudentFilter } from "../students/students.filter.js";
+import { syncProgrammeStudents } from "../students/enrolment.js";
 import type { Prisma } from "../../generated/prisma/client.js";
 import {
   Questions,
@@ -53,16 +54,20 @@ export const setUniversity = (body: z.output<typeof University>) =>
 
 export const listProgrammes = () => db.programme.findMany({ orderBy: [{ department: "asc" }, { name: "asc" }] });
 
-/** Students who registered before their programme existed (enrolment MEB25001, no MEB yet) are linked now; their finishing year follows its length. */
+/** The enrolment prefix decides a student's programme, so adding or editing one re-links its students. */
 export const createProgramme = (body: z.output<typeof ProgrammeCreate>) =>
   inTx(async (tx) => {
     const p = await tx.programme.create({ data: body });
-    await tx.$executeRaw`update students set programme_id = ${p.id}, year_of_completion = coalesce(year_of_admission + ${p.year ?? 4}, year_of_completion)
-      where programme_id is null and upper(left(enrolment_no, 3)) = upper(${p.code})`;
+    await syncProgrammeStudents(tx, p);
     return p;
   });
 
-export const updateProgramme = (id: string, body: z.output<typeof ProgrammePatch>) => db.programme.update({ where: { id }, data: body });
+export const updateProgramme = (id: string, body: z.output<typeof ProgrammePatch>) =>
+  inTx(async (tx) => {
+    const p = await tx.programme.update({ where: { id }, data: body });
+    await syncProgrammeStudents(tx, p);
+    return p;
+  });
 
 export const listPlacementRecords = () => db.placementRecord.findMany({ orderBy: { year: "desc" } }) as never;
 
