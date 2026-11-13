@@ -9,6 +9,7 @@ import type { UploadedFile } from "../../middleware/upload.js";
 import { getSetting } from "../settings/settings.service.js";
 import { userMachine } from "../auth/auth.service.js";
 import { findProfile } from "./students.repository.js";
+import { fromEnrolment } from "./enrolment.js";
 import { IMPORT_FIELDS, ImportRow, type FeedbackBody, type RecordBody } from "./students.schemas.js";
 import { mail } from "../../infrastructure/mailer.js";
 import { audit } from "../../infrastructure/db.js";
@@ -206,6 +207,9 @@ export const importStudentsJob = defineJob({
         report.updated++;
         continue;
       }
+      // New rows: what the sheet leaves out comes from the enrolment number. Re-imports never overwrite from it.
+      const derived = await fromEnrolment(db, r.enrolment_no);
+      for (const [k, v] of Object.entries(derived)) if (fields[k] == null && v !== undefined) fields[k] = v;
       await inTx((tx) =>
         userMachine.create(
           tx,
