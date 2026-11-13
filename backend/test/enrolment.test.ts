@@ -46,4 +46,18 @@ describe("enrolment number -> programme and batch", () => {
     const s = await student("ECB99001");
     expect([s.programme_id, s.year_of_admission, s.year_of_completion]).toEqual([null, null, null]);
   });
+
+  it("adding a programme moves students of that prefix even if they picked another one", async () => {
+    await register("EEB24001", csb).expect(201);
+    expect((await student("EEB24001")).programme?.code).toBe("CSB");
+    await admin.post("/admin/programmes", { department: "School of Engineering", name: "B.Tech EE", code: "EEB", year: 4 }).expect(201);
+    const s = await student("EEB24001");
+    expect([s.programme?.code, s.year_of_completion]).toEqual(["EEB", 2028]);
+  });
+
+  it("editing a programme's years recomputes its students' finishing year", async () => {
+    const id = (await student("CSM25003")).programme_id!;
+    await admin.patch(`/admin/programmes/${id}`, { year: 3 }).expect(200);
+    expect((await student("CSM25003")).year_of_completion).toBe(2028);
+  });
 });
