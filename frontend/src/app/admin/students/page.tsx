@@ -337,7 +337,8 @@ function Roster() {
           ))}
         </Select>
       </div>
-      <details className="group rounded-xs bg-surface-low p-3" open={isTargeted(filter)}>
+      {/* Uncontrolled: an `open` prop tied to the filter snapped the panel shut when the last criterion was cleared. */}
+      <details className="group rounded-xs bg-surface-low p-3">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-label font-semibold text-ink [&::-webkit-details-marker]:hidden">
           <span className="flex flex-wrap items-center gap-2">
             <Icon name="filter_alt" /> Department, programme, batch, CGPA
