@@ -33,6 +33,8 @@ export const RegisterStudentBody = z.object({
   email: Email, password: Password, name: z.string().min(2).max(200),
   enrolment_no: z.string().regex(/^[A-Za-z]{3}\d{5,6}$/, "e.g. CSB21001"),
   mobile: z.string().regex(/^\+?\d{10,13}$/), programme_id: z.uuid().optional(),
+  // Used only when the enrolment number gives no admission year.
+  year_of_admission: z.number().int().min(2000).max(2100).optional(),
 });
 export const RegisterRecruiterBody = z.object({
   email: Email, password: Password, name: z.string().min(2).max(200), company: CompanyBody,

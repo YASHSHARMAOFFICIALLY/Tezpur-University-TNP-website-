@@ -74,15 +74,40 @@ async function consumeOtp(userId: string, purpose: OtpPurpose, code: string) {
   if (count === 0) fail("OTP_INVALID"); // raced with another request using the same code
 }
 
-export async function registerStudent(input: { email: string; password: string; name: string; enrolment_no: string; mobile: string; programme_id?: string }) {
+type StudentSignup = {
+  email: string;
+  password: string;
+  name: string;
+  enrolment_no: string;
+  mobile: string;
+  programme_id?: string;
+  year_of_admission?: number;
+};
+
+/**
+ * The enrolment number wins over the form's picks (programme when its code is known, admission year when
+ * its digits are a past year). Finishing year = admission + the length of the programme the student ends up on.
+ */
+async function signupBatch(tx: Tx, input: StudentSignup) {
+  const fromCode = await fromEnrolment(tx, input.enrolment_no);
+  const programme_id = fromCode.programme_id ?? input.programme_id;
+  const year_of_admission = fromCode.year_of_admission ?? input.year_of_admission;
+  if (!year_of_admission) return { programme_id };
+  const programme = programme_id
+    ? await tx.programme.findUnique({ where: { id: programme_id }, select: { year: true } })
+    : null;
+  const year_of_completion = year_of_admission + (programme?.year ?? 4);
+  return { programme_id, year_of_admission, year_of_completion };
+}
+
+export async function registerStudent(input: StudentSignup) {
   const email = normalize(input.email);
   const domain = await getSetting("student_email_domain");
   if (!email.endsWith("@" + domain)) fail("EMAIL_DOMAIN_NOT_ALLOWED", { domain });
   const password_hash = await hashPassword(input.password);
   try {
     return await inTx(async (tx) => {
-      // The enrolment number wins over the form's programme pick when its code is a known programme.
-      const { programme_id, ...batch } = await fromEnrolment(tx, input.enrolment_no);
+      const batch = await signupBatch(tx, input);
       const { id } = await userMachine.create(
         tx,
         {
@@ -91,7 +116,7 @@ export async function registerStudent(input: { email: string; password: string; 
           name: input.name,
           password_hash,
           student: {
-            create: { enrolment_no: input.enrolment_no.toUpperCase(), mobile: input.mobile, programme_id: programme_id ?? input.programme_id, ...batch, academic_standing: "good" },
+            create: { enrolment_no: input.enrolment_no.toUpperCase(), mobile: input.mobile, ...batch, academic_standing: "good" },
           },
         },
         SYSTEM,

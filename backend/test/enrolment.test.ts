@@ -4,10 +4,18 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { db } from "../src/infrastructure/db.js";
 import { api, app, as, freshDbWithAdmin } from "./helpers.js";
 
-const register = (enrol: string, programme_id?: string) =>
+const register = (enrol: string, programme_id?: string, year_of_admission?: number) =>
   request(app)
     .post(api("/auth/register/student"))
-    .send({ email: `${enrol.toLowerCase()}@tezu.ac.in`, password: "student-pass", name: "Enrol Test", enrolment_no: enrol, mobile: "9876543210", programme_id });
+    .send({
+      email: `${enrol.toLowerCase()}@tezu.ac.in`,
+      password: "student-pass",
+      name: "Enrol Test",
+      enrolment_no: enrol,
+      mobile: "9876543210",
+      programme_id,
+      year_of_admission,
+    });
 const student = (enrol: string) => db.student.findUniqueOrThrow({ where: { enrolment_no: enrol }, include: { programme: true } });
 
 describe("enrolment number -> programme and batch", () => {
@@ -39,6 +47,25 @@ describe("enrolment number -> programme and batch", () => {
     await admin.post("/admin/programmes", { department: "School of Engineering", name: "B.Tech ME", code: "MEB", year: 4 }).expect(201);
     s = await student("MEB25001");
     expect(s.programme?.code).toBe("MEB");
+  });
+
+  it("unknown code + picked 2-year M.Tech: batch uses the picked programme's length", async () => {
+    const mtech = (await student("CSM25003")).programme_id!;
+    await register("XYM24001", mtech).expect(201);
+    const s = await student("XYM24001");
+    expect([s.programme?.code, s.year_of_admission, s.year_of_completion]).toEqual(["CSM", 2024, 2026]);
+  });
+
+  it("picked admission year is used when the enrolment number gives none", async () => {
+    await register("ECB99002", csb, 2023).expect(201);
+    const s = await student("ECB99002");
+    expect([s.programme?.code, s.year_of_admission, s.year_of_completion]).toEqual(["CSB", 2023, 2027]);
+  });
+
+  it("enrolment year wins over the picked admission year", async () => {
+    await register("ECB24002", csb, 2021).expect(201);
+    const s = await student("ECB24002");
+    expect([s.programme?.code, s.year_of_admission, s.year_of_completion]).toEqual(["ECB", 2024, 2028]);
   });
 
   it("digits that would be a future year are not a batch: nothing derived", async () => {

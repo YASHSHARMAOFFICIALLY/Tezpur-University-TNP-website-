@@ -78,7 +78,9 @@ await step("student self-registration + OTP verification (UI)", async () => {
   await guest.getByLabel("Enrolment Number *").fill(NEW_ENROL);
   await guest.getByLabel("University Email *").fill(NEW_STUDENT);
   await guest.getByLabel("Mobile *").fill("9876501234");
-  await guest.getByLabel("Programme").selectOption({ label: "B.Tech Computer Science & Engg" });
+  await guest.getByLabel("Course *").selectOption("B.Tech");
+  await guest.getByLabel("Programme *").selectOption({ label: "B.Tech Computer Science & Engg" });
+  await guest.getByLabel("Year of Admission *").selectOption(String(new Date().getFullYear() - 1));
   await guest.getByLabel("Create Password *").fill(NEW_PW);
   await guest.getByRole("button", { name: /Register & Send Code/ }).click();
   await guest.getByLabel("Verification Code *").fill(await otpFor(NEW_STUDENT));

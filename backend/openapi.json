@@ -1627,6 +1627,11 @@
                   "programme_id": {
                     "type": "string",
                     "format": "uuid"
+                  },
+                  "year_of_admission": {
+                    "type": "integer",
+                    "minimum": 2000,
+                    "maximum": 2100
                   }
                 },
                 "required": [
