@@ -47,7 +47,9 @@ await step("student registers via the UI, verifies the OTP and is told the accou
   await page.getByLabel("Enrolment Number *").fill(ENROL);
   await page.getByLabel("University Email *").fill(EMAIL);
   await page.getByLabel("Mobile *").fill("9876500000");
-  await page.getByLabel("Programme").selectOption(cse.id);
+  await page.getByLabel("Course *").selectOption("B.Tech");
+  await page.getByLabel("Programme *").selectOption(cse.id);
+  await page.getByLabel("Year of Admission *").selectOption(String(new Date().getFullYear() - 1));
   await page.getByLabel("Create Password *").fill(SPW);
   await page.getByRole("button", { name: /Register & Send Code/ }).click();
   await page.getByLabel("Verification Code *").fill(await otpFor(EMAIL));

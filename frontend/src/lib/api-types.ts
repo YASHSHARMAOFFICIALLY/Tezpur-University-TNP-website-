@@ -35,6 +35,7 @@ export interface paths {
                         mobile: string;
                         /** Format: uuid */
                         programme_id?: string;
+                        year_of_admission?: number;
                     };
                 };
             };

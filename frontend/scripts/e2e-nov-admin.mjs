@@ -213,6 +213,20 @@ await step("roster: clearing the last filter chip keeps the filter panel open", 
   await adm.getByRole("button", { name: "Female", exact: true }).click({ timeout: 3000 });
 });
 
+await step("roster: course chip (M.Tech) selects every M.Tech programme and clears them again", async () => {
+  await adm.goto(`${WEB}/admin/students`);
+  await adm.getByText("Department, programme, batch, CGPA").click();
+  const mtech = progs.filter((p) => p.name.startsWith("M.Tech "));
+  assert.ok(mtech.length > 1, "dev DB has M.Tech programmes");
+  const course = adm.getByRole("button", { name: "M.Tech", exact: true });
+  const pressed = (p) => adm.getByRole("button", { name: `${p.code} · ${p.name}`, exact: true }).getAttribute("aria-pressed");
+  await course.click();
+  assert.equal(await course.getAttribute("aria-pressed"), "true");
+  for (const p of mtech) assert.equal(await pressed(p), "true", p.name);
+  await course.click();
+  for (const p of mtech) assert.equal(await pressed(p), "false", p.name);
+});
+
 await step("CSV import with profile columns: first upload adds, second updates", async () => {
   const enrol = `ZZC${run}`;
   const csv = (cgpa) =>

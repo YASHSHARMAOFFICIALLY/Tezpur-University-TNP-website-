@@ -3,6 +3,7 @@
 import useSWR from "swr";
 import { Badge, Field, Input, Select, cx } from "@/components/ui";
 import { api, call } from "@/lib/api";
+import { courseOf, coursesOf } from "@/lib/programmes";
 
 export type Gender = "female" | "male" | "other" | "unspecified";
 
@@ -152,7 +153,7 @@ function Chips<T extends string | number>({
   );
 }
 
-/** Department > programme > batch > gender > CGPA > placed. `basic` keeps only the first three (notice history accepts no more); `roster` adds who-they-are and account filters a notice cannot store. */
+/** Department > course > programme > batch > gender > CGPA > placed. `basic` keeps only the first three (notice history accepts no more); `roster` adds who-they-are and account filters a notice cannot store. */
 export function StudentFilterFields({
   value,
   onChange,
@@ -175,26 +176,42 @@ export function StudentFilterFields({
       departments,
       programme_ids: value.programme_ids.filter((id) => !departments.length || departments.includes(list.find((p) => p.id === id)?.department ?? "")),
     });
+  // A course chip is a shortcut: it selects (or clears) every shown programme of that course.
+  const courseIds = (course: string) => shown.filter((p) => courseOf(p.name) === course).map((p) => p.id);
+  const courses = coursesOf(shown);
+  const coursesOn = courses.filter((c) => courseIds(c).every((id) => value.programme_ids.includes(id)));
+  const setCourses = (next: string[]) => {
+    const removed = coursesOn.filter((c) => !next.includes(c)).flatMap(courseIds);
+    const added = next.filter((c) => !coursesOn.includes(c)).flatMap(courseIds);
+    const kept = value.programme_ids.filter((id) => !removed.includes(id));
+    set({ programme_ids: [...new Set([...kept, ...added])] });
+  };
   return (
     <div className="flex flex-col gap-3">
       <Chips label="1. Department" options={departments.map((d) => ({ v: d, label: d }))} value={value.departments} onChange={setDepartments} />
       <Chips
-        label={value.departments.length ? "2. Programme in these departments" : "2. Programme"}
+        label="2. Course (selects all its programmes)"
+        options={courses.map((c) => ({ v: c, label: c }))}
+        value={coursesOn}
+        onChange={setCourses}
+      />
+      <Chips
+        label={value.departments.length ? "3. Programme in these departments" : "3. Programme"}
         options={shown.map((p) => ({ v: p.id, label: `${p.code} · ${p.name}` }))}
         value={value.programme_ids}
         onChange={(programme_ids) => set({ programme_ids })}
       />
       <Chips
-        label="3. Batch (year of completion)"
+        label="4. Batch (year of completion)"
         options={BATCHES.map((y) => ({ v: y, label: String(y) }))}
         value={value.batches}
         onChange={(batches) => set({ batches })}
       />
-      {!basic && <Chips label="4. Gender" options={GENDER_OPTIONS} value={value.genders} onChange={(genders) => set({ genders: genders as Gender[] })} />}
+      {!basic && <Chips label="5. Gender" options={GENDER_OPTIONS} value={value.genders} onChange={(genders) => set({ genders: genders as Gender[] })} />}
       {!basic && (
         <>
           <fieldset className="flex flex-col gap-1.5">
-            <legend className="pb-1.5 text-label font-semibold text-ink">5. CGPA</legend>
+            <legend className="pb-1.5 text-label font-semibold text-ink">6. CGPA</legend>
             <div className="flex flex-wrap gap-1.5">
               {BANDS.map((b) => {
                 const on = value.min_cgpa === b.min && value.max_cgpa === b.max;

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import useSWR from "swr";
 import { api, call } from "@/lib/api";
+import { courseOf, coursesOf } from "@/lib/programmes";
 import { siteText } from "@/app/site-defaults";
 import { Button, Eyebrow, Field, Icon, Input, Select, cx } from "./ui";
 
@@ -293,8 +294,14 @@ function RecruiterFlow() {
   );
 }
 
+const thisYear = new Date().getFullYear();
+const ADMISSION_YEARS = Array.from({ length: 7 }, (_, i) => thisYear - i);
+
 function StudentFlow() {
   const { data: programmes } = useSWR("programmes", () => call(api.GET("/api/v1/programmes")));
+  const [course, setCourse] = useState("");
+  const courses = coursesOf(programmes ?? []);
+  const courseProgrammes = (programmes ?? []).filter((p) => courseOf(p.name) === course);
   const [email, setEmail] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>("pending_email_verify");
   const [err, setErr] = useState("");
@@ -315,6 +322,7 @@ function StudentFlow() {
             mobile: f.mobile,
             password: f.password,
             programme_id: f.programme_id || undefined,
+            year_of_admission: f.year_of_admission ? Number(f.year_of_admission) : undefined,
           },
         }),
       );
@@ -336,7 +344,7 @@ function StudentFlow() {
         text="Currently enrolled Tezpur University students register with their official university email. Imported students set their first password from the sign-in page instead."
         step={email ? 1 : 0}
         steps={[
-          ["Academic Identity", "Enrolment number & programme"],
+          ["Academic Identity", "Enrolment, course & year"],
           ["Email Verification", "6-digit code to your TU inbox"],
           ["Sign in", "Active as soon as your email is verified"],
         ]}
@@ -359,12 +367,33 @@ function StudentFlow() {
               <Field label="Mobile *">
                 <Input name="mobile" type="tel" required pattern="\+?\d{10,13}" autoComplete="tel" placeholder="9876543210" />
               </Field>
-              <Field label="Programme">
-                <Select name="programme_id" defaultValue="">
-                  <option value="">{programmes ? "Select programme" : "Loading programmes…"}</option>
-                  {programmes?.map((p) => (
+              <Field label="Course *" hint="B.Tech, M.Tech, MCA…">
+                <Select name="course" required value={course} onChange={(e) => setCourse(e.target.value)}>
+                  <option value="">{programmes ? "Select course" : "Loading courses…"}</option>
+                  {courses.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label="Programme *">
+                {/* key resets the pick when the course changes */}
+                <Select key={course} name="programme_id" required defaultValue="" disabled={!course}>
+                  <option value="">{course ? "Select programme" : "Select a course first"}</option>
+                  {courseProgrammes.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.name}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label="Year of Admission *">
+                <Select name="year_of_admission" required defaultValue="">
+                  <option value="">Select year</option>
+                  {ADMISSION_YEARS.map((y) => (
+                    <option key={y} value={y}>
+                      {y}
                     </option>
                   ))}
                 </Select>
